@@ -6,3 +6,8 @@
 
 # Visual Studio File
 .vscode
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
