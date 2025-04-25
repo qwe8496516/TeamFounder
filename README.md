@@ -7,8 +7,8 @@ This is a full-stack project with separated frontend and backend. The frontend i
 - Node.js (Recommended v18.x or higher)
 - Java JDK 17 or higher
 - Maven 3.8.x or higher
-- Git
 - MySQL 
+- Git
 
 ## Project Structure
 
@@ -39,6 +39,8 @@ npm run dev
 
 The frontend service will run at http://localhost:5173
 
+---
+
 ### Backend Setup
 
 1. Navigate to the backend directory:
@@ -48,9 +50,11 @@ cd backend
 
 2. Create a `.env` file in the backend directory with the following content:
 ```env
-DB_URL=jdbc:mysql://localhost:3306/your_dbname
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
+MYSQL_HOST=${host}
+MYSQL_DB_NAME=${dbname}
+MYSQL_PORT=${port}
+MYSQL_USER=${user}
+MYSQL_PASSWORD=${password}
 ```
 
 3. Install dependencies using Maven:
