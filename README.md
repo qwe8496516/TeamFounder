@@ -81,6 +81,8 @@ The backend service will run at http://localhost:8080
 - Database Tools: MYSQL
 - API Testing Tools: Postman & Swagger UI
 
+The Swagger UI will run at http://localhost:8080/swagger-ui/index.html
+
 ## Important Notes
 
 1. Ensure all required dependencies are installed
