@@ -1,7 +1,7 @@
 #Users
-INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598012', 'Yang Hong Jie', 123, 't113598012@ntut.org.tw', '1');
-INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598056', 'CK Yang', 123, 't113598056@ntut.org.tw', '2');
-INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598071', 'Shuang Yang', 123, 't113598071@ntut.org.tw', '1');
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598012', 'Yang Hong Jie', 123, 't113598012@ntut.org.tw', 0);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598056', 'CK Yang', 123, 't113598056@ntut.org.tw', 1);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598071', 'Shuang Yang', 123, 't113598071@ntut.org.tw', 0);
 
 #Skills
 INSERT INTO skill (type, name) VALUES ('Programming','HTML/CSS');
