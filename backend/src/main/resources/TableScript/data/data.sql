@@ -34,14 +34,14 @@ INSERT INTO profile (userId, skillId) VALUES (2, 8);
 
 # Course
 INSERT INTO course (course_code, name, professor_id, academic, semester, description)
-VALUES ('CS205', 'Web Development', '113598056', 2, '1', 'A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.');
+VALUES ('CS205', 'Web Development', '113598056', 2, 1, 'A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.');
 
 INSERT INTO course (course_code, name, professor_id, academic, semester, description)
-VALUES ('CS301', 'Software Engineering', '113598056', 3, '2', 'A course about software development methodologies and teamwork.');
+VALUES ('CS301', 'Software Engineering', '113598056', 3, 2, 'A course about software development methodologies and teamwork.');
 
 #Announcement
 INSERT INTO announcement (title, description, importanceLevel, course_code)
-VALUES ('Team Formation Announcement', 'Please form your project teams before the end of next week.', '2', 'CS301');
+VALUES ('Team Formation Announcement', 'Please form your project teams before the end of next week.', 2, 'CS301');
 
 INSERT INTO announcement (title, description, importanceLevel, course_code)
-VALUES ('First Assignment Released', 'The first homework is about building a personal webpage.', '4', 'CS205');
+VALUES ('First Assignment Released', 'The first homework is about building a personal webpage.', 4, 'CS205');
