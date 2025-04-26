@@ -26,40 +26,44 @@ public class UserHandler {
         String userId = credentials.get("userId");
         String password = credentials.get("password");
 
-        String token = "token"; // jwt token
-
         User user = userList.getUserById(userId);
         if (user == null || !user.isValid(password)) {
             return ResponseEntity.badRequest().body("Invalid credentials");
-        } else {
-            if (user.isProfessor()) {
-                Map<String, String> response = new HashMap<>();
-                response.put("token", token);
-                response.put("redirect", "/professor");
-                response.put("userId", userId);
-                return ResponseEntity.ok(response);
-            } else if (user.isStudent()) {
-                Map<String, String> response = new HashMap<>();
-                response.put("token", token);
-                response.put("redirect", "/student");
-                response.put("userId", userId);
-                return ResponseEntity.ok(response);
-            }
-            return ResponseEntity.badRequest().body("Invalid credentials");
         }
+
+        String token = "jwt-token"; // 模擬 token
+        Map<String, String> res = new HashMap<>();
+        res.put("token", token);
+        res.put("userId", user.getUserId());
+        res.put("role", user.getRoleName());
+        res.put("redirect", user.getRedirectPath());
+        return ResponseEntity.ok(res);
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<?> register(@RequestBody Map<String, String> userData) {
-//        try {
-//            String username = userData.get("username");
-//            String password = userData.get("password");
-//            String email = userData.get("email");
+//   @PostMapping("/register")
+//   public ResponseEntity<?> register(@RequestBody Map<String, String> userData) {
+//       try {
+//           String userId = userData.get("userId");
+//           String username = userData.get("username");
+//           String password = userData.get("password");
+//           String confirmPassword = userData.get("confirmPassword");
+//           String email = userData.get("email");
+//           int privilege = Integer.parseInt(userData.getOrDefault("privilege", "0")); // Default to student
 //
-//            User user = authService.registerUser(username, password, email);
-//            return ResponseEntity.ok(user);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
+//           User user = userList.registerUser(userId, username, password, email, privilege);
+//
+//           Map<String, Object> response = new HashMap<>();
+//           response.put("message", "Registration successful");
+//           response.put("userId", user.getUserId());
+//           response.put("username", user.getUsername());
+//           response.put("email", user.getEmail());
+//           response.put("privilege", user.getPrivilege());
+//
+//           return ResponseEntity.ok(response);
+//       } catch (IllegalArgumentException e) {
+//           return ResponseEntity.badRequest().body(e.getMessage());
+//       } catch (Exception e) {
+//           return ResponseEntity.internalServerError().body("An error occurred during registration");
+//       }
+//   }
 } 
