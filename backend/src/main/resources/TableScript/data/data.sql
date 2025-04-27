@@ -24,19 +24,15 @@ INSERT INTO skill (type, name) VALUES ('Nationality','America');
 INSERT INTO skill (type, name) VALUES ('Nationality','Germany');
 
 # Profile
-INSERT INTO profile (userId, skillId) VALUES (1, 2);
-INSERT INTO profile (userId, skillId) VALUES (1, 6);
-INSERT INTO profile (userId, skillId) VALUES (1, 7);
+INSERT INTO profile (userId, skill) VALUES (1, '2,6,7');
 
-INSERT INTO profile (userId, skillId) VALUES (2, 3);
-INSERT INTO profile (userId, skillId) VALUES (2, 5);
-INSERT INTO profile (userId, skillId) VALUES (2, 8);
+INSERT INTO profile (userId, skill) VALUES (2, '3,5,6');
 
 # Course
-INSERT INTO course (course_code, name, professor_id, academic, semester, description)
+INSERT INTO course (course_code, name, professor_id, academic_year, semester, description)
 VALUES ('CS205', 'Web Development', '113598056', 2, 1, 'A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.');
 
-INSERT INTO course (course_code, name, professor_id, academic, semester, description)
+INSERT INTO course (course_code, name, professor_id, academic_year, semester, description)
 VALUES ('CS301', 'Software Engineering', '113598056', 3, 2, 'A course about software development methodologies and teamwork.');
 
 #Announcement

@@ -25,17 +25,16 @@ CREATE TABLE IF NOT EXISTS skill (
 
 CREATE TABLE IF NOT EXISTS profile (
     userId BIGINT NOT NULL,
-    skillId BIGINT NOT NULL,
-    PRIMARY KEY (userId, skillId),
-    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (skillId) REFERENCES skill(id) ON DELETE CASCADE
+    skill NVARCHAR(255) NOT NULL,
+    PRIMARY KEY (userId),
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS course (
     course_code VARCHAR(100) PRIMARY KEY ,
     name VARCHAR(255) NOT NULL,
     professor_id VARCHAR(255) NOT NULL,
-    academic TINYINT NOT NULL,
+    academic_year TINYINT NOT NULL,
     semester TINYINT NOT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
