@@ -53,14 +53,17 @@ public class UserHandler {
                return ResponseEntity.badRequest().body("Passwords do not match");
            }
 
-           User user = userDAO.createUser(userId, username, password, email);
+           if (userDAO.getUserById(userId) != null) {
+               return ResponseEntity.badRequest().body("User ID already exists");
+           }
+
+           int res = userDAO.createUser(userId, username, password, email);
 
            Map<String, Object> response = new HashMap<>();
            response.put("message", "Registration successful");
-           response.put("userId", user.getUserId());
-           response.put("username", user.getUsername());
-           response.put("email", user.getEmail());
-           response.put("privilege", user.getPrivilege());
+           response.put("userId", userId);
+           response.put("username", username);
+           response.put("email", email);
 
            return ResponseEntity.ok(response);
        } catch (IllegalArgumentException e) {

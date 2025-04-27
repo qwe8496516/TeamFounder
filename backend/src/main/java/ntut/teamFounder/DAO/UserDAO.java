@@ -44,10 +44,9 @@ public class UserDAO {
         );
     }
 
-    public User createUser(String userId, String username, String password, String email) {
+    public int createUser(String userId, String username, String password, String email) {
         String sql = "INSERT INTO users (userId, username, password, email, privilege) VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, userId, username, password, email, 0);
-        return getUserById(userId);
+        return jdbcTemplate.update(sql, userId, username, password, email, 0);
     }
 
     public int addSkillToUser(Long userId, Long skillId) {
