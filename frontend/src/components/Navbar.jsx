@@ -33,20 +33,20 @@ function Navbar() {
             </div> */}
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link
-                to="/teams"
-                className={`${
-                  isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-900 hover:text-gray-700'
-                } inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium font-['Roboto_Mono']`}
-              >
-                Teams
-              </Link>
-              <Link
                 to="/courses"
                 className={`${
                   isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-900 hover:text-gray-700'
                 } inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium font-['Roboto_Mono']`}
               >
                 Courses
+              </Link>
+              <Link
+                to="/teams"
+                className={`${
+                  isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-900 hover:text-gray-700'
+                } inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium font-['Roboto_Mono']`}
+              >
+                Teams
               </Link>
               <Link
                 to="/chat"
