@@ -1,16 +1,19 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import Swal from 'sweetalert2'
+import Loading from '../components/Loading'
 
 function Register() {
   const [formData, setFormData] = useState({
+    studentId: '',
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    skills: '',
-    experience: '',
-    lookingFor: ''
   })
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -20,9 +23,61 @@ function Register() {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Registration form submitted:', formData)
+    
+    if (formData.password !== formData.confirmPassword) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        text: 'Passwords do not match',
+        confirmButtonColor: '#4f46e5'
+      })
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      const response = await axios.post('http://localhost:8080/api/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        studentId: formData.studentId
+      })
+
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token)
+        localStorage.setItem('userId', response.data.userId)
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Registration Successful',
+          text: 'Welcome to TeamFounder!',
+          confirmButtonColor: '#4f46e5'
+        }).then(() => {
+          navigate('/login')
+        })
+      }
+
+      console.log(response.data)
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        text: err.response?.data?.message || 'An error occurred during registration',
+        confirmButtonColor: '#4f46e5'
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Loading />
+      </div>
+    )
   }
 
   return (
@@ -38,7 +93,7 @@ function Register() {
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                 Full Name
@@ -48,7 +103,6 @@ function Register() {
                   id="name"
                   name="name"
                   type="text"
-                  required
                   value={formData.name}
                   onChange={handleChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
@@ -58,8 +112,27 @@ function Register() {
             </div>
 
             <div>
+              <label htmlFor="studentId" className="block text-sm font-medium text-gray-700">
+                Student ID
+              </label>
+              <div className="mt-1">
+                <input
+                  id="studentId"
+                  name="studentId"
+                  type="text"
+                  value={formData.studentId}
+                  onChange={handleChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
+                  placeholder="Enter your student ID"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6">
+            <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+                Email address <span className="text-red-500">*</span>
               </label>
               <div className="mt-1">
                 <input
@@ -67,7 +140,6 @@ function Register() {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  required
                   value={formData.email}
                   onChange={handleChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
@@ -75,17 +147,18 @@ function Register() {
                 />
               </div>
             </div>
+          </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+                Password <span className="text-red-500">*</span>
               </label>
               <div className="mt-1">
                 <input
                   id="password"
                   name="password"
                   type="password"
-                  required
                   value={formData.password}
                   onChange={handleChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
@@ -96,14 +169,13 @@ function Register() {
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                Confirm Password
+                Confirm Password <span className="text-red-500">*</span>
               </label>
               <div className="mt-1">
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
-                  required
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
@@ -137,7 +209,7 @@ function Register() {
 
           <div className="mt-6">
             <Link
-              to="/"
+              to="/login"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
             >
               Sign in
