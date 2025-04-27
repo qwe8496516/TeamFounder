@@ -23,15 +23,27 @@ function Register() {
     }))
   }
 
+  const validateForm = () => {
+    const errors = {}
+    if (!formData.name) return 'Name is required'
+    if (!formData.email) return 'Email is required'
+    if (!formData.password) return 'Password is required'
+    if (!formData.confirmPassword) return 'Confirm Password is required'
+    if (!formData.email.endsWith('@ntut.org.tw')) return 'Email must be end with @ntut.org.tw'
+    if (formData.password.length < 6) return 'Password must be at least 6 characters'
+    if (formData.password !== formData.confirmPassword) return 'Passwords do not match'
+    return errors
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
-    if (formData.password !== formData.confirmPassword) {
+
+    const errors = validateForm()
+    if (Object.keys(errors).length > 0) {
       Swal.fire({
         icon: 'error',
         title: 'Registration Failed',
-        text: 'Passwords do not match',
-        confirmButtonColor: '#4f46e5'
+        text: errors,
       })
       return
     }
@@ -42,6 +54,7 @@ function Register() {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        confirmPassword: formData.confirmPassword,
         studentId: formData.studentId
       })
 
@@ -58,9 +71,8 @@ function Register() {
           navigate('/login')
         })
       }
-
-      console.log(response.data)
     } catch (err) {
+      console.error('Registration error:', err)
       Swal.fire({
         icon: 'error',
         title: 'Registration Failed',
@@ -96,7 +108,7 @@ function Register() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Full Name
+                Full Name <span className="text-red-500">*</span>
               </label>
               <div className="mt-1">
                 <input
@@ -113,7 +125,7 @@ function Register() {
 
             <div>
               <label htmlFor="studentId" className="block text-sm font-medium text-gray-700">
-                Student ID
+                Student ID <span className="text-red-500">*</span>
               </label>
               <div className="mt-1">
                 <input

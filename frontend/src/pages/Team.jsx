@@ -39,7 +39,7 @@ function Team() {
       <div className="max-w-7xl mx-auto">
         {teams.length === 0 ? (
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 my-8">
               <svg
                 className="w-8 h-8 text-gray-400"
                 fill="none"
@@ -60,8 +60,8 @@ function Team() {
               You haven't been matched with any teams yet. Check back later or contact your instructor.
             </p>
             <Link
-              to="/match"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              to="/student/match"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-700 hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Find Teams
             </Link>
