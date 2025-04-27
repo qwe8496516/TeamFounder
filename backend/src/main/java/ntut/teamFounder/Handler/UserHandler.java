@@ -1,12 +1,14 @@
 package ntut.teamFounder.Handler;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import ntut.teamFounder.DAO.UserDAO;
 import ntut.teamFounder.Domain.User;
 import ntut.teamFounder.Domain.UserList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -16,9 +18,11 @@ import java.util.Map;
 public class UserHandler {
 
     private final UserList userList;
+    private final UserDAO userDAO;
 
-    public UserHandler(UserList userList) {
+    public UserHandler(UserList userList, UserDAO userDAO) {
         this.userList = userList;
+        this.userDAO = userDAO;
     }
 
     @PostMapping("/login")

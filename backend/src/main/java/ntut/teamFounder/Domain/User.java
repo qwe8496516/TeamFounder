@@ -3,7 +3,10 @@ package ntut.teamFounder.Domain;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter

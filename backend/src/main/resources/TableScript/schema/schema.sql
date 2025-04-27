@@ -66,6 +66,14 @@ CREATE TABLE IF NOT EXISTS invitation (
     FOREIGN KEY (course_code) REFERENCES course(course_code) ON DELETE CASCADE
 );
 
+CREATE TABLE enrollment (
+    user_id VARCHAR(20) NOT NULL,
+    course_code VARCHAR(10) NOT NULL,
+    enrollment_date DATE NOT NULL,
+    PRIMARY KEY (user_id, course_code),
+    FOREIGN KEY (user_id) REFERENCES users(userId),
+    FOREIGN KEY (course_code) REFERENCES course(course_code)
+);
 
 
 
