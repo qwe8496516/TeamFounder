@@ -41,4 +41,14 @@ public class User {
         return this.privilege == 0;
     }
 
+    public String getRoleName() {
+        if (this.isProfessor()) return "professor";
+        if (this.isStudent()) return "student";
+        return "";
+    }
+
+    public String getRedirectPath() {
+        return "/" + getRoleName();
+    }
+
 } 
