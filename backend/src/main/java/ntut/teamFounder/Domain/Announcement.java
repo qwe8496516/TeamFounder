@@ -23,7 +23,7 @@ public class Announcement {
         this.timestamp = createdAt.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime();
 
         this.course = new Course();
-        this.course.setId(courseId);
+//        this.course.setId(courseId);
 
         this.importanceLevel = 0;
     }

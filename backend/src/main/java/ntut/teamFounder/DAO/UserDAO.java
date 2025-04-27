@@ -29,6 +29,27 @@ public class UserDAO {
         );
     }
 
+    public User getUserById(String userId) {
+        String sql = "SELECT * FROM users WHERE userid = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{userId}, (rs, rowNum) ->
+                new User(
+                        rs.getLong("id"),
+                        rs.getString("userId"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getInt("privilege"),
+                        rs.getDate("createdAt")
+                )
+        );
+    }
+
+    public User createUser(String userId, String username, String password, String email) {
+        String sql = "INSERT INTO users (userId, username, password, email, privilege) VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, userId, username, password, email, 0);
+        return getUserById(userId);
+    }
+
     public int addSkillToUser(Long userId, Long skillId) {
         String sql = "INSERT INTO profile (userId, skillId) VALUES (?, ?)";
         return jdbcTemplate.update(sql, userId, skillId);

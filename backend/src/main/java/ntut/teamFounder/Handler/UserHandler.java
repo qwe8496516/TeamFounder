@@ -3,12 +3,10 @@ package ntut.teamFounder.Handler;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import ntut.teamFounder.DAO.UserDAO;
 import ntut.teamFounder.Domain.User;
-import ntut.teamFounder.Domain.UserList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,11 +15,9 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class UserHandler {
 
-    private final UserList userList;
     private final UserDAO userDAO;
 
-    public UserHandler(UserList userList, UserDAO userDAO) {
-        this.userList = userList;
+    public UserHandler(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
 
@@ -30,7 +26,7 @@ public class UserHandler {
         String userId = credentials.get("userId");
         String password = credentials.get("password");
 
-        User user = userList.getUserById(userId);
+        User user = userDAO.getUserById(userId);
         if (user == null || !user.isValid(password)) {
             return ResponseEntity.badRequest().body("Invalid credentials");
         }
@@ -44,30 +40,33 @@ public class UserHandler {
         return ResponseEntity.ok(res);
     }
 
-//   @PostMapping("/register")
-//   public ResponseEntity<?> register(@RequestBody Map<String, String> userData) {
-//       try {
-//           String userId = userData.get("userId");
-//           String username = userData.get("username");
-//           String password = userData.get("password");
-//           String confirmPassword = userData.get("confirmPassword");
-//           String email = userData.get("email");
-//           int privilege = Integer.parseInt(userData.getOrDefault("privilege", "0")); // Default to student
-//
-//           User user = userList.registerUser(userId, username, password, email, privilege);
-//
-//           Map<String, Object> response = new HashMap<>();
-//           response.put("message", "Registration successful");
-//           response.put("userId", user.getUserId());
-//           response.put("username", user.getUsername());
-//           response.put("email", user.getEmail());
-//           response.put("privilege", user.getPrivilege());
-//
-//           return ResponseEntity.ok(response);
-//       } catch (IllegalArgumentException e) {
-//           return ResponseEntity.badRequest().body(e.getMessage());
-//       } catch (Exception e) {
-//           return ResponseEntity.internalServerError().body("An error occurred during registration");
-//       }
-//   }
+   @PostMapping("/register")
+   public ResponseEntity<?> register(@RequestBody Map<String, String> userData) {
+       try {
+           String userId = userData.get("userId");
+           String username = userData.get("username");
+           String password = userData.get("password");
+           String confirmPassword = userData.get("confirmPassword");
+           String email = userData.get("email");
+
+           if (!password.equals(confirmPassword)) {
+               return ResponseEntity.badRequest().body("Passwords do not match");
+           }
+
+           User user = userDAO.createUser(userId, username, password, email);
+
+           Map<String, Object> response = new HashMap<>();
+           response.put("message", "Registration successful");
+           response.put("userId", user.getUserId());
+           response.put("username", user.getUsername());
+           response.put("email", user.getEmail());
+           response.put("privilege", user.getPrivilege());
+
+           return ResponseEntity.ok(response);
+       } catch (IllegalArgumentException e) {
+           return ResponseEntity.badRequest().body(e.getMessage());
+       } catch (Exception e) {
+           return ResponseEntity.internalServerError().body("An error occurred during registration");
+       }
+   }
 } 
