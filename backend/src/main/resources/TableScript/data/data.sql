@@ -17,11 +17,11 @@ INSERT INTO skill (type, name) VALUES ('Tool','Docker');
 INSERT INTO skill (type, name) VALUES ('Language','English');
 INSERT INTO skill (type, name) VALUES ('Language','Mandarin');
 INSERT INTO skill (type, name) VALUES ('Language','Japanese');
-INSERT INTO skill (type, name) VALUES ('Nationality','Japan');
-INSERT INTO skill (type, name) VALUES ('Nationality','Taiwan');
-INSERT INTO skill (type, name) VALUES ('Nationality','China');
-INSERT INTO skill (type, name) VALUES ('Nationality','America');
-INSERT INTO skill (type, name) VALUES ('Nationality','Germany');
+# INSERT INTO skill (type, name) VALUES ('Nationality','Japan');
+# INSERT INTO skill (type, name) VALUES ('Nationality','Taiwan');
+# INSERT INTO skill (type, name) VALUES ('Nationality','China');
+# INSERT INTO skill (type, name) VALUES ('Nationality','America');
+# INSERT INTO skill (type, name) VALUES ('Nationality','Germany');
 
 # Profile
 INSERT INTO profile (userId, skill) VALUES (1, '2,6,7');
