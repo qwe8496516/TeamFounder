@@ -82,7 +82,7 @@ public class StudentHandler {
             @RequestParam Long skillId
     ) {
         try {
-            int result = studentDAO.addSkillToStudent(userId, skillId);
+            studentDAO.addSkillToStudent(userId, skillId);
             return ResponseEntity.ok("Skill added successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to add skill: " + e.getMessage());

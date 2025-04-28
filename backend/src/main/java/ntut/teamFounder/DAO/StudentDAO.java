@@ -57,25 +57,25 @@ public class StudentDAO {
     }
 
     public int addSkillToStudent(Long userId, Long skillId) {
-        String sql = "INSERT INTO profile (userId, skillId) VALUES (?, ?)";
+        String sql = "INSERT INTO userSkill (userId, skillId) VALUES (?, ?)";
         return jdbcTemplate.update(sql, userId, skillId);
     }
 
     public List<Long> getSkillsByStudentId(Long userId) {
-        String sql = "SELECT skillId FROM profile WHERE userId = ?";
+        String sql = "SELECT skillId FROM userSkill WHERE userId = ?";
         return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) ->
                 rs.getLong("skillId")
         );
     }
 
     public int enrollInCourse(Long userId, String courseCode) {
-        String sql = "INSERT INTO enrollment (userId, course_code) VALUES (?, ?)";
+        String sql = "INSERT INTO enrollment (userId, courseCode) VALUES (?, ?)";
         return jdbcTemplate.update(sql, userId, courseCode);
     }
 
     public List<String> getCoursesByStudentId(Long userId) {
-        String sql = "SELECT c.course_code FROM course c " +
-                "JOIN enrollment e ON c.course_code = e.course_code " +
+        String sql = "SELECT c.courseCode FROM course c " +
+                "JOIN enrollment e ON c.courseCode = e.courseCode " +
                 "WHERE e.userId = ?";
         return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) ->
                 rs.getString("course_code")
