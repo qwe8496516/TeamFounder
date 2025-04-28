@@ -1,5 +1,6 @@
 package ntut.teamFounder.DAO;
 
+import ntut.teamFounder.Domain.Skill;
 import ntut.teamFounder.Domain.Student;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -79,6 +80,28 @@ public class StudentDAO {
                 "WHERE e.userId = ?";
         return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) ->
                 rs.getString("courseCode")
+        );
+    }
+
+    public List<Skill> getAllSkills() {
+        String sql = "SELECT * FROM skill";
+        return jdbcTemplate.query(sql, (rs, rowNum) ->
+            new Skill(
+                rs.getLong("id"),
+                rs.getString("type"),
+                rs.getString("name")
+            )
+        );
+    }
+
+    public Skill getSkillById(Long skillId) {
+        String sql = "SELECT * FROM skill WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{skillId}, (rs, rowNum) ->
+            new Skill(
+                rs.getLong("id"),
+                rs.getString("type"),
+                rs.getString("name")
+            )
         );
     }
 }

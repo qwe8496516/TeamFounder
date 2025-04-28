@@ -1,6 +1,7 @@
 package ntut.teamFounder.Handler;
 
 import ntut.teamFounder.DAO.UserDAO;
+import ntut.teamFounder.Domain.Skill;
 import ntut.teamFounder.Domain.Student;
 import ntut.teamFounder.DAO.StudentDAO;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +21,17 @@ public class StudentHandler {
     public ResponseEntity<?> getProfile(@PathVariable String studentId) {
         try {
             Student student = studentDAO.getStudentById(studentId);
-            Map<String, String> res = new HashMap<>();
+            List<Long> skills = studentDAO.getSkillsByStudentId(student.getId());
+            List<Skill> skillList = new ArrayList<>();
+            for (Long skill : skills) {
+                Skill s = studentDAO.getSkillById(skill);
+                skillList.add(s);
+            }
+            Map<String, Object> res = new HashMap<>();
             res.put("studentId", student.getUserId());
             res.put("username", student.getUsername());
             res.put("email", student.getEmail());
-            res.put("privilege", String.valueOf(student.getPrivilege()));
-            res.put("skills", String.valueOf(student.getSkills()));
-            res.put("courses", student.getCourses().toString());
+            res.put("skills", skillList);
             res.put("role", student.getRoleName());
             return ResponseEntity.ok(res);
         } catch (Exception e) {
@@ -95,12 +100,6 @@ public class StudentHandler {
         }
     }
 
-    @GetMapping("/profile/{userId}/skills")
-    public ResponseEntity<List<Long>> getProfileSkills(@PathVariable Long userId) {
-        List<Long> skills = studentDAO.getSkillsByStudentId(userId);
-        return ResponseEntity.ok(skills);
-    }
-
     @PostMapping("/profile/{userId}/courses")
     public ResponseEntity<?> enrollInCourse(
             @PathVariable Long userId,
@@ -119,4 +118,30 @@ public class StudentHandler {
         List<String> courses = studentDAO.getCoursesByStudentId(userId);
         return ResponseEntity.ok(courses);
     }
+
+    @GetMapping("/profile/skills")
+    public ResponseEntity<?> getAllSkills() {
+        try {
+            List<Skill> skills = studentDAO.getAllSkills();
+            return ResponseEntity.ok(skills);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to retrieve skills: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/profile/{userId}/skills")
+    public ResponseEntity<?> getProfileSkills(@PathVariable Long userId) {
+        try {
+            List<Long> skills = studentDAO.getSkillsByStudentId(userId);
+            List<Skill> skillList = new ArrayList<>();
+            for (Long skill : skills) {
+                Skill s = studentDAO.getSkillById(skill);
+                skillList.add(s);
+            }
+            return ResponseEntity.ok(skillList);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to retrieve skills: " + e.getMessage());
+        }
+    }
+
 }

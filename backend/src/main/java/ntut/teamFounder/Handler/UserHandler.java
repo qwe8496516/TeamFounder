@@ -34,6 +34,7 @@ public class UserHandler {
         String token = "jwt-token"; // 模擬 token
         Map<String, String> res = new HashMap<>();
         res.put("token", token);
+        res.put("id", user.getId().toString());
         res.put("userId", user.getUserId());
         res.put("role", user.getRoleName());
         res.put("redirect", user.getRedirectPath());
