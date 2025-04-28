@@ -3,6 +3,14 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import Loading from '../components/Loading'
 import { useNavigate } from 'react-router-dom'
+import { Tag, Modal, Input, Select, Button } from 'antd'
+import { 
+  CodeOutlined, 
+  ToolOutlined, 
+  GlobalOutlined, 
+  TeamOutlined,
+  PlusOutlined
+} from '@ant-design/icons'
 
 function StudentProfile() {
   const [profile, setProfile] = useState({
@@ -15,7 +23,10 @@ function StudentProfile() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [newSkill, setNewSkill] = useState('')
-  const [skillType, setSkillType] = useState('technical') // 預設為技術技能
+  const [skills, setSkills] = useState([])
+  const [skillType, setSkillType] = useState('')
+  const [skillTypes, setSkillTypes] = useState([])
+  const [isAddSkillModalVisible, setIsAddSkillModalVisible] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -23,7 +34,7 @@ function StudentProfile() {
       try {
         const userId = localStorage.getItem('userId')
         const token = localStorage.getItem('token')
-        
+
         if (!userId || !token) {
           Swal.fire({
             icon: 'error',
@@ -42,7 +53,21 @@ function StudentProfile() {
           }
         })
         
-        setProfile(response.data)
+        const mockProfile = {
+          userId: userId,
+          username: response.data.username,
+          email: response.data.email,
+          skills: [
+            { _id: '1', name: 'Java', type: 'Programming' },
+            { _id: '2', name: 'Spring Boot', type: 'Framework' },
+            { _id: '3', name: 'React', type: 'Framework' },
+            { _id: '4', name: 'MySQL', type: 'Tools' },
+            { _id: '5', name: 'English', type: 'Language' },
+            { _id: '6', name: 'Teamwork', type: 'Soft Skills' }
+          ]
+        }
+        
+        setProfile(mockProfile)
       } catch (err) {
         Swal.fire({
           icon: 'error',
@@ -55,7 +80,28 @@ function StudentProfile() {
       }
     }
 
+    const fetchSkillTypes = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get(`http://localhost:8080/api/student/profile/skill/type`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        setSkillTypes(response.data)
+        setSkillType(response.data[0])
+      } catch (err) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load skill types',
+          confirmButtonColor: '#4f46e5'
+        })
+      }
+    }
+
     fetchProfile()
+    fetchSkillTypes()
   }, [])
 
   const handlePasswordChange = async (e) => {
@@ -203,7 +249,7 @@ function StudentProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gradient-to-br from-indigo-50 to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white shadow-2xl rounded-lg overflow-hidden">
           {/* Header Section */}
@@ -239,12 +285,22 @@ function StudentProfile() {
 
           {/* Password Section */}
           <div className="border-b border-gray-200 px-4 py-5 sm:px-6">
-            <h4 className="text-lg font-medium text-gray-900 mb-4">Change Password</h4>
+            <div className="flex justify-between items-center">
+              <h4 className="text-lg font-medium text-gray-900 mb-4">Change Password</h4>
+              <div className="flex">
+                <button
+                  type="submit"
+                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                >
+                  Update Password
+                </button>
+              </div>
+            </div>
             <form onSubmit={handlePasswordChange} className="space-y-4">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Password
+                    Password <span className="text-red-500">*</span>
                   </label>
                   <div className="mt-1">
                     <input
@@ -268,88 +324,128 @@ function StudentProfile() {
                       id="confirmPassword"
                       name="confirmPassword"
                       type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                       className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
                       placeholder="Confirm your password"
                     />
                   </div>
                 </div>
               </div>
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-                >
-                  Update Password
-                </button>
-              </div>
             </form>
           </div>
 
           {/* Skills Section */}
           <div className="px-4 py-5 sm:px-6">
-            <h4 className="text-lg font-medium text-gray-900 mb-4">Skills</h4>
-            
-            <form onSubmit={handleAddSkill} className="mb-6">
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    value={newSkill}
-                    onChange={(e) => setNewSkill(e.target.value)}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    placeholder="Enter new skill"
-                  />
-                </div>
-                
-                <div className="w-40">
-                  <select
-                    value={skillType}
-                    onChange={(e) => setSkillType(e.target.value)}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  >
-                    <option value="technical">Technical</option>
-                    <option value="soft">Soft Skills</option>
-                    <option value="language">Language</option>
-                  </select>
-                </div>
-                
-                <button
-                  type="submit"
-                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-                >
-                  Add Skill
-                </button>
-              </div>
-            </form>
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-lg font-medium text-gray-900">Skills</h4>
+              <Button 
+                type="submit" 
+                icon={<PlusOutlined />}
+                className="bg-gray-600 hover:bg-gray-700 text-white"
+                onClick={() => setIsAddSkillModalVisible(true)}
+              >
+                Add Skill
+              </Button>
+            </div>
 
-            <div className="space-y-3">
+            <div className="flex flex-wrap gap-2">
               {profile.skills.length > 0 ? (
-                profile.skills.map((skill) => (
-                  <div key={skill._id} className="flex items-center justify-between bg-gray-50 p-3 rounded-md hover:bg-gray-100 transition-colors duration-200">
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium text-gray-900">{skill.name}</span>
-                      <span className="ml-2 px-2 py-1 text-xs font-medium text-indigo-600 bg-indigo-50 rounded-full">
-                        {skill.type}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => handleRemoveSkill(skill._id)}
-                      className="text-red-600 hover:text-red-800 transition-colors duration-200"
+                profile.skills.map((skill) => {
+                  let icon = <CodeOutlined />;
+                  let color = 'blue';
+                  
+                  switch(skill.type) {
+                    case 'Programming':
+                      icon = <CodeOutlined />;
+                      color = 'blue';
+                      break;
+                    case 'Tools':
+                      icon = <TeamOutlined />;
+                      color = 'green';
+                      break;
+                    case 'Language':
+                      icon = <GlobalOutlined />;
+                      color = 'purple';
+                      break;
+                    case 'Framework':
+                      icon = <ToolOutlined />;
+                      color = 'orange';
+                      break;
+                    default:
+                      icon = <ToolOutlined />;
+                      color = 'black';
+                  }
+
+                  return (
+                    <Tag
+                      key={skill._id}
+                      icon={icon}
+                      color={color}
+                      closable
+                      onClose={() => handleRemoveSkill(skill._id)}
+                      className="flex items-center gap-1"
                     >
-                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                ))
+                      {skill.name}
+                    </Tag>
+                  );
+                })
               ) : (
-                <div className="text-center py-4">
+                <div className="text-center py-4 w-full">
                   <p className="text-sm text-gray-500">No skills added yet</p>
                 </div>
               )}
             </div>
+
+            <Modal
+              title="Add New Skill"
+              open={isAddSkillModalVisible}
+              onCancel={() => setIsAddSkillModalVisible(false)}
+              footer={null}
+            >
+              <form onSubmit={handleAddSkill} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Skill Type</label>
+                  <Select
+                    value={skillType}
+                    onChange={(value) => setSkillType(value)}
+                    className="w-full"
+                  >
+                    {skillTypes.map((type) => (
+                      <Select.Option key={type} value={type}>
+                        {type}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Skill Type</label>
+                  <Select
+                    value={skillType}
+                    onChange={(value) => setSkillType(value)}
+                    className="w-full"
+                  >
+                    {skillTypes.map((type) => (
+                      <Select.Option key={type} value={type}>
+                        {type}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button onClick={() => setIsAddSkillModalVisible(false)}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="primary" 
+                    onClick={handleAddSkill}
+                    disabled={!newSkill.trim()}
+                  >
+                    Add
+                  </Button>
+                </div>
+              </form>
+            </Modal>
           </div>
         </div>
       </div>

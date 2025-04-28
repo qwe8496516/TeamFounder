@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -155,29 +156,36 @@ function Navbar() {
                   tabIndex="-1"
                   id="user-menu-item-0"
                 >
-                  Your Profile
+                  My Profile
                 </Link>
                 <Link
-                  to="/settings"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
-                  role="menuitem"
-                  tabIndex="-1"
-                  id="user-menu-item-1"
-                >
-                  Settings
-                </Link>
-                <Link
-                  onClick={() => {
-                    localStorage.removeItem('token')
-                    localStorage.removeItem('userId')
-                    navigate('/login')
+                  to="/login"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    Swal.fire({
+                      title: 'Are you sure?',
+                      text: "You will be signed out of your account",
+                      icon: 'info',
+                      showCancelButton: true,
+                      confirmButtonColor: '#4f46e5',
+                      cancelButtonColor: '#6b7280',
+                      confirmButtonText: 'sign out',
+                      cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        localStorage.removeItem('token')
+                        localStorage.removeItem('userId')
+                        setIsUserMenuOpen(false)
+                        navigate('/login')
+                      }
+                    })
                   }}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
                   role="menuitem"
                   tabIndex="-1"
                   id="user-menu-item-1"
                 >
-                  Settings
+                  Sign out
                 </Link>
                 {/* <button
                   

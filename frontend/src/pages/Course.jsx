@@ -67,7 +67,7 @@ function Course() {
     <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">My Courses</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Courses</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Manage your courses and view student progress
           </p>
@@ -103,7 +103,7 @@ function Course() {
               <div className="px-6 py-4 bg-gray-50">
                 <Link
                   to={`/student/course/${course.id}`}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-bold font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-bold font-medium rounded-md shadow-sm text-white bg-gray-600 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   View Details
                 </Link>
