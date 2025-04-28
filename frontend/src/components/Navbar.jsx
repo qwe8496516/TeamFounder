@@ -36,6 +36,8 @@ function Navbar() {
     document.documentElement.classList.toggle('dark')
   }
 
+  const role = localStorage.getItem('role');
+
   return (
     <nav className="bg-gray-800 shadow-lg">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -84,18 +86,22 @@ function Navbar() {
                 >
                   Courses
                 </Link>
-                <Link
-                  to="/student/teams"
-                  className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-                >
-                  Teams
-                </Link>
-                <Link
-                  to="/student/match"
-                  className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-                >
-                  Match
-                </Link>
+                {role !== 'professor' && (
+                  <>
+                    <Link
+                      to="/student/teams"
+                      className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+                    >
+                      Teams
+                    </Link>
+                    <Link
+                      to="/student/match"
+                      className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+                    >
+                      Match
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -213,18 +219,22 @@ function Navbar() {
           >
             Courses
           </Link>
-          <Link
-            to="/student/teams"
-            className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-          >
-            Teams
-          </Link>
-          <Link
-            to="/student/match"
-            className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-          >
-            Match
-          </Link>
+          {role !== 'Professor' && (
+            <>
+              <Link
+                to="/student/teams"
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+              >
+                Teams
+              </Link>
+              <Link
+                to="/student/match"
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+              >
+                Match
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>
