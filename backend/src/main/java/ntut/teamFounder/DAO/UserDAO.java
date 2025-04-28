@@ -1,5 +1,6 @@
 package ntut.teamFounder.DAO;
 
+import ntut.teamFounder.Domain.Student;
 import ntut.teamFounder.Domain.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -47,6 +48,11 @@ public class UserDAO {
     public int createUser(String userId, String username, String password, String email) {
         String sql = "INSERT INTO users (userId, username, password, email, privilege) VALUES (?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql, userId, username, password, email, 0);
+    }
+
+    public int updateUser(String userId, String password) {
+        String sql = "UPDATE users SET password=? WHERE userId=?";
+        return jdbcTemplate.update(sql, password, userId);
     }
 
 }
