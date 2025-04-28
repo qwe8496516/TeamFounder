@@ -20,7 +20,15 @@ public class StudentHandler {
     public ResponseEntity<?> getProfile(@PathVariable String studentId) {
         try {
             Student student = studentDAO.getStudentById(studentId);
-            return ResponseEntity.ok(student);
+            Map<String, String> res = new HashMap<>();
+            res.put("studentId", student.getUserId());
+            res.put("username", student.getUsername());
+            res.put("email", student.getEmail());
+            res.put("privilege", String.valueOf(student.getPrivilege()));
+            res.put("skills", String.valueOf(student.getSkills()));
+            res.put("courses", student.getCourses().toString());
+            res.put("role", student.getRoleName());
+            return ResponseEntity.ok(res);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Student not found");
         }
