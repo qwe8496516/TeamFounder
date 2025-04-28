@@ -32,48 +32,44 @@ CREATE TABLE IF NOT EXISTS userSkill (
 );
 
 CREATE TABLE IF NOT EXISTS course (
-    course_code VARCHAR(100) PRIMARY KEY ,
+    courseCode VARCHAR(100) PRIMARY KEY ,
     name VARCHAR(255) NOT NULL,
-    professor_id VARCHAR(255) NOT NULL,
-    academic_year TINYINT NOT NULL,
+    professorId VARCHAR(255) NOT NULL,
+    academicYear TINYINT NOT NULL,
     semester TINYINT NOT NULL,
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS announcement (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
+    content TEXT NOT NULL,
     importanceLevel TINYINT NOT NULL, -- 'TRIVIAL', 'MINOR', 'NORMAL', 'MAJOR', 'CRITICAL'
-    course_code VARCHAR(100) NOT NULL,
-    is_open BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (course_code) REFERENCES course(course_code) ON DELETE CASCADE
+    courseCode VARCHAR(100) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (courseCode) REFERENCES course(courseCode) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS invitation (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    sender_id BIGINT NOT NULL,
-    receiver_id BIGINT NOT NULL,
-    course_code VARCHAR(100) NOT NULL,
+    senderId BIGINT NOT NULL,
+    receiverId BIGINT NOT NULL,
+    courseCode VARCHAR(100) NOT NULL,
     message TEXT,
     status TINYINT DEFAULT 1 NOT NULL, -- 'PENDING', 'ACCEPTED', 'REJECTED'
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (course_code) REFERENCES course(course_code) ON DELETE CASCADE
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (senderId) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiverId) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (courseCode) REFERENCES course(courseCode) ON DELETE CASCADE
 );
 
-CREATE TABLE enrollment (
+CREATE TABLE IF NOT EXISTS enrollment (
     userId NVARCHAR(20) NOT NULL,
-    course_code VARCHAR(10) NOT NULL,
+    courseCode VARCHAR(10) NOT NULL,
     enrollment_date DATE NOT NULL,
-    PRIMARY KEY (userId, course_code),
+    PRIMARY KEY (userId, courseCode),
     FOREIGN KEY (userId) REFERENCES users(userId),
-    FOREIGN KEY (course_code) REFERENCES course(course_code)
+    FOREIGN KEY (courseCode) REFERENCES course(courseCode)
 );
-
-
-
