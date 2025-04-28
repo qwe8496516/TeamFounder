@@ -100,6 +100,23 @@ public class StudentHandler {
         }
     }
 
+    @DeleteMapping("/profile/{userId}/skills/{skillId}")
+    public ResponseEntity<?> deleteSkillFromProfile(
+            @PathVariable Long userId,
+            @PathVariable Long skillId
+    ) {
+        try {
+            int deleted = studentDAO.deleteSkillFromStudent(userId, skillId);
+            if (deleted > 0) {
+                return ResponseEntity.ok("Skill removed successfully");
+            } else {
+                return ResponseEntity.badRequest().body("Skill not found or already removed");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to remove skill: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/profile/{userId}/courses")
     public ResponseEntity<?> enrollInCourse(
             @PathVariable Long userId,

@@ -62,6 +62,11 @@ public class StudentDAO {
         return jdbcTemplate.update(sql, userId, skillId);
     }
 
+    public int deleteSkillFromStudent(Long userId, Long skillId) {
+        String sql = "DELETE FROM userSkill WHERE userId = ? AND skillId = ?";
+        return jdbcTemplate.update(sql, userId, skillId);
+    }
+
     public List<Long> getSkillsByStudentId(Long userId) {
         String sql = "SELECT skillId FROM userSkill WHERE userId = ?";
         return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) ->
