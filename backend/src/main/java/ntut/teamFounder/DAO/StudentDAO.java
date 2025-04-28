@@ -55,4 +55,30 @@ public class StudentDAO {
                 )
         );
     }
+
+    public int addSkillToStudent(Long userId, Long skillId) {
+        String sql = "INSERT INTO profile (userId, skillId) VALUES (?, ?)";
+        return jdbcTemplate.update(sql, userId, skillId);
+    }
+
+    public List<Long> getSkillsByStudentId(Long userId) {
+        String sql = "SELECT skillId FROM profile WHERE userId = ?";
+        return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) ->
+                rs.getLong("skillId")
+        );
+    }
+
+    public int enrollInCourse(Long userId, String courseCode) {
+        String sql = "INSERT INTO enrollment (userId, course_code) VALUES (?, ?)";
+        return jdbcTemplate.update(sql, userId, courseCode);
+    }
+
+    public List<String> getCoursesByStudentId(Long userId) {
+        String sql = "SELECT c.course_code FROM course c " +
+                "JOIN enrollment e ON c.course_code = e.course_code " +
+                "WHERE e.userId = ?";
+        return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) ->
+                rs.getString("course_code")
+        );
+    }
 }

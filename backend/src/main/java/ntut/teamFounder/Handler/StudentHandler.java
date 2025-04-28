@@ -82,7 +82,7 @@ public class StudentHandler {
             @RequestParam Long skillId
     ) {
         try {
-            int result = userDAO.addSkillToUser(userId, skillId);
+            int result = studentDAO.addSkillToStudent(userId, skillId);
             return ResponseEntity.ok("Skill added successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to add skill: " + e.getMessage());
@@ -91,7 +91,7 @@ public class StudentHandler {
 
     @GetMapping("/profile/{userId}/skills")
     public ResponseEntity<List<Long>> getProfileSkills(@PathVariable Long userId) {
-        List<Long> skills = userDAO.getSkillsByUserId(userId);
+        List<Long> skills = studentDAO.getSkillsByStudentId(userId);
         return ResponseEntity.ok(skills);
     }
 
@@ -101,7 +101,7 @@ public class StudentHandler {
             @RequestParam String courseCode
     ) {
         try {
-            int result = userDAO.enrollInCourse(userId, courseCode);
+            int result = studentDAO.enrollInCourse(userId, courseCode);
             return ResponseEntity.ok("Enrolled in course successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Enrollment failed: " + e.getMessage());
@@ -110,7 +110,7 @@ public class StudentHandler {
 
     @GetMapping("/profile/{userId}/courses")
     public ResponseEntity<List<String>> getEnrolledCourses(@PathVariable Long userId) {
-        List<String> courses = userDAO.getCoursesByUserId(userId);
+        List<String> courses = studentDAO.getCoursesByStudentId(userId);
         return ResponseEntity.ok(courses);
     }
 }
