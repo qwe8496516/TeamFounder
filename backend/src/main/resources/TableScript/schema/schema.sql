@@ -5,8 +5,8 @@ USE teamfounder;
 
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    userId VARCHAR(255) NOT NULL UNIQUE,
-    username VARCHAR(255) NOT NULL UNIQUE,
+    userId NVARCHAR(255) NOT NULL UNIQUE,
+    username NVARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     privilege INT NOT NULL,
@@ -23,11 +23,12 @@ CREATE TABLE IF NOT EXISTS skill (
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS profile (
+CREATE TABLE IF NOT EXISTS userSkill (
     userId BIGINT NOT NULL,
-    skill NVARCHAR(255) NOT NULL,
-    PRIMARY KEY (userId),
-    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+    skillId BIGINT NOT NULL,
+    PRIMARY KEY (userId, skillId),
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (skillId) REFERENCES skill(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS course (
@@ -66,11 +67,11 @@ CREATE TABLE IF NOT EXISTS invitation (
 );
 
 CREATE TABLE enrollment (
-    user_id VARCHAR(20) NOT NULL,
+    userId NVARCHAR(20) NOT NULL,
     course_code VARCHAR(10) NOT NULL,
     enrollment_date DATE NOT NULL,
-    PRIMARY KEY (user_id, course_code),
-    FOREIGN KEY (user_id) REFERENCES users(userId),
+    PRIMARY KEY (userId, course_code),
+    FOREIGN KEY (userId) REFERENCES users(userId),
     FOREIGN KEY (course_code) REFERENCES course(course_code)
 );
 

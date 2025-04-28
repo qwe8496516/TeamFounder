@@ -24,9 +24,13 @@ INSERT INTO skill (type, name) VALUES ('Language','Japanese');
 # INSERT INTO skill (type, name) VALUES ('Nationality','Germany');
 
 # Profile
-INSERT INTO profile (userId, skill) VALUES (1, '2,6,7');
+INSERT INTO userSkill (userId, skillId) VALUES (1, 2);
+INSERT INTO userSkill (userId, skillId) VALUES (1, 6);
+INSERT INTO userSkill (userId, skillId) VALUES (1, 7);
 
-INSERT INTO profile (userId, skill) VALUES (2, '3,5,6');
+INSERT INTO userSkill (userId, skillId) VALUES (3, 3);
+INSERT INTO userSkill (userId, skillId) VALUES (3, 5);
+INSERT INTO userSkill (userId, skillId) VALUES (3, 6);
 
 # Course
 INSERT INTO course (course_code, name, professor_id, academic_year, semester, description)
