@@ -11,11 +11,9 @@ import java.util.*;
 @RequestMapping("/api/student")
 public class StudentHandler {
     private final StudentDAO studentDAO;
-    private final UserDAO userDAO;
 
-    public StudentHandler(StudentDAO studentDAO, UserDAO userDAO) {
+    public StudentHandler(StudentDAO studentDAO) {
         this.studentDAO = studentDAO;
-        this.userDAO = userDAO;
     }
 
     @GetMapping("/profile/{studentId}")
@@ -101,7 +99,7 @@ public class StudentHandler {
             @RequestParam String courseCode
     ) {
         try {
-            int result = studentDAO.enrollInCourse(userId, courseCode);
+            studentDAO.enrollInCourse(userId, courseCode);
             return ResponseEntity.ok("Enrolled in course successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Enrollment failed: " + e.getMessage());

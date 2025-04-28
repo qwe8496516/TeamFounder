@@ -45,3 +45,7 @@ VALUES ('Team Formation Announcement', 'Please form your project teams before th
 
 INSERT INTO announcement (title, content, importanceLevel, courseCode)
 VALUES ('First Assignment Released', 'The first homework is about building a personal webpage.', 4, 'CS205');
+
+#Enroll Courses
+INSERT INTO enrollment (userId, courseCode) VALUES (1, 'CS205');
+INSERT INTO enrollment (userId, courseCode) VALUES (1, 'CS301');

@@ -66,10 +66,10 @@ CREATE TABLE IF NOT EXISTS invitation (
 );
 
 CREATE TABLE IF NOT EXISTS enrollment (
-    userId NVARCHAR(20) NOT NULL,
-    courseCode VARCHAR(10) NOT NULL,
-    enrollment_date DATE NOT NULL,
+    userId BIGINT NOT NULL,
+    courseCode VARCHAR(6) NOT NULL,
+    enrolledAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (userId, courseCode),
-    FOREIGN KEY (userId) REFERENCES users(userId),
+    FOREIGN KEY (userId) REFERENCES users(id),
     FOREIGN KEY (courseCode) REFERENCES course(courseCode)
 );

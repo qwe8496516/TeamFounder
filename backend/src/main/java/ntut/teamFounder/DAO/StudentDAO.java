@@ -78,7 +78,7 @@ public class StudentDAO {
                 "JOIN enrollment e ON c.courseCode = e.courseCode " +
                 "WHERE e.userId = ?";
         return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) ->
-                rs.getString("course_code")
+                rs.getString("courseCode")
         );
     }
 }
