@@ -45,7 +45,7 @@ public class CourseHandler {
     }
 
     @GetMapping("/{courseCode}/students")
-    public ResponseEntity<?> getCourseStudents(@PathVariable String courseCode) {
+    public ResponseEntity<?> getStudentInCourse(@PathVariable String courseCode) {
         try {
             List<Long> enrollments = courseDAO.getCourseStudents(courseCode);
             List<Map<String, Object>> students = new ArrayList<>();

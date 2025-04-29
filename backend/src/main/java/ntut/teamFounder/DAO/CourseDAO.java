@@ -37,7 +37,7 @@ public class CourseDAO {
         );
     }
 
-    public List<Long> getCourseStudents(String courseCode) {
+    public List<Long> getStudentsInCourse(String courseCode) {
         String sql = "SELECT userId FROM enrollment WHERE courseCode = ?";
         return jdbcTemplate.query(sql, new Object[]{courseCode}, (rs, rowNum) ->
                 rs.getLong("userId")

@@ -31,9 +31,14 @@ public class Announcement {
         this.importanceLevel = importanceLevel;
     }
 
+
+    public boolean hasWordInContent(String word) {
+        return content.toLowerCase().contains(word.toLowerCase());
+    }
+
     public boolean verifyAnnouncement() {
         for (String badWord : badWords) {
-            if (content.toLowerCase().contains(badWord.toLowerCase())) {
+            if (hasWordInContent(badWord)) {
                 return false;
             }
         }

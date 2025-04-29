@@ -48,7 +48,7 @@ public class StudentHandler {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<?> updateProfile(
+    public ResponseEntity<?> editProfile(
             @RequestParam String userId,
             @RequestParam String username,
             @RequestParam String password,
