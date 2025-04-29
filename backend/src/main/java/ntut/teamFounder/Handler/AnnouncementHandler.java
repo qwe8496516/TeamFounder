@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Tag(name = "Announcement API")
@@ -28,7 +27,7 @@ public class AnnouncementHandler {
         this.announcementDAO = announcementDAO;
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<?> getAnnouncements(@RequestParam String courseCode) {
         try {
             List<Announcement> announcements = announcementDAO.getAnnouncements(courseCode);
@@ -44,24 +43,22 @@ public class AnnouncementHandler {
         }
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createAnnouncement(@RequestBody Map<String, String> announcementData) {
-        String courseCode = announcementData.get("courseCode");
-        String professorId = announcementData.get("professorId");
-        String title = announcementData.get("title");
-        String content = announcementData.get("content");
-        int importanceLevel = Integer.parseInt(announcementData.get("importanceLevel"));
-
-        Announcement announcement = new Announcement(0L, title, content, new Date(), courseCode, importanceLevel);
-        boolean isClean = announcement.verifyAnnouncement();
-        Long actualProfessorId = courseDAO.getProfessorId(courseCode);
-        if(!professorId.equals(actualProfessorId)) {
-            return ResponseEntity.badRequest().body("Professor does not match course");
+    @PostMapping("")
+    public ResponseEntity<?> createAnnouncement(@RequestParam String courseCode, @RequestParam String professorId, @RequestParam String title, @RequestParam String content, @RequestParam int importanceLevel) {
+        try {
+            Announcement announcement = new Announcement(0L, title, content, new Date(), courseCode, importanceLevel);
+            boolean isClean = announcement.verifyAnnouncement();
+            String actualProfessorId = courseDAO.getProfessorId(courseCode);
+            if(!professorId.equals(actualProfessorId)) {
+                return ResponseEntity.badRequest().body("Professor does not match course");
+            }
+            if(isClean) {
+                announcementDAO.createAnnouncement(courseCode, title, content, importanceLevel);
+            }
+            getAnnouncements(courseCode);
+            return ResponseEntity.ok().body("Announcement created successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to create announcement: " + e.getMessage());
         }
-        if(isClean) {
-            announcementDAO.createAnnouncement(courseCode, title, content, importanceLevel);
-        }
-        getAnnouncements(courseCode);
-        return ResponseEntity.ok().build();
     }
 }

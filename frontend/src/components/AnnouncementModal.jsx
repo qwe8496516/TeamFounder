@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 
 function AnnouncementModal({ isOpen, onClose, onSubmit, courseCode, importanceLevels }) {
   const [isVisible, setIsVisible] = useState(false)
@@ -7,6 +9,7 @@ function AnnouncementModal({ isOpen, onClose, onSubmit, courseCode, importanceLe
     content: '',
     importanceLevel: 2,
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
@@ -23,11 +26,42 @@ function AnnouncementModal({ isOpen, onClose, onSubmit, courseCode, importanceLe
     }, 300)
   }
 
-  const handleSubmit = () => {
-    if (newAnnouncement.title && newAnnouncement.content) {
-      onSubmit(newAnnouncement)
+  const handleSubmit = async () => {
+    if (!newAnnouncement.title || !newAnnouncement.content) return
+
+    setIsSubmitting(true)
+    try {
+      const professorId = localStorage.getItem('userId')
+      const token = localStorage.getItem('token')
+      if (!professorId || !token) {
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Please login first' })
+        setIsSubmitting(false)
+        return
+      }
+
+      const payload = {
+        courseCode,
+        professorId,
+        title: newAnnouncement.title,
+        content: newAnnouncement.content,
+        importanceLevel: newAnnouncement.importanceLevel
+      };
+
+      await axios.post('http://localhost:8080/api/announcements', {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: payload
+        });
+
+      Swal.fire({ icon: 'success', title: 'Success', text: 'Announcement created successfully' })
       setNewAnnouncement({ title: '', content: '', importanceLevel: 2 })
       handleClose()
+      if (onSubmit) onSubmit(payload)
+    } catch (err) {
+      console.log(err)
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create announcement' })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -81,10 +115,8 @@ function AnnouncementModal({ isOpen, onClose, onSubmit, courseCode, importanceLe
               ))}
             </select>
             {importanceLevels && (
-              <div className={`mt-2 text-xs font-sm ${
-                'text-' +
-                (importanceLevels.find(l => l.value === newAnnouncement.importanceLevel)?.color || 'gray') +
-                '-600'
+              <div className={`mt-2 text-xs font-semibold ${
+                importanceLevels.find(l => l.value === newAnnouncement.importanceLevel)?.className || 'text-gray-600'
               }`}>
                 {importanceLevels.find(l => l.value === newAnnouncement.importanceLevel)?.label}
               </div>
@@ -105,9 +137,10 @@ function AnnouncementModal({ isOpen, onClose, onSubmit, courseCode, importanceLe
         <div className="flex justify-end gap-3 mt-8">
           <button
             onClick={handleSubmit}
+            disabled={isSubmitting}
             className="px-6 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 text-white font-bold shadow transition"
           >
-            Post Announcement
+            {isSubmitting ? 'Posting...' : 'Post Announcement'}
           </button>
           <button
             onClick={handleClose}

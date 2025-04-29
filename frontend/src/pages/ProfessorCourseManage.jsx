@@ -79,49 +79,9 @@ function ProfessorCourseManage() {
     fetchCourseData()
   }, [courseId, navigate])
 
-  const handleAddAnnouncement = async (newAnnouncement) => {
-    try {
-      const token = localStorage.getItem('token')
-      const response = await axios.post(
-        'http://localhost:8080/api/announcements',
-        {
-          ...newAnnouncement,
-          courseCode: course.code
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      )
-
-      const formattedAnnouncement = {
-        id: response.data.id,
-        title: response.data.title,
-        content: response.data.content,
-        date: response.data.createdAt,
-        author: 'Professor',
-        importanceLevel: response.data.importanceLevel
-      }
-
-      setAnnouncements([formattedAnnouncement, ...announcements])
-      setIsNewAnnouncementOpen(false)
-      
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Announcement created successfully',
-        confirmButtonColor: '#4f46e5'
-      })
-    } catch (err) {
-      console.error('Error creating announcement:', err)
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to create announcement',
-        confirmButtonColor: '#4f46e5'
-      })
-    }
+  const handleAddAnnouncement = (newAnnouncement) => {
+    setAnnouncements([newAnnouncement, ...announcements])
+    setIsNewAnnouncementOpen(false)
   }
 
   if (isLoading) {
@@ -220,6 +180,7 @@ function ProfessorCourseManage() {
         onClose={() => setIsNewAnnouncementOpen(false)}
         onSubmit={handleAddAnnouncement}
         importanceLevels={IMPORTANCE_LEVELS}
+        courseCode={'CS301'}
       />
     </div>
   )

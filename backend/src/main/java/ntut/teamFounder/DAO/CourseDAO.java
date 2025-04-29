@@ -43,8 +43,8 @@ public class CourseDAO {
         );
     }
 
-    public Long getProfessorId(String courseCode) {
+    public String getProfessorId(String courseCode) {
         String sql = "SELECT professorId FROM course WHERE courseCode = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{courseCode}, Long.class);
+        return jdbcTemplate.queryForObject(sql, new Object[]{courseCode}, String.class);
     }
 }
