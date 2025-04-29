@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Match from './pages/MatchList'
-import Course from './pages/Course'
+import StudentCourse from './pages/StudentCourse'
 import Team from './pages/Team'
 import Navbar from './components/Navbar'
 import Loading from './components/Loading'
@@ -70,7 +70,7 @@ function App() {
             path="/student/course"
             element={
               <ProtectedRoute>
-                <Course />
+                <StudentCourse />
               </ProtectedRoute>
             }
           />

@@ -16,7 +16,7 @@ function Course() {
             semester: 'Spring 2024',
             students: 45,
             image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80',
-            description: 'Learn the fundamentals of web development including HTML, CSS, and JavaScript.',
+            description: 'Web development including HTML, CSS, and JS.',
             tags: ['Web', 'Frontend', 'JavaScript']
           },
           {
@@ -27,7 +27,7 @@ function Course() {
             students: 38,
             image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
             description: 'Build mobile applications for iOS and Android using React Native.',
-            tags: ['Mobile', 'React Native', 'iOS', 'Android']
+            tags: ['Mobile', 'React Native', 'iOS']
           },
           {
             id: 3,
@@ -37,7 +37,7 @@ function Course() {
             students: 52,
             image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
             description: 'Introduction to data analysis, machine learning, and data visualization.',
-            tags: ['Data Science', 'Python', 'Machine Learning']
+            tags: ['Python', 'Machine Learning']
           }
         ]
         setCourses(mockCourses)
@@ -77,7 +77,7 @@ function Course() {
           {courses.map((course) => (
             <div key={course.id} className="max-w-sm rounded-xl overflow-hidden shadow-xl bg-white hover:shadow-2xl transition duration-300 hover:scale-105">
               <img className="w-full h-48 object-cover" src={course.image} alt={course.name} />
-              <div className="px-6 py-4">
+              <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
                   <h2 className="font-bold text-xl text-gray-900">{course.name}</h2>
                   <span className="text-sm text-gray-500">{course.code}</span>
@@ -100,13 +100,15 @@ function Course() {
                   ))}
                 </div>
               </div>
-              <div className="px-6 py-4 bg-gray-50">
-                <Link
-                  to={`/student/course/${course.id}`}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-bold font-medium rounded-md shadow-sm text-white bg-gray-600 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  View Details
-                </Link>
+              <div className="flex justify-between items-center">
+                <div className="px-6 py-4 pb-6 bg-gray-50">
+                  <Link
+                    to={`/student/course/${course.id}`}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-bold font-medium rounded-md shadow-sm text-white bg-gray-600 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    View Details
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
