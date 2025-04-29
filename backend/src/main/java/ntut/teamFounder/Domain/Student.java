@@ -13,7 +13,7 @@ public class Student extends User {
 
     public Student(Long id, String userId, String username, String password,
                    String email, Date createdAt) {
-        super(id, userId, username, password, email, 0, createdAt); // Privilege 0 = student
+        super(id, userId, username, password, email, 0, createdAt);
     }
 
     public double calculateFitness(List<Long> matcherSkills) {

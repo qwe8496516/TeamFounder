@@ -31,18 +31,7 @@ public class Announcement {
         this.importanceLevel = importanceLevel;
     }
 
-//    public Announcement(String title, String content, Date timestamp, String professor, Course course) {
-//        this.title = title;
-//        this.content = content;
-//        this.timestamp = timestamp;
-//        this.professor = professor;
-//        this.course = course;
-//    }
-//
-//    public Announcement() {}
-
     public boolean verifyAnnouncement() {
-        //in content looks for inproper words
         for (String badWord : badWords) {
             if (content.toLowerCase().contains(badWord.toLowerCase())) {
                 return false;

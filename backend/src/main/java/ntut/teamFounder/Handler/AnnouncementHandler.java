@@ -42,14 +42,14 @@ public class AnnouncementHandler {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to retrieve announcements: " + e.getMessage());
         }
     }
-//    @RequestParam Date createdAt,
+
     @PostMapping
     public ResponseEntity<?> createAnnouncement(@RequestParam String courseCode, @RequestParam Long professorId, @RequestParam String title, @RequestParam String content, @RequestParam int importanceLevel) {
         Long actualProfessorId = courseDAO.getProfessorId(courseCode);
         if(!professorId.equals(actualProfessorId)) {
             return new ResponseEntity<>("Professor does not match course", HttpStatus.BAD_REQUEST);
         }
-        Announcement announcement = new Announcement(1L,"",content,new Date(), "",0); //Tue Apr 29 06:59:48 GMT 2025
+        Announcement announcement = new Announcement(1L,"",content,new Date(), "",0);
         boolean isClean = announcement.verifyAnnouncement();
         if(isClean) {
             announcementDAO.createAnnouncement(courseCode, title, content, importanceLevel);

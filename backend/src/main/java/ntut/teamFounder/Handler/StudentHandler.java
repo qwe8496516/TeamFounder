@@ -5,7 +5,6 @@ import ntut.teamFounder.DAO.UserDAO;
 import ntut.teamFounder.Domain.Skill;
 import ntut.teamFounder.Domain.Student;
 import ntut.teamFounder.DAO.StudentDAO;
-import ntut.teamFounder.Domain.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
@@ -55,7 +54,6 @@ public class StudentHandler {
             @RequestParam String password,
             @RequestParam String email
     ) {
-        // Validate required fields
         if (username == null || password == null || email == null) {
             return ResponseEntity.badRequest().body("Required fields are missing.");
         }
@@ -65,7 +63,7 @@ public class StudentHandler {
 
         try {
             Student student = new Student(
-                    null, // id is auto-generated
+                    null,
                     userId,
                     username,
                     password,

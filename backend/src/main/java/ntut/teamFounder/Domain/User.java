@@ -16,7 +16,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private int privilege; // 0: student, 1: professor
+    private int privilege;
     private Date createdAt;
 
     public User(Long id, String userId, String username, String password, String email, int privilege, Date createdAt) {
