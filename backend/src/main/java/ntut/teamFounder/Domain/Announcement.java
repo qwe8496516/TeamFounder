@@ -31,18 +31,40 @@ public class Announcement {
         this.importanceLevel = importanceLevel;
     }
 
+    public boolean importLevelIsValid() {
+        return importanceLevel >= 0 && importanceLevel <= 4;
+    }
 
-    public boolean hasWordInContent(String word) {
-        return content.toLowerCase().contains(word.toLowerCase());
+    public boolean hasWordInContent(String badWord) {
+        return this.content.toLowerCase().contains(badWord.toLowerCase());
+    }
+
+    public boolean hasBadWordsInContent() {
+        for (String badWord : badWords) {
+            if (hasWordInContent(badWord)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasWordInTitle(String badWord) {
+        return this.title.toLowerCase().contains(badWord.toLowerCase());
+    }
+
+    public boolean hasBadWordsInTitle() {
+        for (String badWord : badWords) {
+            if (hasWordInTitle(badWord)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean verifyAnnouncement() {
-        for (String badWord : badWords) {
-            if (hasWordInContent(badWord)) {
-                return false;
-            }
-        }
-        return true;
+        if (hasBadWordsInContent()) return false;
+        if (hasBadWordsInTitle()) return false;
+        return importLevelIsValid();
     }
 
 }

@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react'
 
-function AnnouncementModal({ isOpen, onClose, onSubmit, courseCode }) {
+function AnnouncementModal({ isOpen, onClose, onSubmit, courseCode, importanceLevels }) {
   const [isVisible, setIsVisible] = useState(false)
   const [newAnnouncement, setNewAnnouncement] = useState({
     title: '',
     content: '',
-    importance: 'Normal',
+    importanceLevel: 2,
   })
 
   useEffect(() => {
     if (isOpen) {
       setIsVisible(true)
     } else {
-      // When isOpen becomes false, start closing animation
       setTimeout(() => setIsVisible(false), 300)
     }
   }, [isOpen])
@@ -27,7 +26,7 @@ function AnnouncementModal({ isOpen, onClose, onSubmit, courseCode }) {
   const handleSubmit = () => {
     if (newAnnouncement.title && newAnnouncement.content) {
       onSubmit(newAnnouncement)
-      setNewAnnouncement({ title: '', content: '', importance: 'Normal' })
+      setNewAnnouncement({ title: '', content: '', importanceLevel: 2 })
       handleClose()
     }
   }
@@ -67,18 +66,29 @@ function AnnouncementModal({ isOpen, onClose, onSubmit, courseCode }) {
             />
           </div>
           <div>
-            <label htmlFor="importance" className="block text-sm font-semibold mb-1 text-gray-700">Importance Level</label>
+            <label htmlFor="importanceLevel" className="block text-sm font-semibold mb-1 text-gray-700">Importance Level</label>
             <select
-              id="importance"
-              value={newAnnouncement.importance}
-              onChange={e => setNewAnnouncement({ ...newAnnouncement, importance: e.target.value })}
+              id="importanceLevel"
+              value={newAnnouncement.importanceLevel}
+              onChange={e => setNewAnnouncement({ ...newAnnouncement, importanceLevel: Number(e.target.value) })}
               className="w-full px-4 py-2 rounded-lg bg-white text-gray-900 border border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition font-semibold text-base"
+              required
             >
-              <option value="Low">Low</option>
-              <option value="Normal">Normal</option>
-              <option value="High">High</option>
-              <option value="Critical">Critical</option>
+              {importanceLevels && importanceLevels.map(level => (
+                <option key={level.value} value={level.value}>
+                  {level.label}
+                </option>
+              ))}
             </select>
+            {importanceLevels && (
+              <div className={`mt-2 text-xs font-sm ${
+                'text-' +
+                (importanceLevels.find(l => l.value === newAnnouncement.importanceLevel)?.color || 'gray') +
+                '-600'
+              }`}>
+                {importanceLevels.find(l => l.value === newAnnouncement.importanceLevel)?.label}
+              </div>
+            )}
           </div>
           <div>
             <label htmlFor="content" className="block text-sm font-semibold mb-1 text-gray-700">Content</label>

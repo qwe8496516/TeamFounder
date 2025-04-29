@@ -1,6 +1,5 @@
 package ntut.teamFounder.DAO;
 
-import ntut.teamFounder.Domain.Announcement;
 import ntut.teamFounder.Domain.Course;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

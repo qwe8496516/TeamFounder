@@ -4,14 +4,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import ntut.teamFounder.DAO.CourseDAO;
 import ntut.teamFounder.DAO.StudentDAO;
 import ntut.teamFounder.Domain.Course;
-import ntut.teamFounder.Domain.Enrollment;
 import ntut.teamFounder.Domain.Skill;
 import ntut.teamFounder.Domain.Student;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +25,19 @@ public class CourseHandler {
     public CourseHandler(CourseDAO courseDAO, StudentDAO studentDAO) {
         this.courseDAO = courseDAO;
         this.studentDAO = studentDAO;
+    }
+
+    @GetMapping("/{courseCode}")
+    public ResponseEntity<?> getCourseByCourseCode(@PathVariable String courseCode) {
+        try {
+            Course course = courseDAO.getCourseByCourseCode(courseCode);
+            int studentNum = studentDAO.getStudentCount(courseCode);
+            Map<String, Object> courseMap = course.toMap();
+            courseMap.put("students", studentNum);
+            return ResponseEntity.ok(courseMap);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to retrieve course: " + e.getMessage());
+        }
     }
 
     @GetMapping("/student/{studentId}")
@@ -47,7 +58,7 @@ public class CourseHandler {
     @GetMapping("/{courseCode}/students")
     public ResponseEntity<?> getStudentInCourse(@PathVariable String courseCode) {
         try {
-            List<Long> enrollments = courseDAO.getCourseStudents(courseCode);
+            List<Long> enrollments = courseDAO.getStudentsInCourse(courseCode);
             List<Map<String, Object>> students = new ArrayList<>();
             for (Long enrollment : enrollments) {
                 Student student = studentDAO.getStudentById(enrollment);
@@ -64,7 +75,7 @@ public class CourseHandler {
         try {
             Student matcher = studentDAO.getStudentById(userId);
             matcher.setSkills(studentDAO.getSkillsByStudentId(userId));
-            List<Long> studentIds = courseDAO.getCourseStudents(courseCode);
+            List<Long> studentIds = courseDAO.getStudentsInCourse(courseCode);
             List<Map<String, Object>> students = new ArrayList<>();
             for (Long studentId : studentIds) {
                 Student student = studentDAO.getStudentById(studentId);

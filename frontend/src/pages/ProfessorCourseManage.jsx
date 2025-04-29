@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 import Announcement from '../components/Announcement'
 import AnnouncementModal from '../components/AnnouncementModal'
 
@@ -7,63 +9,145 @@ function ProfessorCourseManage() {
   const { courseId } = useParams()
   const navigate = useNavigate()
   const [course, setCourse] = useState(null)
-  const [announcements, setAnnouncements] = useState([
-    {
-      id: 1,
-      title: 'Midterm Exam Schedule',
-      content: 'The midterm exam will be held on March 15th at 2:00 PM in Room 101.',
-      date: '2024-03-01',
-      author: 'Professor Smith'
-    },
-    {
-      id: 2,
-      title: 'Project Submission Deadline',
-      content: 'The final project submission deadline has been extended to March 20th.',
-      date: '2024-03-05',
-      author: 'Professor Smith'
-    },
-    {
-      id: 3,
-      title: 'Office Hours Update',
-      content: 'Office hours will be held virtually this week. Please check the course website for the Zoom link.',
-      date: '2024-03-10',
-      author: 'Professor Smith'
-    }
-  ])
+  const [announcements, setAnnouncements] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [isNewAnnouncementOpen, setIsNewAnnouncementOpen] = useState(false)
+  const IMPORTANCE_LEVELS = [
+    { value: 0, label: 'Trival' },
+    { value: 1, label: 'Minor' },
+    { value: 2, label: 'Normal' },
+    { value: 3, label: 'Major' },
+    { value: 4, label: 'Critical' }
+  ]
 
   useEffect(() => {
-    // TODO: Fetch course data from API
-    const mockCourse = {
-      id: courseId,
-      name: 'Web Development',
-      code: 'CS101',
-      semester: 'Spring 2024',
-      students: 45,
-      image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80',
-      description: 'Learn the fundamentals of web development including HTML, CSS, and JavaScript.',
-      tags: ['Web', 'Frontend', 'JavaScript']
-    }
-    setCourse(mockCourse)
-  }, [courseId])
+    const fetchCourseData = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        if (!token) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please login first',
+            confirmButtonColor: '#4f46e5'
+          }).then(() => {
+            navigate('/login')
+          })
+          return
+        }
 
-  const handleAddAnnouncement = (newAnnouncement) => {
-    const newAnnouncementObj = {
-      id: announcements.length + 1,
-      ...newAnnouncement,
-      date: new Date().toISOString().split('T')[0],
-      author: 'Professor Smith'
+        const courseCode = 'CS301'
+
+        const courseResponse = await axios.get(`http://localhost:8080/api/course/${courseCode}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        setCourse(courseResponse.data)
+        const announcementsResponse = await axios.get(`http://localhost:8080/api/announcements`, {
+          params: {
+            courseCode: courseCode
+          },
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        
+        const formattedAnnouncements = announcementsResponse.data.map(announcement => ({
+          id: announcement.id,
+          title: announcement.title,
+          content: announcement.content,
+          date: announcement.createdAt,
+          author: 'Professor',
+          importanceLevel: announcement.importanceLevel
+        }))
+        
+        setAnnouncements(formattedAnnouncements)
+      } catch (err) {
+        console.error('Error fetching course data:', err)
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load course information',
+          confirmButtonColor: '#4f46e5'
+        })
+      } finally {
+        setIsLoading(false)
+      }
     }
-    setAnnouncements([newAnnouncementObj, ...announcements])
-    setIsNewAnnouncementOpen(false)
+
+    fetchCourseData()
+  }, [courseId, navigate])
+
+  const handleAddAnnouncement = async (newAnnouncement) => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.post(
+        'http://localhost:8080/api/announcements',
+        {
+          ...newAnnouncement,
+          courseCode: course.code
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+
+      const formattedAnnouncement = {
+        id: response.data.id,
+        title: response.data.title,
+        content: response.data.content,
+        date: response.data.createdAt,
+        author: 'Professor',
+        importanceLevel: response.data.importanceLevel
+      }
+
+      setAnnouncements([formattedAnnouncement, ...announcements])
+      setIsNewAnnouncementOpen(false)
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Announcement created successfully',
+        confirmButtonColor: '#4f46e5'
+      })
+    } catch (err) {
+      console.error('Error creating announcement:', err)
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to create announcement',
+        confirmButtonColor: '#4f46e5'
+      })
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (!course) {
     return (
       <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900">Course not found</h1>
+            <button
+              onClick={() => navigate('/professor/courses')}
+              className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+            >
+              Back to Courses
+            </button>
           </div>
         </div>
       </div>
@@ -98,7 +182,7 @@ function ProfessorCourseManage() {
             <div className="flex justify-between items-start mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">{course.code}</h2>
-                <p className="text-gray-600">{course.semester}</p>
+                <p className="text-gray-600">{course.academicYear}-{course.semester}</p>
               </div>
               <div className="flex items-center text-gray-600">
                 <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +208,7 @@ function ProfessorCourseManage() {
 
             <div className="space-y-4">
               {announcements.map((announcement) => (
-                <Announcement key={announcement.id} announcement={announcement} />
+                <Announcement key={announcement.id} importanceLevel={IMPORTANCE_LEVELS[announcement.importanceLevel]} announcement={announcement} />
               ))}
             </div>
           </div>
@@ -135,6 +219,7 @@ function ProfessorCourseManage() {
         isOpen={isNewAnnouncementOpen}
         onClose={() => setIsNewAnnouncementOpen(false)}
         onSubmit={handleAddAnnouncement}
+        importanceLevels={IMPORTANCE_LEVELS}
       />
     </div>
   )

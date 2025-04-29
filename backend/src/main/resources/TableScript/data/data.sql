@@ -36,10 +36,10 @@ INSERT INTO userSkill (userId, skillId) VALUES (3, 6);
 
 # Course
 INSERT INTO course (courseCode, name, professorId, academicYear, semester, description)
-VALUES ('CS205', 'Web Development', '113598056', 2, 1, 'A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.');
+VALUES ('CS205', 'Web Development', '113598056', 113, 1, 'A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.');
 
 INSERT INTO course (courseCode, name, professorId, academicYear, semester, description)
-VALUES ('CS301', 'Software Engineering', '113598056', 3, 2, 'A course about software development methodologies and teamwork.');
+VALUES ('CS301', 'Software Engineering', '113598056', 113, 1, 'A course about software development methodologies and teamwork.');
 
 #Announcement
 INSERT INTO announcement (title, content, importanceLevel, courseCode)

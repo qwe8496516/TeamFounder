@@ -71,6 +71,11 @@ public class StudentDAO {
         );
     }
 
+    public int getStudentCount(String courseCode) {
+        String sql = "SELECT COUNT(*) FROM enrollment WHERE courseCode = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{courseCode}, Integer.class);
+    }
+
     public int addSkillToStudent(Long userId, Long skillId) {
         String sql = "INSERT INTO userSkill (userId, skillId) VALUES (?, ?)";
         return jdbcTemplate.update(sql, userId, skillId);

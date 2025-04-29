@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import ntut.teamFounder.DAO.AnnouncementDAO;
 import ntut.teamFounder.DAO.CourseDAO;
 import ntut.teamFounder.Domain.Announcement;
+import ntut.teamFounder.Domain.Course;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Tag(name = "Announcement API")
@@ -43,14 +45,20 @@ public class AnnouncementHandler {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> createAnnouncement(@RequestParam String courseCode, @RequestParam Long professorId, @RequestParam String title, @RequestParam String content, @RequestParam int importanceLevel) {
+    @PostMapping("/create")
+    public ResponseEntity<?> createAnnouncement(@RequestBody Map<String, String> announcementData) {
+        String courseCode = announcementData.get("courseCode");
+        String professorId = announcementData.get("professorId");
+        String title = announcementData.get("title");
+        String content = announcementData.get("content");
+        int importanceLevel = Integer.parseInt(announcementData.get("importanceLevel"));
+
+        Announcement announcement = new Announcement(0L, title, content, new Date(), courseCode, importanceLevel);
+        boolean isClean = announcement.verifyAnnouncement();
         Long actualProfessorId = courseDAO.getProfessorId(courseCode);
         if(!professorId.equals(actualProfessorId)) {
-            return new ResponseEntity<>("Professor does not match course", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body("Professor does not match course");
         }
-        Announcement announcement = new Announcement(1L,"",content,new Date(), "",0);
-        boolean isClean = announcement.verifyAnnouncement();
         if(isClean) {
             announcementDAO.createAnnouncement(courseCode, title, content, importanceLevel);
         }
