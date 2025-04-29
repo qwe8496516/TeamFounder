@@ -19,10 +19,10 @@ public class Student extends User {
     public double calculateFitness(List<Long> matcherSkills) {
         double fitness = 0;
         int weight = matcherSkills.size();
-        if (skills.size() == 0 || matcherSkills.size() == 0) {
+        if (skills.isEmpty() || matcherSkills.isEmpty()) {
             return 50;
         }
-        for (Long skillId : skills) {
+        for (Long skillId : matcherSkills) {
             if (this.skills.contains(skillId)) {
                 fitness++;
             }
