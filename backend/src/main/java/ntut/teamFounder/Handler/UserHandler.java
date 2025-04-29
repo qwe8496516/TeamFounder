@@ -30,7 +30,7 @@ public class UserHandler {
             String password = credentials.get("password");
 
             User user = userDAO.getUserById(userId);
-            if (user == null || !user.isValid(password)) {
+            if (user == null || !user.isPasswordValid(password)) {
                 return ResponseEntity.badRequest().body("Invalid credentials");
             }
 

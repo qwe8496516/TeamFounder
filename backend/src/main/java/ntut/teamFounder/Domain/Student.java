@@ -27,12 +27,12 @@ public class Student extends User {
                 fitness++;
             }
         }
-        fitness = weightCalculate(fitness, weight);
+        fitness = calculateWeight(fitness, weight);
         fitness = fitnessToInteger(fitness);
         return fitness;
     }
 
-    public double weightCalculate(double fitness, int weight) {
+    public double calculateWeight(double fitness, int weight) {
         fitness = (fitness * 100 / weight) * 0.1 + 90;
         return fitness;
     }
