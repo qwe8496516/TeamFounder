@@ -73,3 +73,4 @@ CREATE TABLE IF NOT EXISTS enrollment (
     FOREIGN KEY (userId) REFERENCES users(userId),
     FOREIGN KEY (courseCode) REFERENCES course(courseCode)
 );
+
