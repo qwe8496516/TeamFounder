@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS skill (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    type VARCHAR(50),
+    type VARCHAR(50) NOT NULL,
     name VARCHAR(100) NOT NULL UNIQUE,
     status BOOLEAN DEFAULT TRUE,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -32,13 +32,12 @@ CREATE TABLE IF NOT EXISTS userSkill (
 );
 
 CREATE TABLE IF NOT EXISTS course (
-    courseCode VARCHAR(100) PRIMARY KEY ,
+    courseCode VARCHAR(6) PRIMARY KEY ,
     name VARCHAR(255) NOT NULL,
     professorId VARCHAR(255) NOT NULL,
     academicYear TINYINT NOT NULL,
     semester TINYINT NOT NULL,
-    description TEXT,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    description TEXT
 );
 
 CREATE TABLE IF NOT EXISTS announcement (
@@ -66,11 +65,11 @@ CREATE TABLE IF NOT EXISTS invitation (
 );
 
 CREATE TABLE IF NOT EXISTS enrollment (
-    userId NVARCHAR(20) NOT NULL,
-    courseCode VARCHAR(10) NOT NULL,
-    enrollment_date DATE NOT NULL,
+    userId BIGINT NOT NULL,
+    courseCode VARCHAR(6) NOT NULL,
+    enrolledAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (userId, courseCode),
-    FOREIGN KEY (userId) REFERENCES users(userId),
+    FOREIGN KEY (userId) REFERENCES users(id),
     FOREIGN KEY (courseCode) REFERENCES course(courseCode)
 );
 

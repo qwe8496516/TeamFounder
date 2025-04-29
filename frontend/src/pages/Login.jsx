@@ -7,20 +7,20 @@ import Loading from '../components/Loading'
 function Login({ setIsLoggedIn }) {
   const [userId, setUserId] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
     setIsLoading(true)
     try {
       const response = await axios.post('http://localhost:8080/api/auth/login', { userId, password })
 
       if (response.data.token) {
-        localStorage.setItem('token', response.data.token)
+        localStorage.setItem('id', response.data.id)
         localStorage.setItem('userId', response.data.userId)
+        localStorage.setItem('token', response.data.token)
+        localStorage.setItem('role', response.data.role)
         setIsLoggedIn(true)
         navigate(response.data.redirect + '/course')
       }

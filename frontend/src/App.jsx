@@ -3,14 +3,14 @@ import { useState, useEffect } from 'react'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Match from './pages/MatchList'
-import Course from './pages/Course'
+import StudentCourse from './pages/StudentCourse'
 import Team from './pages/Team'
 import Navbar from './components/Navbar'
 import Loading from './components/Loading'
 import ProfessorCourses from './pages/ProfessorCourses'
-import ProfessorCourseDetail from './pages/ProfessorCourseDetail'
 import StudentProfile from './pages/StudentProfile'
 import NotFound from './pages/NotFound'
+import ProfessorCourseManage from './pages/ProfessorCourseManage'
 
 function NavbarWrapper({ isLoggedIn, setIsLoggedIn }) {
   const location = useLocation()
@@ -70,7 +70,7 @@ function App() {
             path="/student/course"
             element={
               <ProtectedRoute>
-                <Course />
+                <StudentCourse />
               </ProtectedRoute>
             }
           />
@@ -99,10 +99,10 @@ function App() {
             }
           />
           <Route
-            path="/professor/course/:courseId"
+            path="/professor/courses/:courseId"
             element={
               <ProtectedRoute>
-                <ProfessorCourseDetail />
+                <ProfessorCourseManage />
               </ProtectedRoute>
             }
           />

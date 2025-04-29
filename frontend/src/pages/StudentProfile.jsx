@@ -53,18 +53,13 @@ function StudentProfile() {
           }
         })
         
+
         const mockProfile = {
           userId: userId,
           username: response.data.username,
           email: response.data.email,
-          skills: [
-            { _id: '1', name: 'Java', type: 'Programming' },
-            { _id: '2', name: 'Spring Boot', type: 'Framework' },
-            { _id: '3', name: 'React', type: 'Framework' },
-            { _id: '4', name: 'MySQL', type: 'Tools' },
-            { _id: '5', name: 'English', type: 'Language' },
-            { _id: '6', name: 'Teamwork', type: 'Soft Skills' }
-          ]
+          skills: response.data.skills,
+          role: response.data.role
         }
         
         setProfile(mockProfile)
@@ -83,13 +78,16 @@ function StudentProfile() {
     const fetchSkillTypes = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get(`http://localhost:8080/api/student/profile/skill/type`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+        const response = await axios.get(`http://localhost:8080/api/student/profile/skills`, {
+          headers: { Authorization: `Bearer ${token}` }
         })
-        setSkillTypes(response.data)
-        setSkillType(response.data[0])
+        const skills = response.data
+        const types = [...new Set(skills.map(skill => skill.type))]
+        const typeSkills = skills.filter(skill => skill.type === types[0])
+        setSkillTypes(types)
+        setSkillType(types[0])
+        setSkills(typeSkills)
+        setNewSkill(typeSkills[0])
       } catch (err) {
         Swal.fire({
           icon: 'error',
@@ -104,137 +102,182 @@ function StudentProfile() {
     fetchSkillTypes()
   }, [])
 
+  useEffect(() => {
+    if (!skillType) return;
+    const fetchAllSkills = async () => {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8080/api/student/profile/skills`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const allSkills = response.data;
+      const filtered = allSkills.filter(skill => skill.type === skillType);
+      setSkills(filtered);
+      setNewSkill(filtered[0] || null);
+    };
+    fetchAllSkills();
+  }, [skillType]);
+
   const handlePasswordChange = async (e) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+    const userId = profile.userId;
     if (password !== confirmPassword) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Passwords do not match',
-        confirmButtonColor: '#4f46e5'
-      })
-      return
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Passwords do not match',
+            confirmButtonColor: '#4f46e5'
+        });
+        return;
     }
-
     if (password.length < 6) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Password must be at least 6 characters long',
-        confirmButtonColor: '#4f46e5'
-      })
-      return
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Password must be at least 6 characters long',
+            confirmButtonColor: '#4f46e5'
+        });
+        return;
     }
-
     try {
-      const token = localStorage.getItem('token')
-      await axios.put(`http://localhost:8080/api/students/${profile.userId}/password`, 
-        { password },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      )
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Password updated successfully',
-        confirmButtonColor: '#4f46e5'
-      })
-
-      setPassword('')
-      setConfirmPassword('')
+        const token = localStorage.getItem('token');
+        const response = await axios.put(
+            'http://localhost:8080/api/auth/change-password',
+            {
+                userId,
+                password,
+                confirmPassword
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: response.data.message || 'Password updated successfully',
+            confirmButtonColor: '#4f46e5'
+        });
+        setPassword('');
+        setConfirmPassword('');
     } catch (err) {
-      console.error('Error updating password:', err)
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to update password',
-        confirmButtonColor: '#4f46e5'
-      })
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: err.response?.data || 'Failed to update password',
+            confirmButtonColor: '#4f46e5'
+        });
     }
   }
 
   const handleAddSkill = async (e) => {
-    e.preventDefault()
-    
-    if (!newSkill.trim()) {
+    e.preventDefault();
+    const id = localStorage.getItem('id');
+    const token = localStorage.getItem('token');
+    if (!newSkill) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Please enter a skill',
+        text: 'Please select a skill',
         confirmButtonColor: '#4f46e5'
-      })
-      return
+      });
+      return;
     }
-
     try {
-      const token = localStorage.getItem('token')
-      const response = await axios.post(
-        `http://localhost:8080/api/students/${profile.userId}/skills`,
-        { skill: newSkill, type: skillType },
+      await axios.put(
+        `http://localhost:8080/api/student/profile/${id}/skills`,
+        {},
         {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` },
+          params: { skillId: newSkill.id }
         }
-      )
-
+      );
       setProfile(prev => ({
         ...prev,
-        skills: [...prev.skills, response.data]
-      }))
-
-      setNewSkill('')
+        skills: [...prev.skills, skills.find(skill => skill.id === newSkill.id)]
+      }));
       Swal.fire({
         icon: 'success',
         title: 'Success',
         text: 'Skill added successfully',
         confirmButtonColor: '#4f46e5'
-      })
+      });
+      setIsAddSkillModalVisible(false);
+      fetchSkillTypes();
     } catch (err) {
-      console.error('Error adding skill:', err)
       Swal.fire({
         icon: 'error',
         title: 'Error',
         text: 'Failed to add skill',
         confirmButtonColor: '#4f46e5'
-      })
+      });
     }
   }
 
   const handleRemoveSkill = async (skillId) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to remove this skill?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, remove it!',
+      cancelButtonText: 'Cancel'
+    });
+    if (!result.isConfirmed) return;
+
     try {
-      const token = localStorage.getItem('token')
+      const id = localStorage.getItem('id');
+      const token = localStorage.getItem('token');
       await axios.delete(
-        `http://localhost:8080/api/students/${profile.userId}/skills/${skillId}`,
+        `http://localhost:8080/api/student/profile/${id}/skills/${skillId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
           }
         }
-      )
-
+      );
       setProfile(prev => ({
         ...prev,
-        skills: prev.skills.filter(skill => skill._id !== skillId)
-      }))
-
+        skills: prev.skills.filter(skill => skill.id !== skillId)
+      }));
       Swal.fire({
         icon: 'success',
         title: 'Success',
         text: 'Skill removed successfully',
         confirmButtonColor: '#4f46e5'
-      })
+      });
     } catch (err) {
-      console.error('Error removing skill:', err)
+      console.log(err)
       Swal.fire({
         icon: 'error',
         title: 'Error',
         text: 'Failed to remove skill',
+        confirmButtonColor: '#4f46e5'
+      });
+    }
+  }
+
+  const fetchSkillTypes = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.get(`http://localhost:8080/api/student/profile/skills`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const skills = response.data
+      const types = [...new Set(skills.map(skill => skill.type))]
+      const typeSkills = skills.filter(skill => skill.type === types[0])
+      setSkillTypes(types)
+      setSkillType(types[0])
+      setSkills(typeSkills)
+      setNewSkill(typeSkills[0])
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to load skill types',
         confirmButtonColor: '#4f46e5'
       })
     }
@@ -285,18 +328,18 @@ function StudentProfile() {
 
           {/* Password Section */}
           <div className="border-b border-gray-200 px-4 py-5 sm:px-6">
-            <div className="flex justify-between items-center">
-              <h4 className="text-lg font-medium text-gray-900 mb-4">Change Password</h4>
-              <div className="flex">
-                <button
-                  type="submit"
-                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-                >
-                  Update Password
-                </button>
-              </div>
-            </div>
             <form onSubmit={handlePasswordChange} className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="text-lg font-medium text-gray-900 mb-4">Change Password</h4>
+                <div className="flex">
+                    <button
+                    type="submit"
+                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                    >
+                    Update Password
+                    </button>
+                </div>
+              </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700">
@@ -360,7 +403,7 @@ function StudentProfile() {
                       icon = <CodeOutlined />;
                       color = 'blue';
                       break;
-                    case 'Tools':
+                    case 'Tool':
                       icon = <TeamOutlined />;
                       color = 'green';
                       break;
@@ -379,11 +422,11 @@ function StudentProfile() {
 
                   return (
                     <Tag
-                      key={skill._id}
+                      key={skill.id}
                       icon={icon}
                       color={color}
                       closable
-                      onClose={() => handleRemoveSkill(skill._id)}
+                      onClose={() => handleRemoveSkill(skill.id)}
                       className="flex items-center gap-1"
                     >
                       {skill.name}
@@ -419,27 +462,29 @@ function StudentProfile() {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Skill Type</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Skill Name</label>
                   <Select
-                    value={skillType}
-                    onChange={(value) => setSkillType(value)}
+                    value={newSkill?.id}
+                    onChange={id => setNewSkill(skills.find(s => s.id === id))}
                     className="w-full"
                   >
-                    {skillTypes.map((type) => (
-                      <Select.Option key={type} value={type}>
-                        {type}
+                    {skills.map((skill) => (
+                      <Select.Option key={skill.id} value={skill.id}>
+                        {skill.name}
                       </Select.Option>
                     ))}
                   </Select>
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button onClick={() => setIsAddSkillModalVisible(false)}>
+                  <Button 
+                  onClick={() => setIsAddSkillModalVisible(false)}>
                     Cancel
                   </Button>
                   <Button 
                     type="primary" 
                     onClick={handleAddSkill}
-                    disabled={!newSkill.trim()}
+                    className="bg-gray-600 hover:bg-gray-700 text-white"
+                    disabled={!newSkill}
                   >
                     Add
                   </Button>

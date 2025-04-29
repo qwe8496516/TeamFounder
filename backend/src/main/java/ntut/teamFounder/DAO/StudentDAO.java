@@ -1,5 +1,6 @@
 package ntut.teamFounder.DAO;
 
+import ntut.teamFounder.Domain.Skill;
 import ntut.teamFounder.Domain.Student;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -42,7 +43,21 @@ public class StudentDAO {
         return jdbcTemplate.update(sql, studentId);
     }
 
-    public Student getStudentById(String studentId) {
+    public Student getStudentById(Long id) {
+        String sql = "SELECT * FROM users WHERE id=?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) ->
+                new Student(
+                        rs.getLong("id"),
+                        rs.getString("userId"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getDate("createdAt")
+                )
+        );
+    }
+
+    public Student getStudentByStudentId(String studentId) {
         String sql = "SELECT * FROM users WHERE userId=?";
         return jdbcTemplate.queryForObject(sql, new Object[]{studentId}, (rs, rowNum) ->
                 new Student(
@@ -58,6 +73,11 @@ public class StudentDAO {
 
     public int addSkillToStudent(Long userId, Long skillId) {
         String sql = "INSERT INTO userSkill (userId, skillId) VALUES (?, ?)";
+        return jdbcTemplate.update(sql, userId, skillId);
+    }
+
+    public int deleteSkillFromStudent(Long userId, Long skillId) {
+        String sql = "DELETE FROM userSkill WHERE userId = ? AND skillId = ?";
         return jdbcTemplate.update(sql, userId, skillId);
     }
 
@@ -78,7 +98,29 @@ public class StudentDAO {
                 "JOIN enrollment e ON c.courseCode = e.courseCode " +
                 "WHERE e.userId = ?";
         return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) ->
-                rs.getString("course_code")
+                rs.getString("courseCode")
+        );
+    }
+
+    public List<Skill> getAllSkills() {
+        String sql = "SELECT * FROM skill";
+        return jdbcTemplate.query(sql, (rs, rowNum) ->
+            new Skill(
+                rs.getLong("id"),
+                rs.getString("type"),
+                rs.getString("name")
+            )
+        );
+    }
+
+    public Skill getSkillById(Long skillId) {
+        String sql = "SELECT * FROM skill WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{skillId}, (rs, rowNum) ->
+            new Skill(
+                rs.getLong("id"),
+                rs.getString("type"),
+                rs.getString("name")
+            )
         );
     }
 }

@@ -23,7 +23,7 @@ public class AnnouncementDAO {
                         rs.getLong("id"),
                         rs.getString("title"),
                         rs.getString("content"),
-//                        rs.getDate("createdAt"),
+                        rs.getDate("createdAt"),
                         rs.getString("courseCode"),
                         rs.getInt("importanceLevel")
                 )

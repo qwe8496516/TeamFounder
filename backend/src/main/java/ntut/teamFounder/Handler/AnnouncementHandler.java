@@ -49,7 +49,7 @@ public class AnnouncementHandler {
         if(!professorId.equals(actualProfessorId)) {
             return new ResponseEntity<>("Professor does not match course", HttpStatus.BAD_REQUEST);
         }
-        Announcement announcement = new Announcement(1L,"",content,"",0);
+        Announcement announcement = new Announcement(1L,"",content,new Date(), "",0); //Tue Apr 29 06:59:48 GMT 2025
         boolean isClean = announcement.verifyAnnouncement();
         if(isClean) {
             announcementDAO.createAnnouncement(courseCode, title, content, importanceLevel);
