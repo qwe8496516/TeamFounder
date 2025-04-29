@@ -72,7 +72,7 @@ function ProfessorCourses() {
     <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">My Courses</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Courses</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Manage your courses and view student progress
           </p>

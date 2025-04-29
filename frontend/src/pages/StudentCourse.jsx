@@ -101,7 +101,7 @@ function Course() {
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <div className="px-6 py-4 pb-6 bg-gray-50">
+                <div className="px-6 py-4 pb-6">
                   <Link
                     to={`/student/course/${course.id}`}
                     className="inline-flex items-center px-4 py-2 border border-transparent text-bold font-medium rounded-md shadow-sm text-white bg-gray-600 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

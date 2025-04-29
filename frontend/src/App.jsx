@@ -11,6 +11,7 @@ import ProfessorCourses from './pages/ProfessorCourses'
 import StudentProfile from './pages/StudentProfile'
 import NotFound from './pages/NotFound'
 import ProfessorCourseManage from './pages/ProfessorCourseManage'
+import ProfessorProfile from './pages/ProfessorProfile'
 
 function NavbarWrapper({ isLoggedIn, setIsLoggedIn }) {
   const location = useLocation()
@@ -103,6 +104,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProfessorCourseManage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/professor/profile"
+            element={
+              <ProtectedRoute>
+                <ProfessorProfile />
               </ProtectedRoute>
             }
           />

@@ -156,7 +156,7 @@ function Navbar() {
                 tabIndex="-1"
               >
                 <Link
-                  to="/student/profile"
+                  to={role === 'professor' ? '/professor/profile' : '/student/profile'}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
                   role="menuitem"
                   tabIndex="-1"
