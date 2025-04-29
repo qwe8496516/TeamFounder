@@ -16,8 +16,38 @@ public class Student extends User {
         super(id, userId, username, password, email, 0, createdAt); // Privilege 0 = student
     }
 
+    public double calculateFitness(List<Long> matcherSkills) {
+        double fitness = 0;
+        int weight = matcherSkills.size();
+        if (skills.size() == 0 || matcherSkills.size() == 0) {
+            return 50;
+        }
+        for (Long skillId : skills) {
+            if (this.skills.contains(skillId)) {
+                fitness++;
+            }
+        }
+        fitness = weightCalculate(fitness, weight);
+        fitness = fitnessToInteger(fitness);
+        return fitness;
+    }
+
+    public double weightCalculate(double fitness, int weight) {
+        fitness = (fitness * 100 / weight) * 0.1 + 90;
+        return fitness;
+    }
+
+    public double fitnessToInteger(double fitness) {
+        if (fitness >= 0) {
+            return Math.floor(fitness);
+        } else {
+            return Math.ceil(fitness);
+        }
+    }
+
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
+        map.put("id", this.getId());
         map.put("userId", this.getUserId());
         map.put("username", this.getUsername());
         map.put("email", this.getEmail());

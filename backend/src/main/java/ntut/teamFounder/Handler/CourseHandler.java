@@ -5,11 +5,13 @@ import ntut.teamFounder.DAO.CourseDAO;
 import ntut.teamFounder.DAO.StudentDAO;
 import ntut.teamFounder.Domain.Course;
 import ntut.teamFounder.Domain.Enrollment;
+import ntut.teamFounder.Domain.Skill;
 import ntut.teamFounder.Domain.Student;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +56,35 @@ public class CourseHandler {
             return ResponseEntity.ok(students);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to retrieve course: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{courseCode}/student/{userId}/match")
+    public ResponseEntity<?> getMatchList(@PathVariable String courseCode, @PathVariable Long userId) {
+        try {
+            Student matcher = studentDAO.getStudentById(userId);
+            matcher.setSkills(studentDAO.getSkillsByStudentId(userId));
+            List<Long> studentIds = courseDAO.getCourseStudents(courseCode);
+            List<Map<String, Object>> students = new ArrayList<>();
+            for (Long studentId : studentIds) {
+                Student student = studentDAO.getStudentById(studentId);
+                student.setSkills(studentDAO.getSkillsByStudentId(studentId));
+                if (!student.getId().equals(userId)) {
+                    List<Skill> skillList = new ArrayList<>();
+                    for (Long skill : student.getSkills()) {
+                        Skill s = studentDAO.getSkillById(skill);
+                        skillList.add(s);
+                    }
+                    double fitness = student.calculateFitness(matcher.getSkills());
+                    Map<String, Object> map = student.toMap();
+                    map.put("Fitness", fitness);
+                    map.put("skills", skillList);
+                    students.add(map);
+                }
+            }
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to retrieve match list: " + e.getMessage());
         }
     }
 
