@@ -1,5 +1,6 @@
 package ntut.teamFounder.Handler;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import ntut.teamFounder.DAO.UserDAO;
 import ntut.teamFounder.Domain.Skill;
 import ntut.teamFounder.Domain.Student;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
+@Tag(name = "Student API")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/student")
 public class StudentHandler {
     private final StudentDAO studentDAO;
@@ -23,7 +26,7 @@ public class StudentHandler {
     @GetMapping("/profile/{studentId}")
     public ResponseEntity<?> getProfile(@PathVariable String studentId) {
         try {
-            Student student = studentDAO.getStudentById(studentId);
+            Student student = studentDAO.getStudentByStudentId(studentId);
             if (userDAO.getUserById(studentId).getPrivilege() == 1) {
                 return ResponseEntity.badRequest().body("User is not a student.");
             }

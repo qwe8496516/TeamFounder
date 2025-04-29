@@ -43,7 +43,21 @@ public class StudentDAO {
         return jdbcTemplate.update(sql, studentId);
     }
 
-    public Student getStudentById(String studentId) {
+    public Student getStudentById(Long id) {
+        String sql = "SELECT * FROM users WHERE id=?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) ->
+                new Student(
+                        rs.getLong("id"),
+                        rs.getString("userId"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getDate("createdAt")
+                )
+        );
+    }
+
+    public Student getStudentByStudentId(String studentId) {
         String sql = "SELECT * FROM users WHERE userId=?";
         return jdbcTemplate.queryForObject(sql, new Object[]{studentId}, (rs, rowNum) ->
                 new Student(
