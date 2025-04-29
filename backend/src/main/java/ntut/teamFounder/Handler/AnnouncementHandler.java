@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import ntut.teamFounder.DAO.AnnouncementDAO;
 import ntut.teamFounder.DAO.CourseDAO;
 import ntut.teamFounder.Domain.Announcement;
-import ntut.teamFounder.Domain.Course;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

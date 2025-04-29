@@ -2,12 +2,10 @@ package ntut.teamFounder.Handler;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import ntut.teamFounder.DAO.UserDAO;
-import ntut.teamFounder.Domain.Student;
 import ntut.teamFounder.Domain.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
