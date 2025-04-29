@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS userSkill (
 );
 
 CREATE TABLE IF NOT EXISTS course (
-    courseCode VARCHAR(100) PRIMARY KEY ,
+    courseCode VARCHAR(6) PRIMARY KEY ,
     name VARCHAR(255) NOT NULL,
     professorId VARCHAR(255) NOT NULL,
     academicYear TINYINT NOT NULL,
