@@ -18,16 +18,15 @@ public class Announcement {
     private Long id;
     private String title;
     private String content;
-//    private Date createdAt;
+    private Date createdAt;
     private String courseCode;
     private int importanceLevel;
 
-//    public Announcement(Long id, String title, String content, Date createdAt, String courseCode, int importanceLevel) {
-    public Announcement(Long id, String title, String content, String courseCode, int importanceLevel) {
+    public Announcement(Long id, String title, String content, Date createdAt, String courseCode, int importanceLevel) {
         this.id = id;
         this.title = title;
         this.content = content;
-//        this.createdAt = createdAt;
+        this.createdAt = createdAt;
         this.courseCode = courseCode;
         this.importanceLevel = importanceLevel;
     }
