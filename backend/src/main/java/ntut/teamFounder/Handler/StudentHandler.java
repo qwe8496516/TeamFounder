@@ -4,6 +4,7 @@ import ntut.teamFounder.DAO.UserDAO;
 import ntut.teamFounder.Domain.Skill;
 import ntut.teamFounder.Domain.Student;
 import ntut.teamFounder.DAO.StudentDAO;
+import ntut.teamFounder.Domain.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
@@ -12,15 +13,20 @@ import java.util.*;
 @RequestMapping("/api/student")
 public class StudentHandler {
     private final StudentDAO studentDAO;
+    private final UserDAO userDAO;
 
-    public StudentHandler(StudentDAO studentDAO) {
+    public StudentHandler(StudentDAO studentDAO, UserDAO userDAO) {
         this.studentDAO = studentDAO;
+        this.userDAO = userDAO;
     }
 
     @GetMapping("/profile/{studentId}")
     public ResponseEntity<?> getProfile(@PathVariable String studentId) {
         try {
             Student student = studentDAO.getStudentById(studentId);
+            if (userDAO.getUserById(studentId).getPrivilege() == 1) {
+                return ResponseEntity.badRequest().body("User is not a student.");
+            }
             List<Long> skills = studentDAO.getSkillsByStudentId(student.getId());
             List<Skill> skillList = new ArrayList<>();
             for (Long skill : skills) {
@@ -35,7 +41,7 @@ public class StudentHandler {
             res.put("role", student.getRoleName());
             return ResponseEntity.ok(res);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Student not found");
+            return ResponseEntity.badRequest().body("Student not found.");
         }
     }
 
@@ -48,10 +54,10 @@ public class StudentHandler {
     ) {
         // Validate required fields
         if (username == null || password == null || email == null) {
-            return ResponseEntity.badRequest().body("Required fields are missing");
+            return ResponseEntity.badRequest().body("Required fields are missing.");
         }
         if (!email.contains("@")) {
-            return ResponseEntity.badRequest().body("Invalid email format");
+            return ResponseEntity.badRequest().body("Invalid email format.");
         }
 
         try {
@@ -67,13 +73,13 @@ public class StudentHandler {
             int updated = studentDAO.updateStudent(student);
             if (updated > 0) {
                 Map<String, String> resp = new HashMap<>();
-                resp.put("message", "Profile updated successfully");
+                resp.put("message", "Profile updated successfully.");
                 return ResponseEntity.ok(resp);
             } else {
-                return ResponseEntity.badRequest().body("Update failed");
+                return ResponseEntity.badRequest().body("Update failed.");
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error updating profile: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error updating profile: " + e.getMessage() + ".");
         }
     }
 
@@ -81,9 +87,9 @@ public class StudentHandler {
     public ResponseEntity<?> deleteProfile(@PathVariable String studentId) {
         int deleted = studentDAO.deleteStudent(studentId);
         if (deleted > 0) {
-            return ResponseEntity.ok("Profile deleted successfully");
+            return ResponseEntity.ok("Profile deleted successfully.");
         } else {
-            return ResponseEntity.badRequest().body("Delete failed");
+            return ResponseEntity.badRequest().body("Delete failed.");
         }
     }
 
@@ -94,9 +100,9 @@ public class StudentHandler {
     ) {
         try {
             studentDAO.addSkillToStudent(userId, skillId);
-            return ResponseEntity.ok("Skill added successfully");
+            return ResponseEntity.ok("Skill added successfully.");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to add skill: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Failed to add skill: " + e.getMessage() + ".");
         }
     }
 
@@ -108,12 +114,12 @@ public class StudentHandler {
         try {
             int deleted = studentDAO.deleteSkillFromStudent(userId, skillId);
             if (deleted > 0) {
-                return ResponseEntity.ok("Skill removed successfully");
+                return ResponseEntity.ok("Skill removed successfully.");
             } else {
-                return ResponseEntity.badRequest().body("Skill not found or already removed");
+                return ResponseEntity.badRequest().body("Skill not found or already removed.");
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to remove skill: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Failed to remove skill: " + e.getMessage() + ".");
         }
     }
 
@@ -124,9 +130,9 @@ public class StudentHandler {
     ) {
         try {
             studentDAO.enrollInCourse(userId, courseCode);
-            return ResponseEntity.ok("Enrolled in course successfully");
+            return ResponseEntity.ok("Enrolled in course successfully.");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Enrollment failed: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Enrollment failed: " + e.getMessage() + ".");
         }
     }
 
@@ -142,7 +148,7 @@ public class StudentHandler {
             List<Skill> skills = studentDAO.getAllSkills();
             return ResponseEntity.ok(skills);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to retrieve skills: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Failed to retrieve skills: " + e.getMessage() + ".");
         }
     }
 
@@ -157,7 +163,7 @@ public class StudentHandler {
             }
             return ResponseEntity.ok(skillList);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to retrieve skills: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Failed to retrieve skills: " + e.getMessage() + ".");
         }
     }
 
