@@ -59,7 +59,7 @@ function AnnouncementModal({ isOpen, onClose, onSubmit, courseCode, importanceLe
       if (onSubmit) onSubmit(payload)
     } catch (err) {
       console.log(err)
-      Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create announcement' })
+      Swal.fire({ icon: 'error', title: 'Error', text: err.response.data })
     } finally {
       setIsSubmitting(false)
     }

@@ -80,7 +80,9 @@ function ProfessorCourseManage() {
   }, [courseId, navigate])
 
   const handleAddAnnouncement = (newAnnouncement) => {
-    setAnnouncements([newAnnouncement, ...announcements])
+    const updatedAnnouncements = [...announcements, newAnnouncement]
+    updatedAnnouncements.sort((a, b) => b.importanceLevel - a.importanceLevel)
+    setAnnouncements(updatedAnnouncements)
     setIsNewAnnouncementOpen(false)
   }
 

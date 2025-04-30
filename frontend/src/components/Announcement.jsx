@@ -1,5 +1,5 @@
 const IMPORTANCE_LEVELS = [
-  { value: 0, label: 'TRIVIAL', color: 'gray' },
+  { value: 0, label: 'TRIVIAL', color: 'green' },
   { value: 1, label: 'MINOR', color: 'blue' },
   { value: 2, label: 'NORMAL', color: 'yellow' },
   { value: 3, label: 'MAJOR', color: 'orange' },
@@ -20,7 +20,7 @@ function Announcement({ announcement }) {
       </div>
       <p className="text-gray-600 mb-4">{announcement.content}</p>
       <div className="flex justify-between items-center">
-        <p className="text-sm text-gray-500">Posted by: {announcement.author}</p>
+        <p className="text-sm text-gray-500">Posted by: {announcement.author ? announcement.author : 'Professor'}</p>
         <p className={`text-xs font-bold mt-2 ${colorClass}`}>
           Importance Level: {level?.label}
         </p>
