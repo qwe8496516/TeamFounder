@@ -1,7 +1,6 @@
 package ntut.teamFounder.DAO;
 
 import ntut.teamFounder.Domain.Skill;
-import org.mockito.Mockito;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ntut.teamFounder.Domain.Student;
 import org.junit.jupiter.api.Test;
