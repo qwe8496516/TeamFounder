@@ -54,7 +54,7 @@ public class UserHandler {
             if (userDAO.getUserById(userId) != null) {
                 return ResponseEntity.badRequest().body("User ID already exists");
             }
-            int affected = userDAO.createUser(userId, username, password, email, 0);
+            int affected = userDAO.createUser(userId, username, password, email);
 
             if (affected == 0) {
                 return ResponseEntity.badRequest().body("Registration failed");

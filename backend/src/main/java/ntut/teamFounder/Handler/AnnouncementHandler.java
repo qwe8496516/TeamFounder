@@ -52,9 +52,10 @@ public class AnnouncementHandler {
             if(!professorId.equals(actualProfessorId)) {
                 return ResponseEntity.badRequest().body("Professor does not match course");
             }
-            if(isClean) {
-                announcementDAO.createAnnouncement(courseCode, title, content, importanceLevel);
+            if(!isClean) {
+                return ResponseEntity.badRequest().body("Please check your title & content and try again.");
             }
+            announcementDAO.createAnnouncement(courseCode, title, content, importanceLevel);
             getAnnouncements(courseCode);
             return ResponseEntity.ok().body("Announcement created successfully");
         } catch (Exception e) {
