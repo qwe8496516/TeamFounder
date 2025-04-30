@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 
-function Navbar() {
+function Navbar({ setIsLoggedIn }) {
   const [isOpen, setIsOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
@@ -39,7 +39,7 @@ function Navbar() {
   const role = localStorage.getItem('role');
 
   return (
-    <nav className="bg-gray-800 shadow-lg">
+    <nav className="fixed top-0 left-0 right-0 bg-gray-800 shadow-lg z-50">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -179,9 +179,9 @@ function Navbar() {
                       cancelButtonText: 'Cancel'
                     }).then((result) => {
                       if (result.isConfirmed) {
-                        localStorage.removeItem('token')
-                        localStorage.removeItem('userId')
+                        localStorage.clear()
                         setIsUserMenuOpen(false)
+                        setIsLoggedIn(false)
                         navigate('/login')
                       }
                     })
