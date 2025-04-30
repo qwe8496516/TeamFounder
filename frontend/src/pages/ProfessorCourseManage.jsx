@@ -133,7 +133,7 @@ function ProfessorCourseManage() {
 
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="relative h-48">
-            <img className="w-full h-full object-cover" src={course.image} alt={course.name} />
+            <img className="w-full h-full object-cover" src={course.image ? course.image : 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80'} alt={course.name} />
             <div className="absolute inset-0 bg-gradient-to-r from-gray-600 to-gray-600 opacity-75"></div>
             <div className="absolute inset-0 flex items-center justify-center">
               <h1 className="text-4xl font-bold text-white">{course.name}</h1>

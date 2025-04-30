@@ -27,7 +27,10 @@ function AnnouncementModal({ isOpen, onClose, onSubmit, courseCode, importanceLe
   }
 
   const handleSubmit = async () => {
-    if (!newAnnouncement.title || !newAnnouncement.content) return
+    if (!newAnnouncement.title || !newAnnouncement.content) {
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Please fill in all fields' })
+      return
+    }
 
     setIsSubmitting(true)
     try {

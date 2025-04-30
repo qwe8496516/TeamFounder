@@ -195,7 +195,7 @@ function StudentProfile() {
       );
       setProfile(prev => ({
         ...prev,
-        skills: [...prev.skills, skills.find(skill => skill.id === newSkill.id)]
+        skills: [...prev.skills, skills.find(skill => skill.id === newSkill.id)].sort((a, b) => a.id - b.id)
       }));
       Swal.fire({
         icon: 'success',
@@ -209,7 +209,7 @@ function StudentProfile() {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Failed to add skill',
+        text: err.response.data,
         confirmButtonColor: '#4f46e5'
       });
     }
