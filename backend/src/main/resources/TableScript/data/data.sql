@@ -1,11 +1,11 @@
 #Users
-INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598012', 'Yang Hong Jie', '123456', 't113598012@ntut.org.tw', 0);
-INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598056', 'CK Yang', '123456', 't113598056@ntut.org.tw', 1);
-INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598071', 'Shuang Yang', '123456', 't113598071@ntut.org.tw', 0);
-INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598002', 'Shin Chou Lie', '123456', 't113598002@ntut.org.tw', 0);
-INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598001', 'Shung Chung chen', '123456', 't113598001@ntut.org.tw', 0);
-INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_islab', 'Jong Yih Kuo', '123456', 'jykuo@ntut.org.tw', 1);
-INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_ooad', 'Woei Kae Chen', '123456', 'woeikaechen@ntut.org.tw', 1);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598012', 'Yang Hong Jie', 'MTIzNDU2', 't113598012@ntut.org.tw', 0);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598056', 'CK Yang', 'MTIzNDU2', 't113598056@ntut.org.tw', 1);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598071', 'Shuang Yang', 'MTIzNDU2', 't113598071@ntut.org.tw', 0);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598002', 'Shin Chou Lie', 'MTIzNDU2', 't113598002@ntut.org.tw', 0);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598001', 'Shung Chung chen', 'MTIzNDU2', 't113598001@ntut.org.tw', 0);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_islab', 'Jong Yih Kuo', 'MTIzNDU2', 'jykuo@ntut.org.tw', 1);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_ooad', 'Woei Kae Chen', 'MTIzNDU2', 'woeikaechen@ntut.org.tw', 1);
 
 
 #Skills
