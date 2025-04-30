@@ -37,11 +37,11 @@ public class Student extends User {
         return fitness;
     }
 
-    public double fitnessToInteger(double fitness) {
+    public int fitnessToInteger(double fitness) {
         if (fitness >= 0) {
-            return Math.floor(fitness);
+            return (int) Math.floor(fitness);
         } else {
-            return Math.ceil(fitness);
+            return (int) Math.ceil(fitness);
         }
     }
 
