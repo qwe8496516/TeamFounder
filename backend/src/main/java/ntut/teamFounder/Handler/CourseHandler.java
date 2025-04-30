@@ -74,12 +74,12 @@ public class CourseHandler {
     public ResponseEntity<?> getCompatibleStudents(@PathVariable String courseCode, @PathVariable Long userId) {
         try {
             Student matcher = studentDAO.getStudentById(userId);
-            matcher.setSkills(studentDAO.getSkillsByStudentId(userId));
+            matcher.setSkills(studentDAO.getSkillsById(userId));
             List<Long> studentIds = courseDAO.getStudentsInCourse(courseCode);
             List<Map<String, Object>> students = new ArrayList<>();
             for (Long studentId : studentIds) {
                 Student student = studentDAO.getStudentById(studentId);
-                student.setSkills(studentDAO.getSkillsByStudentId(studentId));
+                student.setSkills(studentDAO.getSkillsById(studentId));
                 if (!student.getId().equals(userId)) {
                     List<Skill> skillList = new ArrayList<>();
                     for (Long skill : student.getSkills()) {

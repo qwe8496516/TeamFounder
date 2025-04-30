@@ -29,7 +29,7 @@ public class StudentHandler {
             if (userDAO.getUserById(studentId).getPrivilege() == 1) {
                 return ResponseEntity.badRequest().body("User is not a student.");
             }
-            List<Long> skills = studentDAO.getSkillsByStudentId(student.getId());
+            List<Long> skills = studentDAO.getSkillsById(student.getId());
             List<Skill> skillList = new ArrayList<>();
             for (Long skill : skills) {
                 Skill s = studentDAO.getSkillById(skill);
@@ -139,7 +139,7 @@ public class StudentHandler {
 
     @GetMapping("/profile/{userId}/courses")
     public ResponseEntity<List<String>> getEnrolledCourses(@PathVariable Long userId) {
-        List<String> courses = studentDAO.getCoursesByStudentId(userId);
+        List<String> courses = studentDAO.getCoursesById(userId);
         return ResponseEntity.ok(courses);
     }
 
@@ -156,7 +156,7 @@ public class StudentHandler {
     @GetMapping("/profile/{userId}/skills")
     public ResponseEntity<?> getProfileSkills(@PathVariable Long userId) {
         try {
-            List<Long> skills = studentDAO.getSkillsByStudentId(userId);
+            List<Long> skills = studentDAO.getSkillsById(userId);
             List<Skill> skillList = new ArrayList<>();
             for (Long skill : skills) {
                 Skill s = studentDAO.getSkillById(skill);

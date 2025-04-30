@@ -39,13 +39,22 @@ public class StudentDAO {
     }
 
     public int deleteStudent(String studentId) {
+        // Find the user's id
+        String findIdSql = "SELECT id FROM users WHERE userId=?";
+        Long id = jdbcTemplate.queryForObject(findIdSql, new Object[]{studentId}, Long.class);
+
+        // Delete from enrollment first
+        jdbcTemplate.update("DELETE FROM enrollment WHERE userId=?", id);
+
+        // Now delete from users
         String sql = "DELETE FROM users WHERE userId=?";
         return jdbcTemplate.update(sql, studentId);
     }
 
+
     public Student getStudentById(Long id) {
         String sql = "SELECT * FROM users WHERE id=?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) ->
+        List<Student> student = jdbcTemplate.query(sql, new Object[]{id}, (rs, rowNum) ->
                 new Student(
                         rs.getLong("id"),
                         rs.getString("userId"),
@@ -55,11 +64,13 @@ public class StudentDAO {
                         rs.getDate("createdAt")
                 )
         );
+
+        return student.isEmpty() ? null : student.get(0);
     }
 
     public Student getStudentByStudentId(String studentId) {
         String sql = "SELECT * FROM users WHERE userId=?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{studentId}, (rs, rowNum) ->
+        List<Student> student = jdbcTemplate.query(sql, new Object[]{studentId}, (rs, rowNum) ->
                 new Student(
                         rs.getLong("id"),
                         rs.getString("userId"),
@@ -69,6 +80,8 @@ public class StudentDAO {
                         rs.getDate("createdAt")
                 )
         );
+
+        return student.isEmpty() ? null : student.get(0);
     }
 
     public int getStudentCount(String courseCode) {
@@ -86,7 +99,7 @@ public class StudentDAO {
         return jdbcTemplate.update(sql, userId, skillId);
     }
 
-    public List<Long> getSkillsByStudentId(Long userId) {
+    public List<Long> getSkillsById(Long userId) {
         String sql = "SELECT skillId FROM userSkill WHERE userId = ?";
         return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) ->
                 rs.getLong("skillId")
@@ -98,7 +111,7 @@ public class StudentDAO {
         return jdbcTemplate.update(sql, userId, courseCode);
     }
 
-    public List<String> getCoursesByStudentId(Long userId) {
+    public List<String> getCoursesById(Long userId) {
         String sql = "SELECT c.courseCode FROM course c " +
                 "JOIN enrollment e ON c.courseCode = e.courseCode " +
                 "WHERE e.userId = ?";
