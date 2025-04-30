@@ -71,7 +71,7 @@ public class CourseHandler {
     }
 
     @GetMapping("/{courseCode}/student/{userId}/match")
-    public ResponseEntity<?> getMatchList(@PathVariable String courseCode, @PathVariable Long userId) {
+    public ResponseEntity<?> getCompatibleStudents(@PathVariable String courseCode, @PathVariable Long userId) {
         try {
             Student matcher = studentDAO.getStudentById(userId);
             matcher.setSkills(studentDAO.getSkillsByStudentId(userId));

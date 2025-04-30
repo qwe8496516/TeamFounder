@@ -38,7 +38,7 @@ public class UserHandler {
             res.put("token", token);
             res.put("userId", user.getUserId());
             res.put("role", user.getRoleName());
-            res.put("redirect", user.getRedirectPath());
+            res.put("redirect", "/" + user.getRoleName());
             return ResponseEntity.ok(res);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Invalid credentials");
@@ -46,24 +46,19 @@ public class UserHandler {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Map<String, String> userData) {
+    public ResponseEntity<?> register(@RequestParam String username, @RequestParam String userId, @RequestParam String email, @RequestParam String password, @RequestParam String confirmPassword) {
         try {
-            String userId = userData.get("userId");
-            String username = userData.get("username");
-            String password = userData.get("password");
-            String confirmPassword = userData.get("confirmPassword");
-            String email = userData.get("email");
-
             if (!password.equals(confirmPassword)) {
                 return ResponseEntity.badRequest().body("Passwords do not match");
             }
-
             if (userDAO.getUserById(userId) != null) {
                 return ResponseEntity.badRequest().body("User ID already exists");
             }
+            int affected = userDAO.createUser(userId, username, password, email, 0);
 
-            int res = userDAO.createUser(userId, username, password, email);
-
+            if (affected == 0) {
+                return ResponseEntity.badRequest().body("Registration failed");
+            }
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Registration successful");
             response.put("userId", userId);
@@ -74,7 +69,7 @@ public class UserHandler {
         } catch (IllegalArgumentException e) {
              return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-             return ResponseEntity.internalServerError().body("An error occurred during registration");
+             return ResponseEntity.internalServerError().body("An error occurred during registration" + e.getMessage() + ".");
         }
     }
 

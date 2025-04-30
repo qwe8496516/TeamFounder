@@ -44,8 +44,4 @@ public class User {
         return "";
     }
 
-    public String getRedirectPath() {
-        return "/" + getRoleName();
-    }
-
 } 
