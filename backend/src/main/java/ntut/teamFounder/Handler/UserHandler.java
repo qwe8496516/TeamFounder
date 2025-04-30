@@ -89,11 +89,15 @@ public class UserHandler {
             String password = credentials.get("password");
             String confirmPassword = credentials.get("confirmPassword");
 
+            User user = new User(0L, userId, "", password, "", 0, new Date());
+            user.encodeBase64();
+            String encodePassword = user.getPassword();
+
             if (!password.equals(confirmPassword)) {
                 return ResponseEntity.badRequest().body("Passwords do not match");
             }
 
-            int updated = userDAO.updateUser(userId, password);
+            int updated = userDAO.updateUser(userId, encodePassword);
 
             if (updated > 0) {
                 Map<String, String> res = new HashMap<>();
