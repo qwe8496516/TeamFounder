@@ -31,7 +31,7 @@ public class UserDAO {
 
     public User getUserById(String userId) {
         String sql = "SELECT * FROM users WHERE userid = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{userId}, (rs, rowNum) ->
+        List<User> users =  jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) ->
                 new User(
                         rs.getLong("id"),
                         rs.getString("userId"),
@@ -42,6 +42,8 @@ public class UserDAO {
                         rs.getDate("createdAt")
                 )
         );
+
+        return users.isEmpty() ? null : users.get(0);
     }
 
     public int createUser(String userId, String username, String password, String email) {
