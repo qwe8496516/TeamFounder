@@ -64,7 +64,6 @@ public class UserHandler {
             response.put("userId", userId);
             response.put("username", username);
             response.put("email", email);
-
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
              return ResponseEntity.badRequest().body(e.getMessage());
