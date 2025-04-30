@@ -4,6 +4,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import Loading from '../components/Loading'
 import { motion } from 'framer-motion'
+import { spaceChildren } from 'antd/es/button'
 
 function Login({ setIsLoggedIn }) {
   const [userId, setUserId] = useState('')
@@ -99,7 +100,7 @@ function Login({ setIsLoggedIn }) {
                 transition={{ duration: 0.5, delay: 0.6 }}
                 className="text-center mb-8"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full">
                   <i className="fas fa-sign-in-alt text-gray-600 fa-lg"></i>
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800">Welcome Back!</h2>
@@ -116,7 +117,7 @@ function Login({ setIsLoggedIn }) {
               >
                 {/* ID Field */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Student/Teacher ID</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student/Professor ID</label>
                   <div className="relative">
                     <input
                       type="text"
@@ -140,15 +141,12 @@ function Login({ setIsLoggedIn }) {
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
                       placeholder="Enter your password"
-                      requigray
+                      required
                     />
-                    {/* <button
-                      type="button"
-                      className="absolute right-3 top-3 text-gray-400 bg-white hover:border-none active:border-none focus:border-none" 
+                    <i
                       onClick={() => setShowPassword(!showPassword)}
-                    >
-                      <i className={`fas fa-${showPassword ? 'eye-slash' : 'eye'} text-black w-6 h-6`}></i>
-                    </button> */}
+                      className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'} absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 hover:text-gray-500 cursor-pointer flex items-center justify-center`}
+                    ></i>
                   </div>
                 </div>
 

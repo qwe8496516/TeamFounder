@@ -18,23 +18,9 @@ function MatchList() {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const id = localStorage.getItem('id')
-        const userId = localStorage.getItem('userId')
-        const token = localStorage.getItem('token')
-
-        if (!userId || !token) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Please login first',
-            confirmButtonColor: '#4f46e5'
-          }).then(() => {
-            navigate('/login')
-          })
-          return
-        }
-        
         const courseCode = 'CS205'
+        const id = localStorage.getItem('id')
+        const token = localStorage.getItem('token')
         const response = await axios.get(`http://localhost:8080/api/course/${courseCode}/student/${id}/match`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -51,7 +37,9 @@ function MatchList() {
           avatar: '/images/default-avatar.png'
         }))
         
-        setStudents(formattedStudents)
+        const sortedStudents = formattedStudents.sort ((a, b) => b.matchScore - a.matchScore)
+        
+        setStudents(sortedStudents)
       } catch (err) {
         console.error('Error fetching match data:', err)
         Swal.fire({

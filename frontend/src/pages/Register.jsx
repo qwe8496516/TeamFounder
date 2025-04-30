@@ -15,6 +15,8 @@ function Register() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [emailSuggestions, setEmailSuggestions] = useState([])
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -67,7 +69,6 @@ function Register() {
       return
     }
 
-    setIsLoading(true)
     try {
       const response = await axios.post('http://localhost:8080/api/auth/register', {
         userId: formData.studentId,
@@ -84,6 +85,7 @@ function Register() {
           text: 'Welcome to TeamFounder!',
           confirmButtonColor: '#4f46e5'
         }).then(() => {
+		  setIsLoading(true)
           navigate('/login')
         })
       } else {
@@ -123,14 +125,14 @@ function Register() {
       className="min-h-screen bg-gray-100"
     >
       <div className="min-h-screen flex">
-        {/* Right Side - Register Form */}
+        {/* Left Side - Register Form */}
         <motion.div
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="w-full lg:w-1/2 flex items-center justify-center p-8"
         >
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-2xl">
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -159,43 +161,51 @@ function Register() {
                 onSubmit={handleSubmit}
                 className="space-y-6"
               >
-                {/* Name Field */}
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
-                      placeholder="Enter your full name"
-                      required
-                    />
-                    <i className="fas fa-user absolute right-2 top-4 w-6 h-6 text-gray-400"></i>
-                  </div>
-                </div>
 
-                {/* ID Field */}
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Student/Teacher ID</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="studentId"
-                      value={formData.studentId}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
-                      placeholder="Enter your ID"
-                      required
-                    />
-                    <i className="fas fa-id-card absolute right-2 top-4 w-6 h-6 text-gray-400"></i>
+                {/* Name and ID Fields Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Name Field */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
+                        placeholder="Enter your full name"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* ID Field */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Student/Professor ID <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        name="studentId"
+                        value={formData.studentId}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
+                        placeholder="Enter your ID"
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
 
                 {/* Email Field */}
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email <span className="text-red-500">*</span>
+                  </label>
                   <div className="relative">
                     <input
                       type="email"
@@ -206,13 +216,12 @@ function Register() {
                       placeholder="Enter your email"
                       required
                     />
-                    <i className="fas fa-envelope absolute right-2 top-4 w-6 h-6 text-gray-400"></i>
                     {emailSuggestions.length > 0 && (
                       <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
                         {emailSuggestions.map((suggestion, index) => (
                           <div
                             key={index}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                            className="px-4 py-2 hover:bg-gray-100 text-black cursor-pointer"
                             onClick={() => handleEmailSuggestionClick(suggestion)}
                           >
                             {suggestion}
@@ -223,37 +232,50 @@ function Register() {
                   </div>
                 </div>
 
-                {/* Password Field */}
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                  <div className="relative">
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
-                      placeholder="Enter your password"
-                      required
-                    />
-                    <i className="fas fa-lock absolute right-2 top-4 w-6 h-6 text-gray-400"></i>
+                {/* Password Fields Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Password Field */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Password <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
+                        placeholder="Enter your password"
+                        required
+                      />
+                      <i
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'} absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 hover:text-gray-500 cursor-pointer flex items-center justify-center`}
+                      ></i>
+                    </div>
                   </div>
-                </div>
 
-                {/* Confirm Password Field */}
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                  <div className="relative">
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
-                      placeholder="Confirm your password"
-                      required
-                    />
-                    <i className="fas fa-lock absolute right-2 top-4 w-6 h-6 text-gray-400"></i>
+                  {/* Confirm Password Field */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Confirm Password <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
+                        placeholder="Confirm your password"
+                        required
+                      />
+                      <i
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className={`fas ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'} absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 hover:text-gray-500 cursor-pointer flex items-center justify-center`}
+                      ></i>
+                    </div>
                   </div>
                 </div>
 
@@ -280,7 +302,7 @@ function Register() {
           </div>
         </motion.div>
 
-        {/* Left Side - Image */}
+        {/* Right Side - Image */}
         <motion.div
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
