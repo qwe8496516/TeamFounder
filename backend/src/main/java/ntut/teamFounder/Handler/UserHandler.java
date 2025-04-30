@@ -46,8 +46,14 @@ public class UserHandler {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestParam String username, @RequestParam String userId, @RequestParam String email, @RequestParam String password, @RequestParam String confirmPassword) {
+    public ResponseEntity<?> register(@RequestBody Map<String, String> registerData) {
         try {
+            String username = registerData.get("username");
+            String userId = registerData.get("userId");
+            String password = registerData.get("password");
+            String confirmPassword = registerData.get("confirmPassword");
+            String email = registerData.get("email");
+
             if (!password.equals(confirmPassword)) {
                 return ResponseEntity.badRequest().body("Passwords do not match");
             }
@@ -59,12 +65,7 @@ public class UserHandler {
             if (affected == 0) {
                 return ResponseEntity.badRequest().body("Registration failed");
             }
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Registration successful");
-            response.put("userId", userId);
-            response.put("username", username);
-            response.put("email", email);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok("Registration successful");
         } catch (IllegalArgumentException e) {
              return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {

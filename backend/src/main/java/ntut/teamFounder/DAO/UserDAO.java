@@ -18,15 +18,15 @@ public class UserDAO {
     public User getUserById(String userId) {
         String sql = "SELECT * FROM users WHERE userid = ?";
         List<User> users =  jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) ->
-                new User(
-                        rs.getLong("id"),
-                        rs.getString("userId"),
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        rs.getString("email"),
-                        rs.getInt("privilege"),
-                        rs.getDate("createdAt")
-                )
+            new User(
+                rs.getLong("id"),
+                rs.getString("userId"),
+                rs.getString("username"),
+                rs.getString("password"),
+                rs.getString("email"),
+                rs.getInt("privilege"),
+                rs.getDate("createdAt")
+            )
         );
 
         return users.isEmpty() ? null : users.get(0);

@@ -13,14 +13,31 @@ function Register() {
     confirmPassword: '',
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [emailSuggestions, setEmailSuggestions] = useState([])
   const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value } = e.target
+    if (name === 'email') {
+      const baseEmail = value.split('@')[0]
+      if (baseEmail) {
+        setEmailSuggestions([`${baseEmail}@ntut.org.tw`])
+      } else {
+        setEmailSuggestions([])
+      }
+    }
     setFormData(prev => ({
       ...prev,
       [name]: value
     }))
+  }
+
+  const handleEmailSuggestionClick = (suggestion) => {
+    setFormData(prev => ({
+      ...prev,
+      email: suggestion
+    }))
+    setEmailSuggestions([])
   }
 
   const validateForm = () => {
@@ -51,17 +68,14 @@ function Register() {
     setIsLoading(true)
     try {
       const response = await axios.post('http://localhost:8080/api/auth/register', {
-        name: formData.name,
+        userId: formData.studentId,
+        username: formData.name,
         email: formData.email,
         password: formData.password,
-        confirmPassword: formData.confirmPassword,
-        studentId: formData.studentId
+        confirmPassword: formData.confirmPassword
       })
 
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token)
-        localStorage.setItem('userId', response.data.userId)
-        
+      if (response.status === 200) {
         Swal.fire({
           icon: 'success',
           title: 'Registration Successful',
@@ -69,6 +83,12 @@ function Register() {
           confirmButtonColor: '#4f46e5'
         }).then(() => {
           navigate('/login')
+        })
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Registration Failed',
+          text: 'An error occurred during registration',
         })
       }
     } catch (err) {
@@ -142,7 +162,7 @@ function Register() {
           </div>
 
           <div className="grid grid-cols-1 gap-6">
-            <div>
+            <div className="relative">
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email address <span className="text-red-500">*</span>
               </label>
@@ -157,6 +177,19 @@ function Register() {
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
                   placeholder="Enter your email"
                 />
+                {emailSuggestions.length > 0 && (
+                  <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-200">
+                    {emailSuggestions.map((suggestion, index) => (
+                      <div
+                        key={index}
+                        className="px-4 py-2 hover:bg-gray-100 text-black text-sm cursor-pointer"
+                        onClick={() => handleEmailSuggestionClick(suggestion)}
+                      >
+                        {suggestion}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
