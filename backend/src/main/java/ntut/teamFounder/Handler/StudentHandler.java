@@ -15,18 +15,16 @@ import java.util.*;
 @RequestMapping("/api/student")
 public class StudentHandler {
     private final StudentDAO studentDAO;
-    private final UserDAO userDAO;
 
     public StudentHandler(StudentDAO studentDAO, UserDAO userDAO) {
         this.studentDAO = studentDAO;
-        this.userDAO = userDAO;
     }
 
     @GetMapping("/profile/{studentId}")
     public ResponseEntity<?> getProfile(@PathVariable String studentId) {
         try {
             Student student = studentDAO.getStudentByStudentId(studentId);
-            if (userDAO.getUserById(studentId).getPrivilege() == 1) {
+            if (studentDAO.getStudentByStudentId(studentId).getPrivilege() == 1) {
                 return ResponseEntity.badRequest().body("User is not a student.");
             }
             List<Long> skills = studentDAO.getSkillsById(student.getId());

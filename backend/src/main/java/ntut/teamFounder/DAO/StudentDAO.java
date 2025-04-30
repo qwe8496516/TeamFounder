@@ -14,20 +14,6 @@ public class StudentDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Student> getAllStudents() {
-        String sql = "SELECT * FROM users";
-        return jdbcTemplate.query(sql, (rs, rowNum) ->
-                new Student(
-                        rs.getLong("id"),
-                        rs.getString("userId"),
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        rs.getString("email"),
-                        rs.getDate("createdAt")
-                )
-        );
-    }
-
     public int updateStudent(Student student) {
         String sql = "UPDATE users SET username=?, password=?, email=? WHERE userId=?";
         return jdbcTemplate.update(sql,
@@ -69,7 +55,7 @@ public class StudentDAO {
     }
 
     public Student getStudentByStudentId(String studentId) {
-        String sql = "SELECT * FROM users WHERE userId=?";
+        String sql = "SELECT * FROM users WHERE userId = ? AND privilege = 0";
         List<Student> student = jdbcTemplate.query(sql, new Object[]{studentId}, (rs, rowNum) ->
                 new Student(
                         rs.getLong("id"),
@@ -80,7 +66,6 @@ public class StudentDAO {
                         rs.getDate("createdAt")
                 )
         );
-
         return student.isEmpty() ? null : student.get(0);
     }
 
