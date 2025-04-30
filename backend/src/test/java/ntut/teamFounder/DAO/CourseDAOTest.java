@@ -1,114 +1,63 @@
 package ntut.teamFounder.DAO;
 
 import ntut.teamFounder.Domain.Course;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class CourseDAOTest {
+@SpringBootTest
+@Transactional
+public class CourseDAOTest {
 
-    @Mock
-    private JdbcTemplate jdbcTemplate;
-
-    @InjectMocks
+    @Autowired
     private CourseDAO courseDAO;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
-    void getCourseByStudentId_returnsListOfCourseCodes() {
+    public void getCourseByStudentId() {
         Long studentId = 1L;
-        List<String> expected = List.of("CS101", "CS102");
-
-        when(jdbcTemplate.query(
-                eq("SELECT * FROM enrollment WHERE id = ?"),
-                eq(new Object[]{studentId}),
-                any(RowMapper.class))
-        ).thenReturn(expected);
-
-        List<String> result = courseDAO.getCourseByStudentId(studentId);
-
-        assertEquals(expected, result);
-        verify(jdbcTemplate, times(1)).query(
-                eq("SELECT * FROM enrollment WHERE id = ?"),
-                eq(new Object[]{studentId}),
-                any(RowMapper.class)
-        );
+        List<String> courses = courseDAO.getCourseByStudentId(studentId);
+        assertEquals(2, courses.size());
+        assertEquals("CS205", courses.get(0));
+        assertEquals("CS301", courses.get(1));
     }
 
     @Test
-    void getCourseByCourseCode_returnsCourse() {
-        String courseCode = "CS101";
-        Course expected = new Course(
-                courseCode, "Intro to CS", 123L, 2025, 2, "desc"
-        );
-
-        when(jdbcTemplate.queryForObject(
-                eq("SELECT * FROM course WHERE courseCode = ?"),
-                eq(new Object[]{courseCode}),
-                any(RowMapper.class))
-        ).thenReturn(expected);
-
-        Course result = courseDAO.getCourseByCourseCode(courseCode);
-
-        assertEquals(expected, result);
-        verify(jdbcTemplate, times(1)).queryForObject(
-                eq("SELECT * FROM course WHERE courseCode = ?"),
-                eq(new Object[]{courseCode}),
-                any(RowMapper.class)
-        );
+    public void getCourseByCourseCode() {
+        Course course = courseDAO.getCourseByCourseCode("CS205");
+        assertNotNull(course);
+        assertEquals("CS205", course.getCourseCode());
+        assertEquals("Web Development", course.getName());
+        assertEquals("113598056", course.getProfessorId());
+        assertEquals(113, course.getAcademicYear());
+        assertEquals(1, course.getSemester());
+        assertEquals("A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.", course.getDescription());
     }
 
     @Test
-    void getStudentsInCourse_returnsListOfUserIds() {
-        String courseCode = "CS101";
-        List<Long> expected = List.of(10L, 20L);
+    public void getStudentsInCourseTest() {
+        String courseCode = "CS205";
+        List<Long> studentIds = courseDAO.getStudentsInCourse(courseCode);
 
-        when(jdbcTemplate.query(
-                eq("SELECT userId FROM enrollment WHERE courseCode = ?"),
-                eq(new Object[]{courseCode}),
-                any(RowMapper.class))
-        ).thenReturn(expected);
-
-        List<Long> result = courseDAO.getStudentsInCourse(courseCode);
-
-        assertEquals(expected, result);
-        verify(jdbcTemplate, times(1)).query(
-                eq("SELECT userId FROM enrollment WHERE courseCode = ?"),
-                eq(new Object[]{courseCode}),
-                any(RowMapper.class)
-        );
+        assertNotNull(studentIds);
+        assertEquals(4, studentIds.size());
+        assertEquals(1L, studentIds.get(0));
+        assertEquals(3L, studentIds.get(1));
+        assertEquals(4L, studentIds.get(2));
+        assertEquals(5L, studentIds.get(3));
     }
 
     @Test
-    void getProfessorId_returnsProfessorId() {
-        String courseCode = "CS101";
-        String expected = "123";
+    public void getProfessorIdTest() {
+        String courseCode = "CS205";
+        String professorId = courseDAO.getProfessorId(courseCode);
 
-        when(jdbcTemplate.queryForObject(
-                eq("SELECT professorId FROM course WHERE courseCode = ?"),
-                eq(new Object[]{courseCode}),
-                eq(String.class))
-        ).thenReturn(expected);
-
-        String result = courseDAO.getProfessorId(courseCode);
-
-        assertEquals(expected, result);
-        verify(jdbcTemplate, times(1)).queryForObject(
-                eq("SELECT professorId FROM course WHERE courseCode = ?"),
-                eq(new Object[]{courseCode}),
-                eq(String.class)
-        );
+        assertNotNull(professorId);
+        assertEquals("113598056", professorId); // 假設 CS205 的授課教授為 113598056
     }
 }

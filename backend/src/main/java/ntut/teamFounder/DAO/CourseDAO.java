@@ -16,7 +16,7 @@ public class CourseDAO {
     }
 
     public List<String> getCourseByStudentId(Long id) {
-        String sql = "SELECT * FROM enrollment WHERE id = ?";
+        String sql = "SELECT * FROM enrollment WHERE userId = ?";
         return jdbcTemplate.query(sql, new Object[]{id}, (rs, rowNum) ->
             rs.getString("courseCode")
         );
@@ -28,7 +28,7 @@ public class CourseDAO {
             new Course(
                 rs.getString("courseCode"),
                 rs.getString("name"),
-                rs.getLong("professorId"),
+                rs.getString("professorId"),
                 rs.getInt("academicYear"),
                 rs.getInt("semester"),
                 rs.getString("description")
