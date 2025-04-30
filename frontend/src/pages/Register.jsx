@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import Loading from '../components/Loading'
+import { motion } from 'framer-motion'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -61,6 +62,7 @@ function Register() {
         icon: 'error',
         title: 'Registration Failed',
         text: errors,
+        confirmButtonColor: '#4f46e5'
       })
       return
     }
@@ -113,156 +115,188 @@ function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
-      <div className="max-w-2xl w-full space-y-8 bg-white p-8 rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300">
-        <div className="text-center">
-          <h2 className="text-3xl pt-8 font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Join our community and start your journey
-          </p>
-        </div>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gray-100"
+    >
+      <div className="min-h-screen flex">
+        {/* Right Side - Register Form */}
+        <motion.div
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="w-full lg:w-1/2 flex items-center justify-center p-8"
+        >
+          <div className="w-full max-w-md">
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="bg-white rounded-2xl shadow-xl p-8"
+            >
+              {/* Logo */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="text-center mb-8"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                  <i className="fas fa-user-plus text-gray-600 fa-lg"></i>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800">Create Account</h2>
+                <p className="text-gray-600 mt-2">Join us and start your journey</p>
+              </motion.div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Full Name <span className="text-red-500">*</span>
-              </label>
-              <div className="mt-1">
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
-                  placeholder="Enter your full name"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="studentId" className="block text-sm font-medium text-gray-700">
-                Student ID <span className="text-red-500">*</span>
-              </label>
-              <div className="mt-1">
-                <input
-                  id="studentId"
-                  name="studentId"
-                  type="text"
-                  value={formData.studentId}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
-                  placeholder="Enter your student ID"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6">
-            <div className="relative">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address <span className="text-red-500">*</span>
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
-                  placeholder="Enter your email"
-                />
-                {emailSuggestions.length > 0 && (
-                  <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-200">
-                    {emailSuggestions.map((suggestion, index) => (
-                      <div
-                        key={index}
-                        className="px-4 py-2 hover:bg-gray-100 text-black text-sm cursor-pointer"
-                        onClick={() => handleEmailSuggestionClick(suggestion)}
-                      >
-                        {suggestion}
-                      </div>
-                    ))}
+              {/* Form */}
+              <motion.form
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                onSubmit={handleSubmit}
+                className="space-y-6"
+              >
+                {/* Name Field */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
+                      placeholder="Enter your full name"
+                      required
+                    />
+                    <i className="fas fa-user absolute right-2 top-4 w-6 h-6 text-gray-400"></i>
                   </div>
-                )}
-              </div>
+                </div>
+
+                {/* ID Field */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student/Teacher ID</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      name="studentId"
+                      value={formData.studentId}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
+                      placeholder="Enter your ID"
+                      required
+                    />
+                    <i className="fas fa-id-card absolute right-2 top-4 w-6 h-6 text-gray-400"></i>
+                  </div>
+                </div>
+
+                {/* Email Field */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
+                      placeholder="Enter your email"
+                      required
+                    />
+                    <i className="fas fa-envelope absolute right-2 top-4 w-6 h-6 text-gray-400"></i>
+                    {emailSuggestions.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+                        {emailSuggestions.map((suggestion, index) => (
+                          <div
+                            key={index}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                            onClick={() => handleEmailSuggestionClick(suggestion)}
+                          >
+                            {suggestion}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Password Field */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                  <div className="relative">
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
+                      placeholder="Enter your password"
+                      required
+                    />
+                    <i className="fas fa-lock absolute right-2 top-4 w-6 h-6 text-gray-400"></i>
+                  </div>
+                </div>
+
+                {/* Confirm Password Field */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                  <div className="relative">
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
+                      placeholder="Confirm your password"
+                      required
+                    />
+                    <i className="fas fa-lock absolute right-2 top-4 w-6 h-6 text-gray-400"></i>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  className="w-full bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 focus:ring-opacity-50 transition-colors"
+                >
+                  Create Account
+                </button>
+
+                {/* Login Link */}
+                <p className="mt-6 text-center text-gray-600">
+                  Already have an account?
+                  <Link
+                    to="/login"
+                    className="ml-1 text-gray-600 hover:text-gray-700 font-semibold focus:outline-none"
+                  >
+                    Sign in
+                  </Link>
+                </p>
+              </motion.form>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Left Side - Image */}
+        <motion.div
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="hidden lg:block lg:w-1/2 bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80')" }}
+        >
+          <div className="h-full bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="text-center text-white px-12">
+              <h2 className="text-4xl font-bold mb-6">TeamFounder</h2>
+              <p className="text-xl">Find your perfect team members and start your journey together</p>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password <span className="text-red-500">*</span>
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
-                  placeholder="Create a password"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                Confirm Password <span className="text-red-500">*</span>
-              </label>
-              <div className="mt-1">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black"
-                  placeholder="Confirm your password"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-            >
-              Create Account
-            </button>
-          </div>
-        </form>
-
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
-                Already have an account?
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <Link
-              to="/login"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-            >
-              Sign in
-            </Link>
-          </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

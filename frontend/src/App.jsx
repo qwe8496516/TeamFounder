@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Match from './pages/MatchList'
@@ -15,17 +16,93 @@ import ProfessorProfile from './pages/ProfessorProfile'
 
 function NavbarWrapper({ isLoggedIn, setIsLoggedIn }) {
   const location = useLocation()
+  const validPages = ['/login', '/register', '/student/match', '/student/course', '/student/teams', '/student/profile', '/professor/course', '/professor/courses/:courseId', '/professor/profile']
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
-  const isNotFoundPage = location.pathname === '/404' || location.pathname === '*'
-  
-  useEffect(() => {
-  }, [location.pathname])
+  const isNotFoundPage = !validPages.includes(location.pathname)
   
   if (isAuthPage || isNotFoundPage) {
     return null
   }
   
   return <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+}
+
+function AnimatedRoutes({ isLoggedIn, setIsLoggedIn }) {
+  const location = useLocation()
+
+  const ProtectedRoute = ({ children }) => {
+    if (!isLoggedIn) {
+      return <Navigate to="/login" replace />
+    }
+    return children
+  }
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/student/match"
+          element={
+            <ProtectedRoute>
+              <Match />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/course"
+          element={
+            <ProtectedRoute>
+              <StudentCourse />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/teams"
+          element={
+            <ProtectedRoute>
+              <Team />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/profile"
+          element={
+            <ProtectedRoute>
+              <StudentProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/professor/course"
+          element={
+            <ProtectedRoute>
+              <ProfessorCourses />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/professor/courses/:courseId"
+          element={
+            <ProtectedRoute>
+              <ProfessorCourseManage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/professor/profile"
+          element={
+            <ProtectedRoute>
+              <ProfessorProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<NotFound setIsLoggedIn={setIsLoggedIn} />} />
+      </Routes>
+    </AnimatePresence>
+  )
 }
 
 function App() {
@@ -40,13 +117,6 @@ function App() {
     }, 100)
   }, [])
 
-  const ProtectedRoute = ({ children }) => {
-    if (!isLoggedIn) {
-      return <Navigate to="/login" replace />
-    }
-    return children
-  }
-
   if (isLoading) {
     return <Loading />
   }
@@ -55,68 +125,7 @@ function App() {
     <BrowserRouter>
       <div className={`min-h-screen bg-gray-50 ${ isLoggedIn ? 'pt-16' : 'pt-0'}`}>
         <NavbarWrapper isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/student/match"
-            element={
-              <ProtectedRoute>
-                <Match />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/student/course"
-            element={
-              <ProtectedRoute>
-                <StudentCourse />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/student/teams"
-            element={
-              <ProtectedRoute>
-                <Team />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/student/profile"
-            element={
-              <ProtectedRoute>
-                <StudentProfile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/professor/course"
-            element={
-              <ProtectedRoute>
-                <ProfessorCourses />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/professor/courses/:courseId"
-            element={
-              <ProtectedRoute>
-                <ProfessorCourseManage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/professor/profile"
-            element={
-              <ProtectedRoute>
-                <ProfessorProfile />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AnimatedRoutes isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
       </div>
     </BrowserRouter>
   )

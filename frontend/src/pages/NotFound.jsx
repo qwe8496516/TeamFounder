@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-function NotFound() {
+function NotFound({ setIsLoggedIn }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 pb-20">
       <div className="text-center">
@@ -11,7 +11,11 @@ function NotFound() {
         </p>
         <div className="mt-6">
           <Link
-            to="/"
+            to="/login"
+            onClick={() => {
+              localStorage.clear()
+              setIsLoggedIn(false)
+            }}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-700 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Go to login page
