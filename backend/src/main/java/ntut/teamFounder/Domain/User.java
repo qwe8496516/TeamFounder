@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -42,6 +43,15 @@ public class User {
         if (this.isProfessor()) return "professor";
         if (this.isStudent()) return "student";
         return "";
+    }
+
+    public Map<String, Object> toMap() {
+        return Map.of(
+            "id", this.getId(),
+            "userId", this.getUserId(),
+            "username", this.getUsername(),
+            "email", this.getEmail()
+        );
     }
 
 } 
