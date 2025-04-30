@@ -10,7 +10,6 @@ public class AnnouncementTest {
 
     @Test
     public void importLevelIsValid() {
-        // Valid range: 0~4
         Announcement a1 = new Announcement(1L, "t", "c", new Date(), "CS101", 0);
         Announcement a2 = new Announcement(2L, "t", "c", new Date(), "CS101", 4);
         Announcement a3 = new Announcement(3L, "t", "c", new Date(), "CS101", -1);
@@ -27,7 +26,7 @@ public class AnnouncementTest {
         Announcement a = new Announcement(1L, "t", "This is a test content with damn.", new Date(), "CS101", 2);
 
         assertTrue(a.hasWordInContent("damn"));
-        assertTrue(a.hasWordInContent("DAMN")); // case-insensitive
+        assertTrue(a.hasWordInContent("DAMN"));
         assertFalse(a.hasWordInContent("bitch"));
         assertFalse(a.hasWordInContent("hello"));
     }
@@ -50,7 +49,7 @@ public class AnnouncementTest {
         Announcement a = new Announcement(1L, "This is a bitch title", "c", new Date(), "CS101", 2);
 
         assertTrue(a.hasWordInTitle("bitch"));
-        assertTrue(a.hasWordInTitle("BITCH")); // case-insensitive
+        assertTrue(a.hasWordInTitle("BITCH"));
         assertFalse(a.hasWordInTitle("fuck"));
         assertFalse(a.hasWordInTitle("hello"));
     }
@@ -70,23 +69,18 @@ public class AnnouncementTest {
 
     @Test
     public void verifyAnnouncement() {
-        // Valid: no bad words, importanceLevel valid
         Announcement valid = new Announcement(1L, "Good title", "Clean content", new Date(), "CS101", 2);
         assertTrue(valid.verifyAnnouncement());
 
-        // Invalid: bad word in content
         Announcement badContent = new Announcement(2L, "Good title", "This contains fuck.", new Date(), "CS101", 2);
         assertFalse(badContent.verifyAnnouncement());
 
-        // Invalid: bad word in title
         Announcement badTitle = new Announcement(3L, "bitch in title", "Clean content", new Date(), "CS101", 2);
         assertFalse(badTitle.verifyAnnouncement());
 
-        // Invalid: importanceLevel out of range
         Announcement badLevel = new Announcement(4L, "Good title", "Clean content", new Date(), "CS101", 10);
         assertFalse(badLevel.verifyAnnouncement());
 
-        // Invalid: both bad word and invalid level
         Announcement bothBad = new Announcement(5L, "fuck", "damn", new Date(), "CS101", -1);
         assertFalse(bothBad.verifyAnnouncement());
     }
