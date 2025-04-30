@@ -4,6 +4,9 @@ INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598071', 'Shuang Yang', '123456', 't113598071@ntut.org.tw', 0);
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598002', 'Shin Chou Lie', '123456', 't113598002@ntut.org.tw', 0);
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598001', 'Shung Chung chen', '123456', 't113598001@ntut.org.tw', 0);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_islab', 'Jong Yih Kuo', '123456', 'jykuo@ntut.org.tw', 1);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_ooad', 'Woei Kae Chen', '123456', 'woeikaechen@ntut.org.tw', 1);
+
 
 #Skills
 INSERT INTO skill (type, name) VALUES ('Programming','HTML/CSS');
