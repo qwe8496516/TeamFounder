@@ -58,6 +58,6 @@ public class CourseDAOTest {
         String professorId = courseDAO.getProfessorId(courseCode);
 
         assertNotNull(professorId);
-        assertEquals("113598056", professorId); // 假設 CS205 的授課教授為 113598056
+        assertEquals("113598056", professorId);
     }
 }

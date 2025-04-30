@@ -37,28 +37,24 @@ public class StudentTest {
     @Test
     void testCalculateFitness() {
         Student student = new Student(1L, "u1", "Alice", "pass", "a@x.com", new Date());
-        // Both lists empty
         assertEquals(50, student.calculateFitness(new ArrayList<>()));
 
-        // Some overlap
         student.getSkills().addAll(Arrays.asList(1L, 2L, 3L));
-        List<Long> matcherSkills = Arrays.asList(2L, 3L, 4L, 5L); // 2 matches out of 4
+        List<Long> matcherSkills = Arrays.asList(2L, 3L, 4L, 5L);
         double fitness = student.calculateFitness(matcherSkills);
-        double expected = (2 * 100 / 4) * 0.1 + 90; // 95
+        double expected = (2 * 100 / 4) * 0.1 + 90;
         expected = Math.floor(expected);
         assertEquals(expected, fitness);
 
-        // No overlap
         matcherSkills = Arrays.asList(6L, 7L);
         fitness = student.calculateFitness(matcherSkills);
-        expected = (0 * 100 / 2) * 0.1 + 90; // 90
+        expected = (0 * 100 / 2) * 0.1 + 90;
         expected = Math.floor(expected);
         assertEquals(expected, fitness);
 
-        // All overlap
         matcherSkills = Arrays.asList(2L, 3L);
         fitness = student.calculateFitness(matcherSkills);
-        expected = (2 * 100 / 2) * 0.1 + 90; // 100
+        expected = (2 * 100 / 2) * 0.1 + 90;
         expected = Math.floor(expected);
         assertEquals(expected, fitness);
     }

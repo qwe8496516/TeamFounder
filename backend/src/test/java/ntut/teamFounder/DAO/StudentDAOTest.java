@@ -62,6 +62,7 @@ public class StudentDAOTest {
     }
 
     @Test
+    @Transactional
     public void testGetSkill() {
         List<Long> expectedSkillIds = new ArrayList<>();
         expectedSkillIds.add(2L);
@@ -72,6 +73,7 @@ public class StudentDAOTest {
     }
 
     @Test
+    @Transactional
     public void testAddSkill() {
         List<Long> expectedSkillIds = new ArrayList<>();
         expectedSkillIds.add(2L);
@@ -83,6 +85,7 @@ public class StudentDAOTest {
     }
 
     @Test
+    @Transactional
     public void testDeleteSkill() {
         List<Long> expectedSkillIds = new ArrayList<>();
         expectedSkillIds.add(2L);
@@ -101,13 +104,11 @@ public class StudentDAOTest {
                 100L, "TEST001", "Test User", "testpass", "test@ntut.org.tw", 0
         );
 
-        // Create test course
         jdbcTemplate.update(
                 "INSERT INTO course (courseCode, name, professorId, academicYear, semester, description) VALUES (?, ?, ?, ?, ?, ?)",
                 "T101", "Test Course", "p_test", 113, 1, "A test course"
         );
 
-        // 3. Execute enrollment
         int result = studentDAO.enrollInCourse(100L, "T101");
         assertEquals(1, result);
 

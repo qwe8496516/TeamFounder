@@ -25,14 +25,11 @@ public class StudentDAO {
     }
 
     public int deleteStudent(String studentId) {
-        // Find the user's id
         String findIdSql = "SELECT id FROM users WHERE userId=?";
         Long id = jdbcTemplate.queryForObject(findIdSql, new Object[]{studentId}, Long.class);
 
-        // Delete from enrollment first
         jdbcTemplate.update("DELETE FROM enrollment WHERE userId=?", id);
 
-        // Now delete from users
         String sql = "DELETE FROM users WHERE userId=?";
         return jdbcTemplate.update(sql, studentId);
     }
