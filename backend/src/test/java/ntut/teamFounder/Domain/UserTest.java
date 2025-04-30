@@ -55,4 +55,13 @@ public class UserTest {
         assertEquals("student", user2.getRoleName());
     }
 
+    @Test
+    public void testEncodeBase64() {
+        Date currentDate = new Date();
+        User user = new User(10L, "113598999", "Mike Wang", "13579", "t113598999@ntut.org.tw", 1, currentDate);
+        user.encodeBase64();
+
+        assertEquals("MTM1Nzk=", user.getPassword());
+    }
+
 }
