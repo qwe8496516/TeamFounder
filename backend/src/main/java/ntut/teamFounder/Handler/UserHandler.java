@@ -6,6 +6,7 @@ import ntut.teamFounder.Domain.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,8 +28,12 @@ public class UserHandler {
             String userId = credentials.get("userId");
             String password = credentials.get("password");
 
+            User loginUser = new User(0L, userId, "", password, "", 0, new Date());
+            loginUser.encodeBase64();
+            String encodePassword = loginUser.getPassword();
+
             User user = userDAO.getUserById(userId);
-            if (user == null || !user.isPasswordValid(password)) {
+            if (user == null || !user.isPasswordValid(encodePassword)) {
                 return ResponseEntity.badRequest().body("Invalid credentials");
             }
 
@@ -60,7 +65,11 @@ public class UserHandler {
             if (userDAO.getUserById(userId) != null) {
                 return ResponseEntity.badRequest().body("User ID already exists");
             }
-            int affected = userDAO.createUser(userId, username, password, email);
+
+            User user = new User(0L, userId, username, password, email, 0, new Date());
+            user.encodeBase64();
+            String encodePassword = user.getPassword();
+            int affected = userDAO.createUser(userId, username, encodePassword, email);
 
             if (affected == 0) {
                 return ResponseEntity.badRequest().body("Registration failed");

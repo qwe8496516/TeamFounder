@@ -3,6 +3,7 @@ package ntut.teamFounder.Domain;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -52,6 +53,12 @@ public class User {
             "username", this.getUsername(),
             "email", this.getEmail()
         );
+    }
+
+    public void encodeBase64() {
+        if (this.password != null) {
+            this.password = Base64.getEncoder().encodeToString(this.password.getBytes());
+        }
     }
 
 } 

@@ -54,7 +54,4 @@ public class Student extends User {
         return map;
     }
 
-    private String encodeBase64(String value) {
-        return value == null ? null : Base64.getEncoder().encodeToString(value.getBytes());
-    }
 }
