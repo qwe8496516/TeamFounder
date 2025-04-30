@@ -35,7 +35,8 @@ public class UserDAOTest {
     @Test
     public void updateUser() {
         int res = userDAO.updateUser("113598012", "FWF46468F");
-        assertEquals(1, res);
+        User user = userDAO.getUserById("113598012");
+        assertEquals("FWF46468F", user.getPassword());
     }
 
 }
