@@ -86,7 +86,7 @@ public class CourseHandler {
                         Skill s = studentDAO.getSkillById(skill);
                         skillList.add(s);
                     }
-                    double fitness = student.calculateFitness(matcher.getSkills());
+                    int fitness = student.calculateFitness(matcher.getSkills());
                     Map<String, Object> map = student.toMap();
                     map.put("Fitness", fitness);
                     map.put("skills", skillList);

@@ -16,7 +16,7 @@ public class Student extends User {
         super(id, userId, username, password, email, 0, createdAt);
     }
 
-    public double calculateFitness(List<Long> matcherSkills) {
+    public int calculateFitness(List<Long> matcherSkills) {
         double fitness = 0;
         int weight = matcherSkills.size();
         if (skills.isEmpty() || matcherSkills.isEmpty()) {
@@ -28,8 +28,7 @@ public class Student extends User {
             }
         }
         fitness = calculateWeight(fitness, weight);
-        fitness = fitnessToInteger(fitness);
-        return fitness;
+        return fitnessToInteger(fitness);
     }
 
     public double calculateWeight(double fitness, int weight) {

@@ -60,14 +60,7 @@ public class StudentHandler {
         }
 
         try {
-            Student student = new Student(
-                    null,
-                    userId,
-                    username,
-                    password,
-                    email,
-                    new Date()
-            );
+            Student student = new Student(null, userId, username, password, email, new Date() );
 
             int updated = studentDAO.updateStudent(student);
             if (updated > 0) {

@@ -155,7 +155,7 @@ public class CourseHandlerTest {
         assertEquals("student2", student2Data.get("userId"));
         assertEquals("Student Two", student2Data.get("username"));
         assertEquals("student2@example.com", student2Data.get("email"));
-        assertTrue((Double) student2Data.get("Fitness") > 90);
+        assertTrue((int) student2Data.get("Fitness") > 90);
         List<Skill> student2SkillsList = (List<Skill>) student2Data.get("skills");
         assertEquals(3, student2SkillsList.size());
         
@@ -163,7 +163,7 @@ public class CourseHandlerTest {
         assertEquals("student3", student3Data.get("userId"));
         assertEquals("Student Three", student3Data.get("username"));
         assertEquals("student3@example.com", student3Data.get("email"));
-        assertTrue((Double) student3Data.get("Fitness") <= 90);
+        assertTrue((int) student3Data.get("Fitness") <= 90);
         List<Skill> student3SkillsList = (List<Skill>) student3Data.get("skills");
         assertEquals(2, student3SkillsList.size());
     }
