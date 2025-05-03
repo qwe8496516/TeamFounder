@@ -16,9 +16,13 @@ import ProfessorProfile from './pages/ProfessorProfile'
 
 function NavbarWrapper({ isLoggedIn, setIsLoggedIn }) {
   const location = useLocation()
-  const validPages = ['/login', '/register', '/student/match', '/student/course', '/student/teams', '/student/profile', '/professor/course', '/professor/courses/:courseId', '/professor/profile']
+  const validPages = ['/login', '/register', '/student/match', '/student/course', '/student/teams', '/student/profile', '/professor/course', '/professor/course/:courseCode', '/professor/profile']
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
-  const isNotFoundPage = !validPages.includes(location.pathname)
+  const isNotFoundPage = !validPages.some(page => {
+    const pagePattern = page.replace(/:[^/]+/, '[^/]+')
+    const regex = new RegExp(`^${pagePattern}$`)
+    return regex.test(location.pathname)
+  })
   
   if (isAuthPage || isNotFoundPage) {
     return null
@@ -84,7 +88,7 @@ function AnimatedRoutes({ isLoggedIn, setIsLoggedIn }) {
           }
         />
         <Route
-          path="/professor/courses/:courseId"
+          path="/professor/course/:courseCode"
           element={
             <ProtectedRoute>
               <ProfessorCourseManage />

@@ -99,4 +99,21 @@ public class CourseHandler {
         }
     }
 
+    @GetMapping("/professor/{professorId}")
+    public ResponseEntity<?> getCoursesByProfessorId(@PathVariable String professorId) {
+        try {
+            List<Course> courses = courseDAO.getCoursesByProfessorId(professorId);
+            List<Map<String, Object>> coursesMap = new ArrayList<>();
+            for (Course course : courses) {
+                int studentNum = studentDAO.getStudentCount(course.getCourseCode());
+                Map<String, Object> courseMap = course.toMap();
+                courseMap.put("students", studentNum);
+                coursesMap.add(courseMap);
+            }
+            return ResponseEntity.ok(coursesMap);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to retrieve course: " + e.getMessage());
+        }
+    }
+
 }

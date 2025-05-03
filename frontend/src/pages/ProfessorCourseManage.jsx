@@ -4,9 +4,10 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import Announcement from '../components/Announcement'
 import AnnouncementModal from '../components/AnnouncementModal'
+import Loading from '../components/Loading'
 
 function ProfessorCourseManage() {
-  const { courseId } = useParams()
+  const { courseCode } = useParams()
   const navigate = useNavigate()
   const [course, setCourse] = useState(null)
   const [announcements, setAnnouncements] = useState([])
@@ -35,8 +36,6 @@ function ProfessorCourseManage() {
           })
           return
         }
-
-        const courseCode = 'CS301'
 
         const courseResponse = await axios.get(`http://localhost:8080/api/course/${courseCode}`, {
           headers: {
@@ -77,7 +76,7 @@ function ProfessorCourseManage() {
     }
 
     fetchCourseData()
-  }, [courseId, navigate])
+  }, [courseCode, navigate])
 
   const handleAddAnnouncement = (newAnnouncement) => {
     const updatedAnnouncements = [...announcements, newAnnouncement]
@@ -88,13 +87,7 @@ function ProfessorCourseManage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          </div>
-        </div>
-      </div>
+      <Loading />
     )
   }
 
@@ -105,7 +98,7 @@ function ProfessorCourseManage() {
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900">Course not found</h1>
             <button
-              onClick={() => navigate('/professor/courses')}
+              onClick={() => navigate('/professor/course')}
               className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
             >
               Back to Courses
@@ -143,7 +136,7 @@ function ProfessorCourseManage() {
           <div className="p-6">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">{course.code}</h2>
+                <h2 className="text-2xl font-bold text-gray-900">{course.courseCode}</h2>
                 <p className="text-gray-600">{course.academicYear}-{course.semester}</p>
               </div>
               <div className="flex items-center text-gray-600">
@@ -182,7 +175,7 @@ function ProfessorCourseManage() {
         onClose={() => setIsNewAnnouncementOpen(false)}
         onSubmit={handleAddAnnouncement}
         importanceLevels={IMPORTANCE_LEVELS}
-        courseCode={'CS301'}
+        courseCode={courseCode}
       />
     </div>
   )

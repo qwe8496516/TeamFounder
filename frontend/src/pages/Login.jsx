@@ -48,9 +48,7 @@ function Login({ setIsLoggedIn }) {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <Loading />
-      </div>
+      <Loading />
     )
   }
 
@@ -60,7 +58,7 @@ function Login({ setIsLoggedIn }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gray-100"
+      className="min-h-screen"
     >
       <div className="min-h-screen flex">
         {/* Left Side - Image */}

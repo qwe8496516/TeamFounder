@@ -1,7 +1,6 @@
 package ntut.teamFounder.Handler;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import ntut.teamFounder.DAO.UserDAO;
 import ntut.teamFounder.Domain.Skill;
 import ntut.teamFounder.Domain.Student;
 import ntut.teamFounder.DAO.StudentDAO;
@@ -16,7 +15,7 @@ import java.util.*;
 public class StudentHandler {
     private final StudentDAO studentDAO;
 
-    public StudentHandler(StudentDAO studentDAO, UserDAO userDAO) {
+    public StudentHandler(StudentDAO studentDAO) {
         this.studentDAO = studentDAO;
     }
 

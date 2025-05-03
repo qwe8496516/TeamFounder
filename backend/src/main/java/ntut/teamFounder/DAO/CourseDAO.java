@@ -47,4 +47,19 @@ public class CourseDAO {
         String sql = "SELECT professorId FROM course WHERE courseCode = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{courseCode}, String.class);
     }
+
+    public List<Course> getCoursesByProfessorId(String professorId) {
+        String sql = "SELECT * FROM course WHERE professorId = ?";
+        return jdbcTemplate.query(sql, new Object[]{professorId}, (rs, rowNum) ->
+            new Course(
+                rs.getString("courseCode"),
+                rs.getString("name"),
+                rs.getString("professorId"),
+                rs.getInt("academicYear"),
+                rs.getInt("semester"),
+                rs.getString("description")
+            )
+        );
+    }
+
 }

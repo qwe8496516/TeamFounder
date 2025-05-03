@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import Loading from '../components/Loading'
-import { useNavigate } from 'react-router-dom'
 import MatchCard from '../components/MatchCard'
 import Pagination from '../components/Pagination'
 
@@ -13,7 +12,6 @@ function MatchList() {
   const [itemsPerPage] = useState(3)
   const [currentStudents, setCurrentStudents] = useState([])
   const topRef = useRef(null)
-  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -71,13 +69,7 @@ function MatchList() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-center items-center h-64">
-            <Loading />
-          </div>
-        </div>
-      </div>
+      <Loading />
     )
   }
 

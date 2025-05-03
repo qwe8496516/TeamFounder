@@ -119,9 +119,7 @@ function ProfessorProfile() {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <Loading />
-      </div>
+      <Loading />
     )
   }
 
