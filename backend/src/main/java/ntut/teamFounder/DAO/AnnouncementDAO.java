@@ -16,7 +16,7 @@ public class AnnouncementDAO {
     }
 
     public List<Announcement> getAnnouncements(String courseCode) {
-        String sql = "SELECT * FROM announcement WHERE courseCode = ? ORDER BY importanceLevel DESC";
+        String sql = "SELECT * FROM announcement WHERE courseCode = ? ORDER BY importanceLevel DESC, createdAt DESC";
         return jdbcTemplate.query(sql, new Object[]{courseCode}, (rs, rowNum) ->
                 new Announcement(
                         rs.getLong("id"),

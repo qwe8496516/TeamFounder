@@ -52,15 +52,28 @@ function ProfessorCourseManage() {
           }
         })
         
-        const formattedAnnouncements = announcementsResponse.data.map(announcement => ({
-          id: announcement.id,
-          title: announcement.title,
-          content: announcement.content,
-          date: announcement.createdAt,
-          author: 'Professor',
-          importanceLevel: announcement.importanceLevel
-        }))
+        const formattedAnnouncements = announcementsResponse.data.map(announcement => {
+          const timestamp = new Date(announcement.createdAt).getTime()
+          return {
+            id: announcement.id,
+            title: announcement.title,
+            content: announcement.content,
+            date: new Date(announcement.createdAt).toISOString().split('T')[0],
+            timestamp: timestamp,
+            author: 'Professor',
+            importanceLevel: announcement.importanceLevel
+          }
+        })
         
+        formattedAnnouncements.sort((a, b) => {
+          const importanceDiff = b.importanceLevel - a.importanceLevel
+          if (importanceDiff !== 0) {
+            return importanceDiff
+          }
+          return b.timestamp - a.timestamp
+        })
+        
+        console.log('Sorted announcements:', formattedAnnouncements)
         setAnnouncements(formattedAnnouncements)
       } catch (err) {
         console.error('Error fetching course data:', err)
@@ -79,8 +92,26 @@ function ProfessorCourseManage() {
   }, [courseCode, navigate])
 
   const handleAddAnnouncement = (newAnnouncement) => {
-    const updatedAnnouncements = [...announcements, newAnnouncement]
-    updatedAnnouncements.sort((a, b) => b.importanceLevel - a.importanceLevel)
+    const now = new Date()
+    const timestamp = now.getTime()
+    const formattedAnnouncement = {
+      ...newAnnouncement,
+      date: now.toISOString().split('T')[0],
+      timestamp: timestamp,
+      author: 'Professor'
+    }
+    console.log('New announcement timestamp:', timestamp)
+    
+    const updatedAnnouncements = [...announcements, formattedAnnouncement]
+    updatedAnnouncements.sort((a, b) => {
+      const importanceDiff = b.importanceLevel - a.importanceLevel
+      if (importanceDiff !== 0) {
+        return importanceDiff
+      }
+      return b.timestamp - a.timestamp
+    })
+    
+    console.log('Updated announcements:', updatedAnnouncements)
     setAnnouncements(updatedAnnouncements)
     setIsNewAnnouncementOpen(false)
   }
