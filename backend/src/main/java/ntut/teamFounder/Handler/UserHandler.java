@@ -59,14 +59,17 @@ public class UserHandler {
             String confirmPassword = registerData.get("confirmPassword");
             String email = registerData.get("email");
 
+
+            User user = new User(0L, userId, username, password, email, 0, new Date());
             if (!password.equals(confirmPassword)) {
                 return ResponseEntity.badRequest().body("Passwords do not match");
             }
             if (userDAO.getUserById(userId) != null) {
                 return ResponseEntity.badRequest().body("User ID already exists");
             }
-
-            User user = new User(0L, userId, username, password, email, 0, new Date());
+            if (user.isEmailValid()) {
+                return ResponseEntity.badRequest().body("Invalid email format");
+            }
             user.encodeBase64();
             String encodePassword = user.getPassword();
             int affected = userDAO.createUser(userId, username, encodePassword, email);
