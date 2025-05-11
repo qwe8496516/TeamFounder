@@ -44,12 +44,15 @@ public class CourseHandler {
     public ResponseEntity<?> getCoursesByStudentId(@PathVariable Long studentId) {
         try {
             List<String> courseCodes = courseDAO.getCourseByStudentId(studentId);
-            List<Course> courses = new ArrayList<>();
+            List<Map<String, Object>> coursesMap = new ArrayList<>();
             for (String courseCode : courseCodes) {
                 Course course = courseDAO.getCourseByCourseCode(courseCode);
-                courses.add(course);
+                int studentNum = studentDAO.getStudentCount(course.getCourseCode());
+                Map<String, Object> courseMap = course.toMap();
+                courseMap.put("students", studentNum);
+                coursesMap.add(courseMap);
             }
-            return ResponseEntity.ok(courses);
+            return ResponseEntity.ok(coursesMap);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to retrieve course: " + e.getMessage());
         }

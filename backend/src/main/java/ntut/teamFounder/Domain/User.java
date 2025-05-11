@@ -28,6 +28,10 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public boolean isEmailValid() {
+        return this.email.contains("@");
+    }
+
     public boolean isPasswordValid(String password) {
         return this.password.equals(password);
     }
