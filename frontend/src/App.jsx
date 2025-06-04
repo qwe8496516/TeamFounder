@@ -10,13 +10,14 @@ import Navbar from './components/Navbar'
 import Loading from './components/Loading'
 import ProfessorCourses from './pages/ProfessorCourses'
 import StudentProfile from './pages/StudentProfile'
+import StudentCourseManage from './pages/StudentCourseManage'
 import NotFound from './pages/NotFound'
 import ProfessorCourseManage from './pages/ProfessorCourseManage'
 import ProfessorProfile from './pages/ProfessorProfile'
 
 function NavbarWrapper({ isLoggedIn, setIsLoggedIn }) {
   const location = useLocation()
-  const validPages = ['/login', '/register', '/student/match', '/student/course', '/student/teams', '/student/profile', '/professor/course', '/professor/course/:courseCode', '/professor/profile']
+  const validPages = ['/login', '/register', '/student/match', '/student/course', '/student/teams', '/student/profile', '/student/course/:courseCode', '/professor/course', '/professor/course/:courseCode', '/professor/profile']
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
   const isNotFoundPage = !validPages.some(page => {
     const pagePattern = page.replace(/:[^/]+/, '[^/]+')
@@ -76,6 +77,14 @@ function AnimatedRoutes({ isLoggedIn, setIsLoggedIn }) {
           element={
             <ProtectedRoute>
               <StudentProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/course/:courseCode"
+          element={
+            <ProtectedRoute>
+              <StudentCourseManage />
             </ProtectedRoute>
           }
         />

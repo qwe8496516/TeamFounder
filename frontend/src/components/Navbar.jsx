@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import Swal from 'sweetalert2'
 
 function Navbar({ setIsLoggedIn }) {
@@ -7,7 +7,10 @@ function Navbar({ setIsLoggedIn }) {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const userMenuRef = useRef(null)
+
+  const isInCourseManage = location.pathname.includes('/course/')
 
   useEffect(() => {
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -42,35 +45,49 @@ function Navbar({ setIsLoggedIn }) {
     <nav className="fixed top-0 left-0 right-0 bg-gray-800 shadow-lg z-50">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
-          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <button
-              type="button"
-              className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-colors duration-200"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              <span className="absolute -inset-0.5"></span>
-              <span className="sr-only">Open main menu</span>
-              <svg
-                className={`${isOpen ? 'hidden' : 'block'} h-6 w-6 transition-opacity duration-200`}
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                aria-hidden="true"
+          <div className="flex items-center">
+            {isInCourseManage && (
+              <button
+                onClick={() => navigate(-1)}
+                className="mr-4 bg-gray-800 text-white hover:text-white-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 rounded-full p-1"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
-              <svg
-                className={`${isOpen ? 'block' : 'hidden'} h-6 w-6 transition-opacity duration-200`}
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </button>
+            )}
+            <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+              {!isInCourseManage && (
+                <button
+                  type="button"
+                  className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-colors duration-200"
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  <span className="absolute -inset-0.5"></span>
+                  <span className="sr-only">Open main menu</span>
+                  <svg
+                    className={`${isOpen ? 'hidden' : 'block'} h-6 w-6 transition-opacity duration-200`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                  </svg>
+                  <svg
+                    className={`${isOpen ? 'block' : 'hidden'} h-6 w-6 transition-opacity duration-200`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             {/* <div className="flex shrink-0 items-center">
@@ -80,26 +97,30 @@ function Navbar({ setIsLoggedIn }) {
             </div> */}
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
-                <Link
-                  to={role === 'professor' ? '/professor/course' : '/student/course'}
-                  className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-                >
-                  Courses
-                </Link>
-                {role !== 'professor' && (
+                {!isInCourseManage && (
                   <>
                     <Link
-                      to="/student/teams"
+                      to={role === 'professor' ? '/professor/course' : '/student/course'}
                       className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
                     >
-                      Teams
+                      Courses
                     </Link>
-                    <Link
-                      to="/student/match"
-                      className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-                    >
-                      Match
-                    </Link>
+                    {role !== 'professor' && (
+                      <>
+                        <Link
+                          to="/student/teams"
+                          className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+                        >
+                          Teams
+                        </Link>
+                        <Link
+                          to="/student/match"
+                          className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+                        >
+                          Match
+                        </Link>
+                      </>
+                    )}
                   </>
                 )}
               </div>
@@ -213,26 +234,30 @@ function Navbar({ setIsLoggedIn }) {
         id="mobile-menu"
       >
         <div className="space-y-1 px-2 pb-3 pt-2">
-          <Link
-            to={role === 'professor' ? '/professor/course' : '/student/course'}
-            className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-          >
-            Courses
-          </Link>
-          {role !== 'professor' && (
+          {!isInCourseManage && (
             <>
               <Link
-                to="/student/teams"
+                to={role === 'professor' ? '/professor/course' : '/student/course'}
                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
               >
-                Teams
+                Courses
               </Link>
-              {/* <Link
-                to="/student/match"
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-              >
-                Match
-              </Link> */}
+              {role !== 'professor' && (
+                <>
+                  <Link
+                    to="/student/teams"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+                  >
+                    Teams
+                  </Link>
+                  <Link
+                    to="/student/match"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+                  >
+                    Match
+                  </Link>
+                </>
+              )}
             </>
           )}
         </div>

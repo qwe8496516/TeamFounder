@@ -6,6 +6,14 @@ import Announcement from '../components/Announcement'
 import AnnouncementModal from '../components/AnnouncementModal'
 import Loading from '../components/Loading'
 
+const courseImages = [
+  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80",
+  "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+  "https://images.unsplash.com/photo-1503676382389-4809596d5290?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+  "https://images.unsplash.com/photo-1513258496099-48168024aec0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+  "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+]
+
 function ProfessorCourseManage() {
   const { courseCode } = useParams()
   const navigate = useNavigate()
@@ -42,7 +50,15 @@ function ProfessorCourseManage() {
             Authorization: `Bearer ${token}`
           }
         })
-        setCourse(courseResponse.data)
+        
+        const courseWithImage = {
+          ...courseResponse.data,
+          image: courseImages[
+            Array.from(courseCode).reduce((acc, char) => acc + char.charCodeAt(0), 0) % courseImages.length
+          ]
+        }
+        
+        setCourse(courseWithImage)
         const announcementsResponse = await axios.get(`http://localhost:8080/api/announcements`, {
           params: {
             courseCode: courseCode
@@ -128,12 +144,6 @@ function ProfessorCourseManage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900">Course not found</h1>
-            <button
-              onClick={() => navigate('/professor/course')}
-              className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-            >
-              Back to Courses
-            </button>
           </div>
         </div>
       </div>
@@ -141,66 +151,94 @@ function ProfessorCourseManage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <button
-            onClick={() => navigate('/professor/course')}
-            className="inline-flex items-center text-white bg-gray-800 hover:bg-gray-900"
-          >
-            <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to Courses
-          </button>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="relative h-48">
-            <img className="w-full h-full object-cover" src={course.image ? course.image : 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80'} alt={course.name} />
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-600 to-gray-600 opacity-75"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <h1 className="text-4xl font-bold text-white">{course.name}</h1>
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center pt-8">
+      <div className="flex flex-col md:flex-row w-full max-w-7xl gap-8">
+        <div className="hidden md:block w-full md:w-96 flex-shrink-0 mb-8 md:mb-0">
+          <div className="relative bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col group">
+            <div className="relative w-full h-40">
+              <img 
+                className="w-full h-full object-cover" 
+                src={course.image} 
+                alt={course.name} 
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-30 pointer-events-none"></div>
+              <span className="absolute top-4 right-4 bg-gray-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                {course.courseCode}
+              </span>
+              <div className="absolute bottom-0 left-0 w-full px-4 pb-3">
+                <h1 className="text-xl font-bold text-white drop-shadow mb-1">{course.name}</h1>
+              </div>
+            </div>
+            <div className="p-6 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <svg className="h-5 w-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span className="text-gray-500 text-sm">Semester</span>
+                <span className="ml-auto font-semibold text-gray-900">{course.academicYear}-{course.semester}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                <span className="text-gray-500 text-sm">Students</span>
+                <span className="ml-auto font-semibold text-gray-900">{course.students}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <svg className="h-5 w-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+                <span className="text-gray-500 text-sm">Announcements</span>
+                <span className="ml-auto font-semibold text-gray-900">{announcements.length}</span>
+              </div>
+              <div className="border-t border-gray-200 my-2"></div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <svg className="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 17l4 4 4-4m0-5V3a1 1 0 00-1-1H7a1 1 0 00-1 1v14a1 1 0 001 1h3" /></svg>
+                  <span className="text-gray-700 font-semibold">Description</span>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed line-clamp-5">{course.description}</p>
+              </div>
             </div>
           </div>
-
-          <div className="p-6">
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">{course.courseCode}</h2>
-                <p className="text-gray-600">{course.academicYear}-{course.semester}</p>
-              </div>
-              <div className="flex items-center text-gray-600">
-                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                {course.students} students
-              </div>
-            </div>
-
-            <p className="text-gray-700 mb-6">{course.description}</p>
-
-            <div className="mb-6">
+        </div>
+        <div className="flex-1 flex flex-col items-center w-full">
+          <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+              <div className="text-lg font-bold text-gray-700">Announcements</div>
               <button
                 onClick={() => setIsNewAnnouncementOpen(true)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-bold font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="inline-flex items-center px-3 py-2 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700 transition-colors duration-200"
               >
-                <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                 </svg>
-                New Announcement
+                New
               </button>
             </div>
-
-            <div className="space-y-4">
-              {announcements.map((announcement) => (
-                <Announcement key={announcement.id} importanceLevel={IMPORTANCE_LEVELS[announcement.importanceLevel]} announcement={announcement} />
-              ))}
+            <div className="divide-y divide-gray-100">
+              {announcements.length === 0 ? (
+                <div className="p-8">
+                  <div className="text-center">
+                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h3 className="mt-2 text-lg font-medium text-gray-900">No announcements</h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      There are no announcements for this course yet.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                announcements.map((announcement) => (
+                  <div key={announcement.id} className="px-6 py-4">
+                    <div className="flex items-center">
+                      <span className="font-semibold text-gray-900 mr-2">{announcement.title}</span>
+                      <span className="ml-2 px-2 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-500">{announcement.date}</span>
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1 mb-2">{announcement.content}</div>
+                    <div className="text-xs text-gray-500">Posted by: {announcement.author || 'Professor'}</div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
       </div>
-
       <AnnouncementModal
         isOpen={isNewAnnouncementOpen}
         onClose={() => setIsNewAnnouncementOpen(false)}
