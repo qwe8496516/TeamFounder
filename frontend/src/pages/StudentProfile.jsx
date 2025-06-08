@@ -425,7 +425,7 @@ function StudentProfile() {
                       color={color}
                       closable
                       onClose={() => handleRemoveSkill(skill.id)}
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-2 text-sm px-2 py-1 rounded-lg"
                     >
                       {skill.name}
                     </Tag>
