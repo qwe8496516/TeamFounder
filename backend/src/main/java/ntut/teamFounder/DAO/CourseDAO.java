@@ -31,7 +31,9 @@ public class CourseDAO {
                 rs.getString("professorId"),
                 rs.getInt("academicYear"),
                 rs.getInt("semester"),
-                rs.getString("description")
+                rs.getString("description"),
+                rs.getBoolean("teamStatus"),
+                rs.getInt("courseStatus")
             )
         );
     }
@@ -57,7 +59,9 @@ public class CourseDAO {
                 rs.getString("professorId"),
                 rs.getInt("academicYear"),
                 rs.getInt("semester"),
-                rs.getString("description")
+                rs.getString("description"),
+                rs.getBoolean("teamStatus"),
+                rs.getInt("courseStatus")
             )
         );
     }

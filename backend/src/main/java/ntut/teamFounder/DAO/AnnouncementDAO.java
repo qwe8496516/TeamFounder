@@ -29,6 +29,11 @@ public class AnnouncementDAO {
         );
     }
 
+    public int getAnnouncementCount(String courseCode) {
+        String sql = "SELECT count(*) FROM announcement WHERE courseCode = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{courseCode}, Integer.class);
+    }
+
     public int createAnnouncement(String courseCode, String title, String content, int importanceLevel) {
         String sql = "INSERT INTO announcement (courseCode, title, content, importanceLevel) VALUES (?, ?, ?, ?)";
         return jdbcTemplate.update(sql, courseCode, title, content, importanceLevel );

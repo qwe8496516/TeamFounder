@@ -37,7 +37,9 @@ CREATE TABLE IF NOT EXISTS course (
     professorId VARCHAR(255) NOT NULL,
     academicYear TINYINT NOT NULL,
     semester TINYINT NOT NULL,
-    description TEXT
+    description TEXT,
+    teamStatus BOOLEAN NOT NULL, -- 'CLOSED', 'OPEN'
+    courseStatus TINYINT NOT NULL -- 'ACTIVE', 'INACTIVE', 'ARCHIVED'
 );
 
 CREATE TABLE IF NOT EXISTS announcement (
@@ -73,3 +75,11 @@ CREATE TABLE IF NOT EXISTS enrollment (
     FOREIGN KEY (courseCode) REFERENCES course(courseCode)
 );
 
+CREATE TABLE IF NOT EXISTS announceReceipt (
+    receiptId BIGINT AUTO_INCREMENT PRIMARY KEY,
+    userId BIGINT NOT NULL,
+    courseCode VARCHAR(100) NOT NULL,
+    announcementId BIGINT NOT NULL,
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (courseCode) REFERENCES course(courseCode) ON DELETE CASCADE
+);

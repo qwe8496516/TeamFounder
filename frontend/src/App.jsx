@@ -11,13 +11,16 @@ import Loading from './components/Loading'
 import ProfessorCourses from './pages/ProfessorCourses'
 import StudentProfile from './pages/StudentProfile'
 import StudentCourseManage from './pages/StudentCourseManage'
+import StudentCourseTeamUp from './pages/StudentCourseTeamUp'
 import NotFound from './pages/NotFound'
 import ProfessorCourseManage from './pages/ProfessorCourseManage'
+import ProfessorCourseTeamUp from './pages/ProfessorCourseTeamUp'
 import ProfessorProfile from './pages/ProfessorProfile'
+import ProfessorCourseAnnouncement from './pages/ProfessorCourseAnnouncement'
 
 function NavbarWrapper({ isLoggedIn, setIsLoggedIn }) {
   const location = useLocation()
-  const validPages = ['/login', '/register', '/student/match', '/student/course', '/student/teams', '/student/profile', '/student/course/:courseCode', '/professor/course', '/professor/course/:courseCode', '/professor/profile']
+  const validPages = ['/login', '/register', '/student/match', '/student/course', '/student/teams', '/student/profile', '/student/course/:courseCode', '/student/course/:courseCode/team', '/professor/course', '/professor/course/:courseCode', '/professor/profile', '/professor/course/:courseCode/team', '/professor/course/:courseCode/announcement']
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
   const isNotFoundPage = !validPages.some(page => {
     const pagePattern = page.replace(/:[^/]+/, '[^/]+')
@@ -89,6 +92,14 @@ function AnimatedRoutes({ isLoggedIn, setIsLoggedIn }) {
           }
         />
         <Route
+          path="/student/course/:courseCode/team"
+          element={
+            <ProtectedRoute>
+              <StudentCourseTeamUp />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/professor/course"
           element={
             <ProtectedRoute>
@@ -101,6 +112,22 @@ function AnimatedRoutes({ isLoggedIn, setIsLoggedIn }) {
           element={
             <ProtectedRoute>
               <ProfessorCourseManage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/professor/course/:courseCode/announcement"
+          element={
+            <ProtectedRoute>
+              <ProfessorCourseAnnouncement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/professor/course/:courseCode/team"
+          element={
+            <ProtectedRoute>
+              <ProfessorCourseTeamUp />
             </ProtectedRoute>
           }
         />

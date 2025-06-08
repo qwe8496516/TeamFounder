@@ -36,7 +36,7 @@ public class CourseHandlerTest {
     @Test
     void getCourseByCourseCode_WithValidCode_ShouldReturnSuccess() {
         String courseCode = "CS101";
-        Course mockCourse = new Course(courseCode, "Computer Science 101", "prof1", 2024, 1, "Introduction to CS");
+        Course mockCourse = new Course(courseCode, "Computer Science 101", "prof1", 2024, 1, "Introduction to CS", true, 0);
         when(courseDAO.getCourseByCourseCode(courseCode)).thenReturn(mockCourse);
         when(studentDAO.getStudentCount(courseCode)).thenReturn(30);
 
@@ -69,8 +69,8 @@ public class CourseHandlerTest {
     void getCoursesByStudentId_WithValidId_ShouldReturnSuccess() {
         Long studentId = 1L;
         List<String> courseCodes = Arrays.asList("CS101", "CS102");
-        Course mockCourse1 = new Course("CS101", "Computer Science 101", "prof1", 2024, 1, "Introduction to CS");
-        Course mockCourse2 = new Course("CS102", "Computer Science 102", "prof1", 2024, 1, "Advanced CS");
+        Course mockCourse1 = new Course("CS101", "Computer Science 101", "prof1", 2024, 1, "Introduction to CS", true, 0);
+        Course mockCourse2 = new Course("CS102", "Computer Science 102", "prof1", 2024, 1, "Advanced CS", true, 0);
 
         when(courseDAO.getCourseByStudentId(studentId)).thenReturn(courseCodes);
         when(courseDAO.getCourseByCourseCode("CS101")).thenReturn(mockCourse1);

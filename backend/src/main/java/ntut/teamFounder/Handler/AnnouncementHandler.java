@@ -4,13 +4,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import ntut.teamFounder.DAO.AnnouncementDAO;
 import ntut.teamFounder.DAO.CourseDAO;
 import ntut.teamFounder.Domain.Announcement;
+import ntut.teamFounder.Domain.Skill;
+import ntut.teamFounder.Domain.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @Tag(name = "Announcement API")
@@ -40,6 +41,16 @@ public class AnnouncementHandler {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to retrieve announcements: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{courseCode}/count")
+    public ResponseEntity<?> getProfile(@PathVariable String courseCode) {
+        try {
+            int count = announcementDAO.getAnnouncementCount(courseCode);
+            return ResponseEntity.ok(count);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Course not found.");
         }
     }
 

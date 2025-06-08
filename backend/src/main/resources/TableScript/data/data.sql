@@ -39,22 +39,21 @@ INSERT INTO userSkill (userId, skillId) VALUES (3, 5);
 INSERT INTO userSkill (userId, skillId) VALUES (3, 6);
 
 # Course
-INSERT INTO course (courseCode, name, professorId, academicYear, semester, description)
-VALUES ('CS205', 'Web Development', '113598056', 113, 1, 'A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.');
+INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, teamStatus, courseStatus)
+VALUES ('CS205', 'Web Development', '113598056', 113, 1, 'A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.', 1, 0);
 
-INSERT INTO course (courseCode, name, professorId, academicYear, semester, description)
-VALUES ('CS301', 'Software Engineering', '113598056', 113, 1, 'A course about software development methodologies and teamwork.');
+INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, teamStatus, courseStatus)
+VALUES ('CS301', 'Software Engineering', '113598056', 113, 1, 'A course about software development methodologies and teamwork.', 0, 0);
 
-INSERT INTO course (courseCode, name, professorId, academicYear, semester, description)
-VALUES ('CS201', 'Object-Oriented Programming', '113598056', 113, 1, 'A course that introduces object-oriented design and programming in Java.');
+INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, teamStatus, courseStatus)
+VALUES ('CS201', 'Object-Oriented Programming', '113598056', 113, 1, 'A course that introduces object-oriented design and programming in Java.', 1, 0);
 
-INSERT INTO course (courseCode, name, professorId, academicYear, semester, description)
-VALUES ('CS302', 'Artificial Intelligence', '113598056', 113, 1, 'A course that introduces concepts and techniques in artificial intelligence.');
-
+INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, teamStatus, courseStatus)
+VALUES ('CS302', 'Artificial Intelligence', '113598056', 113, 1, 'A course that introduces concepts and techniques in artificial intelligence.', 1, 0);
 
 #Announcement
 INSERT INTO announcement (title, content, importanceLevel, courseCode)
-VALUES ('Team Formation Announcement', 'Please form your project teams before the end of next week.', 2, 'CS301');
+VALUES ('Team Formation Announcement', 'Please form your project teams before the end of next week.', 1, 'CS301');
 
 INSERT INTO announcement (title, content, importanceLevel, courseCode)
 VALUES ('First Assignment Released', 'The first homework is about building a personal webpage.', 4, 'CS301');
@@ -64,6 +63,8 @@ VALUES ('Team Formation Announcement', 'Please form your project teams before th
 
 INSERT INTO announcement (title, content, importanceLevel, courseCode)
 VALUES ('First Assignment Released', 'The first homework is about building a personal webpage.', 4, 'CS205');
+
+INSERT INTO announceReceipt (userId, courseCode, announcementId) VALUES (1, 'CS205', 3);
 
 #Enroll Courses
 INSERT INTO enrollment (userId, courseCode) VALUES (1, 'CS201');

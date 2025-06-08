@@ -11,6 +11,7 @@ function Navbar({ setIsLoggedIn }) {
   const userMenuRef = useRef(null)
 
   const isInCourseManage = location.pathname.includes('/course/')
+  const isInProfile = location.pathname.includes('/profile')
 
   useEffect(() => {
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -46,10 +47,10 @@ function Navbar({ setIsLoggedIn }) {
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="flex items-center">
-            {isInCourseManage && (
+            {(isInCourseManage || isInProfile) && (
               <button
-                onClick={() => navigate(-1)}
-                className="mr-4 bg-gray-800 text-white hover:text-white-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 rounded-full p-1"
+                onClick={() => navigate(role === 'professor' ? '/professor/course' : '/student/course')}
+                className="mr-4 bg-gray-800 text-white border-none hover:text-white-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-800 rounded-full p-1"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -99,25 +100,25 @@ function Navbar({ setIsLoggedIn }) {
               <div className="flex space-x-4">
                 {!isInCourseManage && (
                   <>
-                    <Link
+                    {/* <Link
                       to={role === 'professor' ? '/professor/course' : '/student/course'}
                       className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
                     >
-                      Courses
-                    </Link>
+                      COURSES
+                    </Link> */}
                     {role !== 'professor' && (
                       <>
                         <Link
                           to="/student/teams"
                           className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
                         >
-                          Teams
+                          TEAMS
                         </Link>
                         <Link
                           to="/student/match"
                           className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
                         >
-                          Match
+                          MATCH
                         </Link>
                       </>
                     )}
@@ -129,7 +130,7 @@ function Navbar({ setIsLoggedIn }) {
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             <button
               type="button"
-              className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition-colors duration-200"
+              className="relative rounded-full border-none bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition-colors duration-200"
               onClick={toggleDarkMode}
             >
               <span className="absolute -inset-1.5"></span>
@@ -149,7 +150,7 @@ function Navbar({ setIsLoggedIn }) {
               <div>
                 <button
                   type="button"
-                  className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 hover:ring-2 hover:ring-white"
+                  className="relative flex rounded-full border-none bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200"
                   id="user-menu-button"
                   aria-expanded="false"
                   aria-haspopup="true"
@@ -214,15 +215,6 @@ function Navbar({ setIsLoggedIn }) {
                 >
                   Sign out
                 </Link>
-                {/* <button
-                  
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
-                  role="menuitem"
-                  tabIndex="-1"
-                  id="user-menu-item-2"
-                >
-                  Sign out
-                </button> */}
               </div>
             </div>
           </div>
@@ -240,7 +232,7 @@ function Navbar({ setIsLoggedIn }) {
                 to={role === 'professor' ? '/professor/course' : '/student/course'}
                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
               >
-                Courses
+                COURSES
               </Link>
               {role !== 'professor' && (
                 <>
@@ -248,13 +240,13 @@ function Navbar({ setIsLoggedIn }) {
                     to="/student/teams"
                     className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
                   >
-                    Teams
+                    TEAMS
                   </Link>
                   <Link
                     to="/student/match"
                     className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
                   >
-                    Match
+                    MATCH
                   </Link>
                 </>
               )}
