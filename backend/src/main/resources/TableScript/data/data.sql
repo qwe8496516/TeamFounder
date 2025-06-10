@@ -87,14 +87,12 @@ INSERT INTO enrollment (userId, courseCode) VALUES (6, 'CS301');
 INSERT INTO enrollment (userId, courseCode) VALUES (7, 'CS205');
 INSERT INTO enrollment (userId, courseCode) VALUES (7, 'CS301');
 
-
-INSERT INTO teamConfiguration (courseCode, description, formationType, status, minSize, maxSize, startDate, endDate)
-VALUES ('CS205', '', 0, 1, 3, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');
+INSERT INTO teamConfiguration (courseCode, title, description, formationType, status, minSize, maxSize, startDate, endDate)
+VALUES ('CS205', 'Team Formation', '', 0, 1, 3, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');
 
 INSERT INTO teamConfiguration (courseCode, description, formationType, status, minSize, maxSize, startDate, endDate)
 VALUES ('CS201', '', 1, 0, 3, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');
 
-#Invitation
 INSERT INTO invitation (senderId, receiverId, courseCode, message, status)
 VALUES
     (1, 2, 'CS205', 'Would you like to team up for the CS project?', 0),
