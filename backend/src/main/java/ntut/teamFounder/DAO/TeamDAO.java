@@ -3,6 +3,7 @@ package ntut.teamFounder.DAO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,4 +52,9 @@ public class TeamDAO {
         Integer count = jdbcTemplate.queryForObject(sql, new Object[]{teamId}, Integer.class);
         return count != null && count > 0;
     }
+
+//    public int updateToReady(int teamId, int userId) {
+//        String sql = "UPDATE team_member SET ready = 1 WHERE (team_id, user_id) VALUES (?, ?)";
+//        return jdbcTemplate.update(sql, teamId, userId);
+//    }
 }

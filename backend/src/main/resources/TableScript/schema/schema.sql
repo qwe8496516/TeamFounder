@@ -111,7 +111,8 @@ CREATE TABLE IF NOT EXISTS team (
 CREATE TABLE IF NOT EXISTS team_member (
     team_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
-    PRIMARY KEY (team_id, user_id), -- Composite primary key: ensures a user is unique within a team
+    ready BIGINT NOT NULL DEFAULT 0,
+    PRIMARY KEY (team_id, user_id, ready), -- Composite primary key: ensures a user is unique within a team
     FOREIGN KEY (team_id) REFERENCES team(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
