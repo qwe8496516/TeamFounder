@@ -1,3 +1,4 @@
+use teamfounder;
 #Users
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598012', 'Yang Hong Jie', 'MTIzNDU2', 't113598012@ntut.org.tw', 0);
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598056', 'CK Yang', 'MTIzNDU2', 't113598056@ntut.org.tw', 1);
@@ -92,3 +93,10 @@ VALUES ('CS205', '', 0, 1, 3, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');
 
 INSERT INTO teamConfiguration (courseCode, description, formationType, status, minSize, maxSize, startDate, endDate)
 VALUES ('CS201', '', 1, 0, 3, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');
+
+#Invitation
+INSERT INTO invitation (senderId, receiverId, courseCode, message, status)
+VALUES
+    (1, 2, 'CS205', 'Would you like to team up for the CS project?', 0),
+    (3, 1, 'CS301', 'I LOVE U!', 0),
+    (2, 4, 'CS302', 'Hey, want to join my group?', 1);
