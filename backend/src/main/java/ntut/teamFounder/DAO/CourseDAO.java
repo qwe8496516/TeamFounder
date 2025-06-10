@@ -32,7 +32,6 @@ public class CourseDAO {
                 rs.getInt("academicYear"),
                 rs.getInt("semester"),
                 rs.getString("description"),
-                rs.getBoolean("teamStatus"),
                 rs.getInt("courseStatus")
             )
         );
@@ -60,7 +59,6 @@ public class CourseDAO {
                 rs.getInt("academicYear"),
                 rs.getInt("semester"),
                 rs.getString("description"),
-                rs.getBoolean("teamStatus"),
                 rs.getInt("courseStatus")
             )
         );

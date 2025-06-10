@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import Loading from '../components/Loading'
+import { motion } from 'framer-motion'
 
 // Constants
 const COURSE_IMAGES = [
@@ -20,6 +21,29 @@ const IMPORTANCE_LEVELS = [
   { value: 3, label: 'Major', color: 'yellow' },
   { value: 4, label: 'Critical', color: 'red' }
 ]
+
+// Types
+/**
+ * @typedef {Object} Course
+ * @property {string} courseCode
+ * @property {string} name
+ * @property {string} description
+ * @property {string} academicYear
+ * @property {string} semester
+ * @property {number} students
+ * @property {string} image
+ */
+
+/**
+ * @typedef {Object} Announcement
+ * @property {number} id
+ * @property {string} title
+ * @property {string} content
+ * @property {string} date
+ * @property {boolean} isRead
+ * @property {number} importanceLevel
+ * @property {string} author
+ */
 
 // Components
 const CourseInfoCard = ({ course }) => (
@@ -134,7 +158,7 @@ const AnnouncementModal = ({ announcement, onClose }) => (
     >
       <div className="flex items-center justify-between mb-2">
       </div>
-      <h2 className="text-2xl font-bold mb-1 break-words transition-colors duration-200 hover:text-indigo-600">
+      <h2 className="text-2xl font-bold mb-1 break-words transition-colors duration-200 hover:text-gray-600">
         {announcement.title}
       </h2>
       <div className="text-xs text-gray-500 mb-4">
@@ -147,7 +171,7 @@ const AnnouncementModal = ({ announcement, onClose }) => (
         <span className={`px-3 py-1 rounded text-xs font-semibold shadow-sm transition-all duration-300 ${
           announcement.isRead 
             ? 'bg-gray-200 text-gray-500' 
-            : 'bg-indigo-100 text-indigo-600'
+            : 'bg-gray-100 text-gray-600'
         }`}>
           {announcement.isRead ? 'Read' : 'Unread'}
         </span>
@@ -157,52 +181,70 @@ const AnnouncementModal = ({ announcement, onClose }) => (
   </div>
 )
 
-// Main Component
+const Pagination = ({ currentPage, totalPages, onPageChange }) => (
+  <div className="flex items-center justify-between border-t border-gray-100 bg-white px-4 py-4">
+    <div className="flex flex-1 justify-between">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className={`relative inline-flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium transition-all duration-200 ${
+          currentPage === 1
+            ? 'text-gray-400 cursor-not-allowed'
+            : 'text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+        }`}
+      >
+        Previous
+      </button>
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className={`relative inline-flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium transition-all duration-200 ${
+          currentPage === totalPages
+            ? 'text-gray-400 cursor-not-allowed'
+            : 'text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+        }`}
+      >
+        Next
+      </button>
+    </div>
+  </div>
+)
+
 function StudentCourseManage() {
   const { courseCode } = useParams()
   const navigate = useNavigate()
   
-  // State
   const [course, setCourse] = useState(null)
   const [announcements, setAnnouncements] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(5)
+  const [itemsPerPage] = useState(4)
+  const [sortBy, setSortBy] = useState('date')
 
-  const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = announcements.slice(indexOfFirstItem, indexOfLastItem)
-  const totalPages = Math.ceil(announcements.length / itemsPerPage)
+  const totalPages = useMemo(() => 
+    Math.ceil(announcements.length / itemsPerPage),
+    [announcements.length, itemsPerPage]
+  )
+
+  const sortedAnnouncements = useMemo(() => {
+    return [...announcements].sort((a, b) => {
+      if (sortBy === 'date') {
+        return new Date(b.createdAt) - new Date(a.createdAt)
+      } else {
+        return b.importanceLevel - a.importanceLevel
+      }
+    })
+  }, [announcements, sortBy])
+
+  const indexOfLastItem = useMemo(() => currentPage * itemsPerPage, [currentPage, itemsPerPage])
+  const indexOfFirstItem = useMemo(() => indexOfLastItem - itemsPerPage, [indexOfLastItem, itemsPerPage])
+  const currentItems = useMemo(() => 
+    sortedAnnouncements.slice(indexOfFirstItem, indexOfLastItem),
+    [sortedAnnouncements, indexOfFirstItem, indexOfLastItem]
+  )
 
   // Effects
-  useEffect(() => {
-    const calculateItemsPerPage = () => {
-      const container = document.querySelector('.divide-y')
-      if (!container) return
-
-      const firstAnnouncementElement = container.querySelector('.announcement-item')
-      if (!firstAnnouncementElement) {
-        setItemsPerPage(5)
-        return
-      }
-
-      const itemHeight = firstAnnouncementElement.offsetHeight
-      const containerHeight = container.clientHeight
-      
-      const items = Math.floor(containerHeight / itemHeight)
-      setItemsPerPage(Math.max(1, items))
-    }
-
-    calculateItemsPerPage()
-    window.addEventListener('resize', calculateItemsPerPage)
-    if (announcements.length > 0) {
-      calculateItemsPerPage()
-    }
-
-    return () => window.removeEventListener('resize', calculateItemsPerPage)
-  }, [announcements])
-
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
@@ -263,7 +305,7 @@ function StudentCourseManage() {
   }, [courseCode, navigate])
 
   // Handlers
-  const handleOpenAnnouncement = async (announcement) => {
+  const handleOpenAnnouncement = useCallback(async (announcement) => {
     setSelectedAnnouncement(announcement)
     if (!announcement.isRead) {
       try {
@@ -281,48 +323,18 @@ function StudentCourseManage() {
         })
       }
     }
-  }
+  }, [])
 
-  const handlePageChange = (pageNumber) => {
+  const handlePageChange = useCallback((pageNumber) => {
     setCurrentPage(pageNumber)
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  // Render helpers
-  const renderPagination = () => (
-    <div className="flex items-center justify-between border-t border-gray-100 bg-white px-4 py-4">
-      <div className="flex flex-1 justify-between">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className={`relative inline-flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium transition-all duration-200 ${
-            currentPage === 1
-              ? 'text-gray-400 cursor-not-allowed'
-              : 'text-gray-700 hover:bg-gray-50 hover:border-gray-300'
-          }`}
-        >
-          Previous
-        </button>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className={`relative inline-flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium transition-all duration-200 ${
-            currentPage === totalPages
-              ? 'text-gray-400 cursor-not-allowed'
-              : 'text-gray-700 hover:bg-gray-50 hover:border-gray-300'
-          }`}
-        >
-          Next
-        </button>
-      </div>
-    </div>
-  )
+  }, [])
 
   if (isLoading) return <Loading />
 
   if (!course) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900">Course not found</h1>
@@ -333,19 +345,86 @@ function StudentCourseManage() {
   }
 
   return (
-    <div className="bg-gray-50 flex flex-col items-center pt-8">
-      <div className="flex flex-col md:flex-row w-full max-w-7xl gap-8 px-4 sm:px-6 lg:px-8">
-        <CourseInfoCard course={course} />
+    <div className="bg-gray-50 flex flex-col">
+      <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Navigation */}
+        <div className="mb-8">
+          <nav className="flex space-x-1 bg-gray-100 p-1 rounded-xl">
+            <Link
+              to={`/student/course/${courseCode}`}
+              className="px-4 py-2.5 text-sm font-medium rounded-lg bg-white text-gray-900 shadow-sm"
+              aria-current="page"
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <svg className="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                </svg>
+                <span>Announcements</span>
+              </div>
+            </Link>
+            <Link
+              to={`/student/course/${courseCode}/team`}
+              className="px-4 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm transition-all duration-200"
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <svg className="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span>Team Up</span>
+              </div>
+            </Link>
+            <Link
+              to={`/student/course/${courseCode}/match`}
+              className="px-4 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm transition-all duration-200"
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <svg className="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span>Match</span>
+              </div>
+            </Link>
+            <Link
+              to={`/student/course/${courseCode}/invitations`}
+              className="px-4 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm transition-all duration-200"
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <svg className="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <span>Invitations</span>
+              </div>
+            </Link>
+          </nav>
+        </div>
 
-        {/* Announcements List */}
-        <div className="flex-1 flex flex-col items-center w-full">
-          <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="flex justify-center items-center px-6 py-4 border-b border-gray-200">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className="flex flex-col md:flex-row w-full gap-8"
+        >
+          <CourseInfoCard course={course} />
+
+          {/* Announcements List */}
+          <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
               <div className="text-lg font-bold text-gray-700">Announcements</div>
+              <div className="flex items-center space-x-2">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:border-gray-400 transition-colors duration-200"
+                >
+                  <option value="date">Date</option>
+                  <option value="importance">Importance</option>
+                </select>
+              </div>
             </div>
-            <div className="divide-y divide-gray-100 h-[calc(100vh-16rem)] overflow-y-auto">
+            <div className="divide-y divide-gray-100 flex-1 overflow-y-auto min-h-[500px]">
               {announcements.length === 0 ? (
-                <div className="p-8">
+                <div className="h-full flex items-center justify-center p-8">
                   <div className="text-center">
                     <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -357,18 +436,26 @@ function StudentCourseManage() {
                   </div>
                 </div>
               ) : (
-                currentItems.map(announcement => (
-                  <AnnouncementItem 
-                    key={announcement.id}
-                    announcement={announcement}
-                    onClick={handleOpenAnnouncement}
-                  />
-                ))
+                <div className="min-h-[500px]">
+                  {currentItems.map(announcement => (
+                    <AnnouncementItem 
+                      key={announcement.id}
+                      announcement={announcement}
+                      onClick={handleOpenAnnouncement}
+                    />
+                  ))}
+                </div>
               )}
             </div>
-            {announcements.length > 0 && renderPagination()}
+            {announcements.length > 0 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {selectedAnnouncement && (

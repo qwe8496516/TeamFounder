@@ -5,6 +5,9 @@ INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598002', 'Shin Chou Lie', 'MTIzNDU2', 't113598002@ntut.org.tw', 0);
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598001', 'Shung Chung chen', 'MTIzNDU2', 't113598001@ntut.org.tw', 0);
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598003', 'Zhi Hong chen', 'MTIzNDU2', 't113598003@ntut.org.tw', 0);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598004', 'John Smith', 'MTIzNDU2', 't113598004@ntut.org.tw', 0);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598005', 'Emma Wilson', 'MTIzNDU2', 't113598005@ntut.org.tw', 0);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598006', 'Michael Brown', 'MTIzNDU2', 't113598006@ntut.org.tw', 0);
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_islab', 'Jong Yih Kuo', 'MTIzNDU2', 'jykuo@ntut.org.tw', 1);
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_ooad', 'Woei Kae Chen', 'MTIzNDU2', 'woeikaechen@ntut.org.tw', 1);
 
@@ -39,17 +42,17 @@ INSERT INTO userSkill (userId, skillId) VALUES (3, 5);
 INSERT INTO userSkill (userId, skillId) VALUES (3, 6);
 
 # Course
-INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, teamStatus, courseStatus)
-VALUES ('CS205', 'Web Development', '113598056', 113, 1, 'A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.', 1, 0);
+INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, courseStatus)
+VALUES ('CS205', 'Web Development', '113598056', 113, 1, 'A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.', 0);
 
-INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, teamStatus, courseStatus)
-VALUES ('CS301', 'Software Engineering', '113598056', 113, 1, 'A course about software development methodologies and teamwork.', 0, 0);
+INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, courseStatus)
+VALUES ('CS301', 'Software Engineering', '113598056', 113, 1, 'A course about software development methodologies and teamwork.', 0);
 
-INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, teamStatus, courseStatus)
-VALUES ('CS201', 'Object-Oriented Programming', '113598056', 113, 1, 'A course that introduces object-oriented design and programming in Java.', 1, 0);
+INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, courseStatus)
+VALUES ('CS201', 'Object-Oriented Programming', '113598056', 113, 1, 'A course that introduces object-oriented design and programming in Java.', 0);
 
-INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, teamStatus, courseStatus)
-VALUES ('CS302', 'Artificial Intelligence', '113598056', 113, 1, 'A course that introduces concepts and techniques in artificial intelligence.', 1, 0);
+INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, courseStatus)
+VALUES ('CS302', 'Artificial Intelligence', '113598056', 113, 1, 'A course that introduces concepts and techniques in artificial intelligence.', 0);
 
 #Announcement
 INSERT INTO announcement (title, content, importanceLevel, courseCode)
@@ -78,3 +81,14 @@ INSERT INTO enrollment (userId, courseCode) VALUES (4, 'CS205');
 INSERT INTO enrollment (userId, courseCode) VALUES (4, 'CS301');
 INSERT INTO enrollment (userId, courseCode) VALUES (5, 'CS205');
 INSERT INTO enrollment (userId, courseCode) VALUES (5, 'CS301');
+INSERT INTO enrollment (userId, courseCode) VALUES (6, 'CS205');
+INSERT INTO enrollment (userId, courseCode) VALUES (6, 'CS301');
+INSERT INTO enrollment (userId, courseCode) VALUES (7, 'CS205');
+INSERT INTO enrollment (userId, courseCode) VALUES (7, 'CS301');
+
+
+INSERT INTO teamConfiguration (courseCode, description, formationType, status, minSize, maxSize, startDate, endDate)
+VALUES ('CS205', '', 0, 1, 3, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');
+
+INSERT INTO teamConfiguration (courseCode, description, formationType, status, minSize, maxSize, startDate, endDate)
+VALUES ('CS201', '', 1, 0, 3, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');

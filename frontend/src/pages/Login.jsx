@@ -15,24 +15,25 @@ function Login({ setIsLoggedIn }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setIsLoading(true)
     try {
       const response = await axios.post('http://localhost:8080/api/auth/login', { userId, password })
 
       if (response.data) {
-        Swal.fire({
+        localStorage.setItem('id', response.data.id)
+        localStorage.setItem('userId', response.data.userId)
+        localStorage.setItem('token', response.data.token)
+        localStorage.setItem('role', response.data.role)
+        
+        await Swal.fire({
           icon: 'success',
           title: 'Login Success',
           text: 'You have successfully logged in',
           confirmButtonColor: '#4f46e5'
-        }).then(() => {
-          setIsLoading(true)
-          navigate(response.data.redirect + '/course')
-          localStorage.setItem('id', response.data.id)
-          localStorage.setItem('userId', response.data.userId)
-          localStorage.setItem('token', response.data.token)
-          localStorage.setItem('role', response.data.role)
-          setIsLoggedIn(true)
         })
+        
+        setIsLoggedIn(true)
+        navigate(response.data.redirect + '/course')
       }
     } catch (err) {
       Swal.fire({
@@ -123,7 +124,7 @@ function Login({ setIsLoggedIn }) {
                       onChange={(e) => setUserId(e.target.value)}
                       className="w-full px-4 py-3 rounded-lg border bg-white text-black border-gray-300 focus:ring-2 focus:ring-gray-600 focus:border-transparent transition-colors"
                       placeholder="Enter your ID"
-                      requigray
+                      required
                     />
                     <i className="fas fa-user absolute right-2 top-4 w-6 h-6 text-gray-400"></i>
                   </div>

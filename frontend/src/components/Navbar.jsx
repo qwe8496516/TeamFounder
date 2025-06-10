@@ -106,22 +106,6 @@ function Navbar({ setIsLoggedIn }) {
                     >
                       COURSES
                     </Link> */}
-                    {role !== 'professor' && (
-                      <>
-                        <Link
-                          to="/student/teams"
-                          className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-                        >
-                          TEAMS
-                        </Link>
-                        <Link
-                          to="/student/match"
-                          className="rounded-md px-3 py-2 font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-                        >
-                          MATCH
-                        </Link>
-                      </>
-                    )}
                   </>
                 )}
               </div>
@@ -234,22 +218,6 @@ function Navbar({ setIsLoggedIn }) {
               >
                 COURSES
               </Link>
-              {role !== 'professor' && (
-                <>
-                  <Link
-                    to="/student/teams"
-                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-                  >
-                    TEAMS
-                  </Link>
-                  <Link
-                    to="/student/match"
-                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
-                  >
-                    MATCH
-                  </Link>
-                </>
-              )}
             </>
           )}
         </div>

@@ -7,8 +7,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        mono: ['JetBrains Mono', 'monospace'],
-        sans: ['JetBrains Mono', 'monospace'],
+        // mono: ['JetBrains Mono', 'monospace'],
+        // sans: ['JetBrains Mono', 'monospace'],
+        sans: ['Inter', 'Noto Sans', 'Helvetica Neue', 'Arial', 'Segoe UI', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Menlo', 'monospace'],
       },
     },
   },
