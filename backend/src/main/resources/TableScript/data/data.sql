@@ -99,4 +99,4 @@ INSERT INTO invitation (senderId, receiverId, courseCode, message, status)
 VALUES
     (1, 2, 'CS205', 'Would you like to team up for the CS project?', 0),
     (3, 1, 'CS301', 'I LOVE U!', 0),
-    (2, 4, 'CS302', 'Hey, want to join my group?', 1);
+    (2, 4, 'CS302', 'Hey, want to join my group?', 0);

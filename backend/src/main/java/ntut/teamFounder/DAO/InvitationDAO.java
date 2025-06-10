@@ -16,8 +16,8 @@ public class InvitationDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public int createInvitation(long senderId, long receiverId, String courseCode, String message, int status) {
-        String sql = "INSERT INTO invitation (senderId, receiverId, courseCode, message, status) VALUES (?, ?, ?, ?, ?)";
+    public int createInvitation(int senderId, int receiverId, String courseCode, String message, int status) {
+        String sql = "INSERT INTO invitation (`senderId`, `receiverId`, `courseCode`, `message`, `status`) VALUES (?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql, senderId, receiverId, courseCode, message, status);
     }
 

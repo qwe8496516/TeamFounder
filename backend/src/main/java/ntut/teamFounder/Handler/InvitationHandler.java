@@ -84,11 +84,14 @@ public class InvitationHandler {
 
     @PostMapping("")
     public ResponseEntity<?> sendInvitation(
-            @RequestParam Long senderId,
-            @RequestParam Long receiverId,
+            @RequestParam int senderId,
+            @RequestParam int receiverId,
             @RequestParam String courseCode,
             @RequestParam String message,
             @RequestParam(required = false, defaultValue = "0") int status) {
+        if (senderId == receiverId) {
+            return ResponseEntity.badRequest().body("Sender and Receiver are the same.");
+        }
         try {
             invitationDAO.createInvitation(senderId, receiverId, courseCode, message, status);
             return ResponseEntity.ok().body("Invitation created successfully.");
