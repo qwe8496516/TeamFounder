@@ -11,7 +11,9 @@ import java.util.Map;
 @Setter
 public class TeamConfiguration {
 
-    private String configId;
+    private Long configId;
+    private String courseCode;
+    private String title;
     private String description;
     private Boolean formationType;
     private Boolean status;
@@ -20,8 +22,10 @@ public class TeamConfiguration {
     private Date startDate;
     private Date endDate;
 
-    public TeamConfiguration (String config, String description, Boolean formationType, Boolean status, int minSize, int maxSize, Date startDate, Date endDate) {
+    public TeamConfiguration (Long config, String courseCode, String title, String description, Boolean formationType, Boolean status, int minSize, int maxSize, Date startDate, Date endDate) {
         this.configId = config;
+        this.courseCode = courseCode;
+        this.title = title;
         this.description = description;
         this.formationType = formationType;
         this.status = status;
@@ -29,6 +33,23 @@ public class TeamConfiguration {
         this.maxSize = maxSize;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public boolean checkConstraints() {
+        return sizeValid() && dateValid() && statusValid();
+    }
+
+    public boolean statusValid() {
+        return !status;
+    }
+
+    public boolean sizeValid() {
+        return minSize <= maxSize;
+    }
+
+    public boolean dateValid() {
+//        return startDate != null && endDate != null && startDate.before(endDate);
+        return startDate != null && endDate != null;
     }
 
     public Map<String, Object> toMap() {

@@ -6,12 +6,11 @@ const { Option } = Select
 const { RangePicker } = DatePicker
 
 const TEAM_FORMATION_TYPES = {
-  ASSIGNED: 'Assigned',
   SELF_SELECTED: 'Self-selected',
   RANDOM: 'Random'
 }
 
-function ActivityModal({ isOpen, onClose, onSubmit, initialData = null }) {
+function ActivityModal({ isOpen, onClose, onSubmit, initialData }) {
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
 
@@ -73,9 +72,9 @@ function ActivityModal({ isOpen, onClose, onSubmit, initialData = null }) {
         preserve={false}
       >
         <Form.Item
-          name="name"
-          label="Activity Name"
-          rules={[{ required: true, message: 'Please enter activity name' }]}
+          name="title"
+          label="title"
+          rules={[{ required: true, message: 'Please enter title' }]}
         >
           <Input placeholder="e.g., Project Team Formation" />
         </Form.Item>
@@ -97,7 +96,6 @@ function ActivityModal({ isOpen, onClose, onSubmit, initialData = null }) {
           rules={[{ required: true, message: 'Please select team formation type' }]}
         >
           <Select>
-            <Option value={TEAM_FORMATION_TYPES.ASSIGNED}>Assigned</Option>
             <Option value={TEAM_FORMATION_TYPES.SELF_SELECTED}>Self-selected</Option>
             <Option value={TEAM_FORMATION_TYPES.RANDOM}>Random</Option>
           </Select>

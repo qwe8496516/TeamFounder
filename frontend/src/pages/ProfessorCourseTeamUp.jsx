@@ -22,7 +22,7 @@ const api = {
     })
     return response.data
   },
-
+  
   async updateTeamConfig(courseCode, token, data) {
     const response = await axios.put(
       `http://localhost:8080/api/teamConfig/${courseCode}`,
@@ -107,7 +107,7 @@ function ProfessorCourseTeamUp() {
 
       const token = localStorage.getItem('token')
       await axios.post(
-        `http://localhost:8080/api/teamConfig/${courseCode}/status`,
+        `http://localhost:8080/api/teamConfig/${courseCode}/status/Ongoing`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -150,11 +150,14 @@ function ProfessorCourseTeamUp() {
       }
 
       const token = localStorage.getItem('token')
-      await api.updateTeamConfig(courseCode, token, {
-        ...teamConfig,
-        status: false
-      })
-      setTeamConfig(prev => ({ ...prev, status: false }))
+      await axios.post(
+        `http://localhost:8080/api/teamConfig/${courseCode}/status/Closed`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      
+      const updatedConfig = await api.getTeamConfig(courseCode, token)
+      setTeamConfig(updatedConfig)
       
       Swal.fire({
         title: 'Success',
@@ -176,28 +179,56 @@ function ProfessorCourseTeamUp() {
   const handleUpdateActivity = async (values) => {
     try {
       const token = localStorage.getItem('token')
-      const configData = {
-        status: teamConfig.status,
+      const params = {
+        courseCode: courseCode,
+        title: values.title || 'Team Formation',
+        description: values.description || '',
         minSize: values.minTeamSize,
         maxSize: values.maxTeamSize,
-        startDate: values.startTime,
-        endDate: values.endTime,
+        sDate: values.startTime,
+        eDate: values.endTime,
         formationType: values.teamFormationType === TEAM_FORMATION_TYPES.RANDOM,
-        description: values.description
+        status: teamConfig?.status || false
+      }
+
+      if (teamConfig) {
+        // 更新現有配置
+        await axios.put(
+          'http://localhost:8080/api/teamConfig/update',
+          null,
+          {
+            params: params,
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        )
+      } else {
+        // 創建新配置
+        await axios.post(
+          'http://localhost:8080/api/teamConfig/create',
+          null,
+          {
+            params: params,
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        )
       }
       
-      await api.updateTeamConfig(courseCode, token, configData)
-      setTeamConfig(prev => ({
-        ...prev,
-        ...configData
-      }))
+      const updatedConfig = await api.getTeamConfig(courseCode, token)
+      setTeamConfig(updatedConfig)
       setIsModalVisible(false)
+      
+      Swal.fire({
+        title: 'Success',
+        text: teamConfig ? 'Team formation settings have been updated successfully' : 'Team formation settings have been created successfully',
+        icon: 'success',
+        confirmButtonColor: '#4f46e5'
+      })
     } catch (error) {
       console.error('Error updating team formation settings:', error)
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Failed to update team formation settings',
+        text: teamConfig ? 'Failed to update team formation settings' : 'Failed to create team formation settings',
         confirmButtonColor: '#4f46e5'
       })
     }
@@ -255,34 +286,18 @@ function ProfessorCourseTeamUp() {
     }
   }
 
+  const handleEditSettings = () => {
+    setIsModalVisible(true)
+  }
+
+  const handleAddSettings = () => {
+    setIsModalVisible(true)
+  }
+
   if (isLoading) {
     return <Loading />
   }
 
-  if (!teamConfig) {
-    return (
-      <div className="bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <CourseNavigation courseCode={courseCode} currentPage="team up" userType="professor" />
-          <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 mb-4">
-              <svg className="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Team Formation is Disabled</h3>
-            <p className="text-gray-500 mb-6">Enable team formation to allow students to form teams</p>
-            <button
-              onClick={handleEnableTeamUp}
-              className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200"
-            >
-              Enable Team Formation
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -302,7 +317,7 @@ function ProfessorCourseTeamUp() {
                 <div>
                   <div className="flex items-center space-x-4 mb-2">
                     <h3 className="text-2xl font-bold text-gray-900">Team Formation Settings</h3>
-                    {teamConfig.status && (
+                    {teamConfig?.status && (
                       <span className="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
                         Ongoing
                       </span>
@@ -311,31 +326,46 @@ function ProfessorCourseTeamUp() {
                   <div className="flex items-center space-x-4">
                     <p className="text-gray-600">Configure team formation rules and requirements for your course</p>
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      teamConfig.formationType
+                      teamConfig?.formationType
                         ? 'bg-green-100 text-green-800'
                         : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {teamConfig.formationType ? TEAM_FORMATION_TYPES.RANDOM : TEAM_FORMATION_TYPES.SELF_SELECTED}
+                      {teamConfig?.formationType ? TEAM_FORMATION_TYPES.RANDOM : TEAM_FORMATION_TYPES.SELF_SELECTED}
                     </span>
                   </div>
                 </div>
-                {teamConfig.status ? (
-                  <button
-                    onClick={handleEndTeamUp}
-                    className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-medium rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
-                  >
-                    <LockOutlined className="mr-2" />
-                    End Team Formation
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setIsModalVisible(true)}
-                    className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
-                  >
-                    <EditOutlined className="mr-2" />
-                    Edit Settings
-                  </button>
-                )}
+                <div className="flex space-x-4">
+                  {teamConfig?.status ? (
+                    <button
+                      onClick={handleEndTeamUp}
+                      className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-medium rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                    >
+                      <LockOutlined className="mr-2" />
+                      End Team Formation
+                    </button>
+                  ) : (
+                    <>
+                      {!teamConfig && (
+                        <button
+                          onClick={handleAddSettings}
+                          className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                        >
+                          <PlusOutlined className="mr-2" />
+                          Add Settings
+                        </button>
+                      )}
+                      {teamConfig && (
+                        <button
+                          onClick={handleEditSettings}
+                          className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                        >
+                          <EditOutlined className="mr-2" />
+                          Edit Settings
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -466,14 +496,16 @@ function ProfessorCourseTeamUp() {
           isOpen={isModalVisible}
           onClose={() => setIsModalVisible(false)}
           onSubmit={handleUpdateActivity}
-          initialData={{
+          initialData={teamConfig ? {
             minTeamSize: teamConfig.minSize,
             maxTeamSize: teamConfig.maxSize,
             startTime: teamConfig.startDate,
             endTime: teamConfig.endDate,
             teamFormationType: teamConfig.formationType ? TEAM_FORMATION_TYPES.RANDOM : TEAM_FORMATION_TYPES.SELF_SELECTED,
-            description: teamConfig.description
-          }}
+            description: teamConfig.description,
+            title: teamConfig.title || 'Team Formation'
+          } : undefined}
+          key={isModalVisible ? 'modal-open' : 'modal-closed'}
         />
       </div>
     </div>
