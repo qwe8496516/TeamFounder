@@ -76,7 +76,7 @@ public class CourseHandler {
         try {
             Student matcher = studentDAO.getStudentById(userId);
             matcher.setSkills(studentDAO.getSkillsById(userId));
-            List<Long> studentIds = courseDAO.getStudentsInCourse(courseCode);
+            List<Long> studentIds = courseDAO.getStudentsInMatch(courseCode, userId);
             List<Map<String, Object>> students = new ArrayList<>();
             for (Long studentId : studentIds) {
                 Student student = studentDAO.getStudentById(studentId);

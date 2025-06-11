@@ -46,7 +46,7 @@ const IMPORTANCE_LEVELS = [
  */
 
 // Components
-const CourseInfoCard = ({ course }) => (
+const CourseInfoCard = ({ course, announcementsCount }) => (
   <div className="hidden md:block w-full md:w-96 flex-shrink-0">
     <div className="relative bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col group">
       <div className="relative w-full h-40">
@@ -77,7 +77,7 @@ const CourseInfoCard = ({ course }) => (
         <InfoItem 
           icon="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
           label="Announcements"
-          value={course.announcements?.length || 0}
+          value={announcementsCount}
         />
         <div className="border-t border-gray-200 my-2"></div>
         <div>
@@ -405,7 +405,7 @@ function StudentCourseManage() {
           transition={{ duration: 0.3 }}
           className="flex flex-col md:flex-row w-full gap-8"
         >
-          <CourseInfoCard course={course} />
+          <CourseInfoCard course={course} announcementsCount={announcements.length} />
 
           {/* Announcements List */}
           <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">

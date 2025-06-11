@@ -42,6 +42,9 @@ INSERT INTO userSkill (userId, skillId) VALUES (3, 3);
 INSERT INTO userSkill (userId, skillId) VALUES (3, 5);
 INSERT INTO userSkill (userId, skillId) VALUES (3, 6);
 
+INSERT INTO userSkill (userId, skillId) VALUES (4, 5);
+INSERT INTO userSkill (userId, skillId) VALUES (4, 6);
+
 # Course
 INSERT INTO course (courseCode, name, professorId, academicYear, semester, description, courseStatus)
 VALUES ('CS205', 'Web Development', '113598056', 113, 1, 'A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.', 0);
@@ -94,34 +97,32 @@ INSERT INTO teamConfiguration (courseCode, title, description, formationType, st
 VALUES ('CS201', 'Team Formation', '', 1, 0, 3, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');
 
 INSERT INTO invitation (senderId, receiverId, courseCode, message, status)
-VALUES
-    (1, 2, 'CS205', 'Would you like to team up for the CS project?', 0),
-    (3, 1, 'CS301', 'I LOVE U!', 0),
-    (2, 4, 'CS302', 'Hey, want to join my group?', 0);
+VALUES (1, 5, 'CS301', 'Would you like to team up for the CS project?', 0),
+       (5, 1, 'CS205', 'Would you like to team up for the CS project?', 0),
+       (3, 1, 'CS205', 'I LOVE U!', 0),
+       (5, 4, 'CS302', 'Hey, want to join my group?', 0);
 
--- Team 1 (More than one not ready)
-INSERT INTO team (id, course_code, legit) VALUES (1, 'CS205', FALSE);
-
--- Members: 2 ready, 2 not ready
-INSERT INTO team_member (team_id, user_id, ready) VALUES
-                                                      (1, 1, 1),
-                                                      (1, 2, 0),
-                                                      (1, 3, 1),
-                                                      (1, 4, 0);
-
--- Team 2 (Only one not ready, but team too small)
-INSERT INTO team (id, course_code, legit) VALUES (2, 'CS205', FALSE);
-
--- Members: 1 ready, 1 not ready
-INSERT INTO team_member (team_id, user_id, ready) VALUES
-                                                      (2, 5, 1),
-                                                      (2, 6, 0);
-
--- Team 3 (Only one not ready, and team meets size)
-INSERT INTO team (id, course_code, legit) VALUES (3, 'CS205', FALSE);
-
--- Members: 2 ready, 1 not ready
-INSERT INTO team_member (team_id, user_id, ready) VALUES
-                                                      (3, 7, 1),
-                                                      (3, 8, 1),
-                                                      (3, 9, 0);
+# -- Team 1 (More than one not ready)
+# INSERT INTO team (id, course_code, legit) VALUES (1, 'CS205', FALSE);
+#
+# -- Members: 2 ready, 2 not ready
+# INSERT INTO team_member (team_id, user_id, ready) VALUES
+#                                                       (1, 1, 1),
+#                                                       (1, 2, 0),
+#                                                       (1, 3, 1),
+#                                                       (1, 4, 0);
+#
+# -- Team 2 (Only one not ready, but team too small)
+# INSERT INTO team (course_code, legit) VALUES ('CS205', FALSE);
+#
+# -- Members: 1 ready, 1 not ready
+# INSERT INTO team_member (team_id, user_id, ready) VALUES (2, 5, 1),
+#                                                          (2, 6, 0);
+#
+# -- Team 3 (Only one not ready, and team meets size)
+# INSERT INTO team (course_code, legit) VALUES ('CS205', FALSE);
+#
+# -- Members: 2 ready, 1 not ready
+# INSERT INTO team_member (team_id, user_id, ready) VALUES (3, 7, 1),
+#                                                          (3, 8, 1),
+#                                                          (3, 9, 0);

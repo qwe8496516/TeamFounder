@@ -2,12 +2,7 @@ package ntut.teamFounder.DAO;
 
 import ntut.teamFounder.Domain.Team;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +26,24 @@ public class TeamDAO {
             // 查無資料時回傳 null
             return null;
         }
+    }
+
+    public Team getTeamById (Long teamId) {
+        String sql = "SELECT * FROM team WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{teamId}, (rs, rowNum) ->
+            new Team(
+                rs.getString("course_code"),
+                rs.getLong("id"),
+                rs.getBoolean("legit")
+            )
+        );
+    }
+
+    public List<Long> getTeamMembersById (Long teamId) {
+        String sql = "SELECT * FROM team_member WHERE team_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{teamId}, (rs, rowNum) ->
+                rs.getLong("user_id")
+        );
     }
 
     // 2. 建立新 team，回傳 team id
@@ -73,14 +86,14 @@ public class TeamDAO {
         Map<String, Object> teamRow = jdbcTemplate.queryForMap(teamSql, teamId);
 
         String courseCode = (String) teamRow.get("course_code");
-        int id = ((Long) teamRow.get("id")).intValue();
+        Long id = ((Long) teamRow.get("id"));
 
         // 2. Load team members (just user IDs)
         String memberSql = "SELECT user_id FROM team_member WHERE team_id = ?";
         List<Long> memberIds = jdbcTemplate.query(memberSql, (rs, rowNum) -> rs.getLong("user_id"), teamId);
 
         // 3. Create Team domain object
-        Team team = new Team(courseCode, id);
+        Team team = new Team(courseCode, id, false);
 
         // 4. Add members to the team
         for (Long userId : memberIds) {
