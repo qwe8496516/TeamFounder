@@ -52,7 +52,7 @@ public class TeamConfigurationHandlerTest {
     void testUpdateTeamConfigStatus_success() throws Exception {
         TeamConfiguration config = Mockito.mock(TeamConfiguration.class);
         Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS101")).thenReturn(config);
-        Mockito.when(teamConfigurationDAO.updateTeamConfigStatus(eq("CS101"), eq(true))).thenReturn(1);
+        Mockito.when(teamConfigurationDAO.updateTeamConfigStatus(eq("CS101"), eq(1))).thenReturn(1);
 
         mockMvc.perform(post("/api/teamConfig/CS101/status/Ongoing"))
                 .andExpect(status().isOk())
@@ -72,7 +72,7 @@ public class TeamConfigurationHandlerTest {
     void testUpdateTeamConfigStatus_updateFailed() throws Exception {
         TeamConfiguration config = Mockito.mock(TeamConfiguration.class);
         Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS101")).thenReturn(config);
-        Mockito.when(teamConfigurationDAO.updateTeamConfigStatus(eq("CS101"), eq(false))).thenReturn(0);
+        Mockito.when(teamConfigurationDAO.updateTeamConfigStatus(eq("CS101"), eq(0))).thenReturn(0);
 
         mockMvc.perform(post("/api/teamConfig/CS101/status/Closed"))
                 .andExpect(status().isBadRequest())
@@ -91,7 +91,7 @@ public class TeamConfigurationHandlerTest {
                 .when(teamConfigurationDAO)
                 .createTeamConfiguration(
                         eq("CS101"), anyString(), anyString(),
-                        anyBoolean(), anyBoolean(),
+                        anyBoolean(), anyInt(),
                         anyInt(), anyInt(),
                         any(Date.class), any(Date.class)
                 );
