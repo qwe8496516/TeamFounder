@@ -16,13 +16,13 @@ public class TeamConfiguration {
     private String title;
     private String description;
     private Boolean formationType;
-    private Boolean status;
+    private int status;
     private int minSize;
     private int maxSize;
     private Date startDate;
     private Date endDate;
 
-    public TeamConfiguration (Long config, String courseCode, String title, String description, Boolean formationType, Boolean status, int minSize, int maxSize, Date startDate, Date endDate) {
+    public TeamConfiguration (Long config, String courseCode, String title, String description, Boolean formationType, int status, int minSize, int maxSize, Date startDate, Date endDate) {
         this.configId = config;
         this.courseCode = courseCode;
         this.title = title;
@@ -40,7 +40,7 @@ public class TeamConfiguration {
     }
 
     public boolean statusValid() {
-        return !status;
+        return status == 0 || status == 1;
     }
 
     public boolean sizeValid() {
@@ -70,7 +70,7 @@ public class TeamConfiguration {
         // return teamSize >= this.minSize && teamSize <= this.maxSize;
 
         // Check status is ongoing
-        if (!(this.status)) {
+        if (this.status == 0 || this.status == 2) {
             return false;
         }
 

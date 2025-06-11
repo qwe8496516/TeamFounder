@@ -37,7 +37,12 @@ public class TeamConfigurationHandler {
     @PostMapping("/{courseCode}/status/{status}")
     public ResponseEntity<?> updateTeamConfigStatus(@PathVariable String courseCode, @PathVariable String status) {
         try {
-            boolean configStatus = status.equals("Ongoing");
+            int configStatus = 0;
+            if (status.equals("POST")) {
+                configStatus = 2;
+            } else if (status.equals("MID")) {
+                configStatus = 1;
+            }
             TeamConfiguration teamConfiguration = teamConfigurationDAO.getTeamConfigByCourseCode(courseCode);
             if (teamConfiguration == null) {
                 return ResponseEntity.ok("No Team Config Found");
@@ -57,7 +62,7 @@ public class TeamConfigurationHandler {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateTeamConfiguration(@RequestParam String courseCode, @RequestParam String title, @RequestParam String description, @RequestParam boolean formationType,
-                                                     @RequestParam boolean status, @RequestParam int minSize, @RequestParam int maxSize, @RequestParam String sDate, @RequestParam String eDate)
+                                                     @RequestParam int status, @RequestParam int minSize, @RequestParam int maxSize, @RequestParam String sDate, @RequestParam String eDate)
     {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -94,12 +99,12 @@ public class TeamConfigurationHandler {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date startDate = sdf.parse(sDate);
             Date endDate = sdf.parse(eDate);
-            TeamConfiguration teamConfiguration = new TeamConfiguration(0L, courseCode, title, description, false, false, minSize, maxSize, startDate, endDate);
+            TeamConfiguration teamConfiguration = new TeamConfiguration(0L, courseCode, title, description, false, 0, minSize, maxSize, startDate, endDate);
             boolean isClean = teamConfiguration.checkConstraints();
             if (!isClean) {
                 return ResponseEntity.badRequest().body("Please check your limitation and try again.");
             }
-            teamConfigurationDAO.createTeamConfiguration(courseCode, title, description, false, false, minSize, maxSize, startDate, endDate);
+            teamConfigurationDAO.createTeamConfiguration(courseCode, title, description, false, 0, minSize, maxSize, startDate, endDate);
             return ResponseEntity.ok(teamConfiguration.toMap());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error Creating Team Config : " + e.getMessage() + ".");

@@ -100,7 +100,8 @@ const StudentCourseMatch = () => {
         const now = new Date()
         const startDate = new Date(configResponse.data.startDate)
         const endDate = new Date(configResponse.data.endDate)
-        const isEnabled = configResponse.data.status === true && now >= startDate && now <= endDate
+        const isEnabled = configResponse.data.status === 1 && now >= startDate && now <= endDate
+        
         setIsTeamUpEnabled(isEnabled)
 
         if (isEnabled) {
@@ -178,7 +179,6 @@ const StudentCourseMatch = () => {
         return
       }
 
-      // First confirmation
       const confirmResult = await Swal.fire({
         title: 'Send Team Invitation',
         text: "Are you sure you want to send a team invitation to this student?",
@@ -196,7 +196,6 @@ const StudentCourseMatch = () => {
 
       const defaultMessage = "I'd like to invite you to join my team! I think we would work well together based on our skills and interests."
 
-      // Message input
       const { value: formValues } = await Swal.fire({
         title: 'Write Your Message',
         html:
@@ -249,7 +248,6 @@ const StudentCourseMatch = () => {
             }
           })
 
-          // Update the student list after successful invitation
           await fetchStudents()
 
           Swal.fire({
@@ -291,7 +289,7 @@ const StudentCourseMatch = () => {
             <h3 className="text-lg font-medium text-gray-900 mb-2">Team Formation Not Available</h3>
             <p className="text-gray-500 mb-6">
               {teamConfig ? (
-                teamConfig.status === true ? (
+                teamConfig.status === 1 ? (
                   <>
                     Team formation will be available from {new Date(teamConfig.startDate).toLocaleDateString()} to {new Date(teamConfig.endDate).toLocaleDateString()}
                   </>
@@ -329,7 +327,6 @@ const StudentCourseMatch = () => {
                 </div>
               </div>
 
-              {/* 搜索和過濾區域 */}
               <div className="mb-8 space-y-4">
                 <div className="flex items-center space-x-4">
                   <div className="flex-1">

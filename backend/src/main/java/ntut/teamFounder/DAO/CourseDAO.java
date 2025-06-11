@@ -89,10 +89,11 @@ public class CourseDAO {
         FROM team_member tm
         JOIN team t ON tm.team_id = t.id
         WHERE t.course_code = ? AND t.legit = TRUE
-    """;
+        """;
 
         return jdbcTemplate.queryForObject(sql, Integer.class, courseCode);
     }
+
     public String getContentType(String fileType) {
         return switch (fileType.toLowerCase()) {
             case "pdf" -> "application/pdf";

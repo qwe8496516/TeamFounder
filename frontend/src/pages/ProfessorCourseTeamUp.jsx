@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Loading from '../components/Loading'
 import { motion } from 'framer-motion'
-import { PlusOutlined, TeamOutlined, UserOutlined, LockOutlined, UnlockOutlined, EditOutlined, EyeOutlined, CalendarOutlined, TableOutlined } from '@ant-design/icons'
+import { PlusOutlined, TeamOutlined, UserOutlined, LockOutlined, UnlockOutlined, EditOutlined, EyeOutlined, CalendarOutlined, TableOutlined, FileExcelOutlined, FilePdfOutlined } from '@ant-design/icons'
 import ActivityModal from '../components/ActivityModal'
 import { Table, Tag, message } from 'antd'
 import * as XLSX from 'xlsx'
@@ -107,7 +107,7 @@ function ProfessorCourseTeamUp() {
 
       const token = localStorage.getItem('token')
       await axios.post(
-        `http://localhost:8080/api/teamConfig/${courseCode}/status/Ongoing`,
+        `http://localhost:8080/api/teamConfig/${courseCode}/status/MID`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -151,7 +151,7 @@ function ProfessorCourseTeamUp() {
 
       const token = localStorage.getItem('token')
       await axios.post(
-        `http://localhost:8080/api/teamConfig/${courseCode}/status/Closed`,
+        `http://localhost:8080/api/teamConfig/${courseCode}/status/POST`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -183,12 +183,12 @@ function ProfessorCourseTeamUp() {
         courseCode: courseCode,
         title: values.title || 'Team Formation',
         description: values.description || '',
-        minSize: values.minTeamSize,
-        maxSize: values.maxTeamSize,
+        minSize: parseInt(values.minTeamSize),
+        maxSize: parseInt(values.maxTeamSize),
         sDate: values.startTime,
         eDate: values.endTime,
         formationType: values.teamFormationType === TEAM_FORMATION_TYPES.RANDOM,
-        status: teamConfig?.status || false
+        status: teamConfig?.status || 0
       }
 
       if (teamConfig) {
@@ -232,55 +232,87 @@ function ProfessorCourseTeamUp() {
     }
   }
 
-  const handleExportData = () => {
+  const handleExportExcel = async () => {
     try {
-      const exportData = teamConfig.teams.map(team => {
-        const teamData = {
-          'Team Name': team.name,
-          'Project Title': team.projectTitle,
-          'Team Status': team.status === 'Confirmed' ? 'Confirmed' : 'Pending',
-        }
-
-        team.members.forEach((member, index) => {
-          teamData[`Member ${index + 1} Name`] = member.name
-          teamData[`Member ${index + 1} ID`] = member.studentId
-          teamData[`Member ${index + 1} Role`] = member.role
-        })
-
-        return teamData
+      const result = await Swal.fire({
+        title: 'Export Excel',
+        text: 'Are you sure you want to export team formation data to Excel?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Export',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#4f46e5',
+        cancelButtonColor: '#6b7280'
       })
 
-      const wb = XLSX.utils.book_new()
-      const ws = XLSX.utils.json_to_sheet(exportData)
+      if (!result.isConfirmed) {
+        return
+      }
 
-      const colWidths = [
-        { wch: 15 },
-        { wch: 20 },
-        { wch: 10 },
-        { wch: 15 },
-        { wch: 15 },
-        { wch: 15 },
-        { wch: 15 },
-        { wch: 15 },
-        { wch: 15 },
-        { wch: 15 },
-        { wch: 15 },
-        { wch: 15 },
-        { wch: 15 },
-        { wch: 15 },
-        { wch: 15 },
-      ]
-      ws['!cols'] = colWidths
+      const token = localStorage.getItem('token')
+      const response = await axios.get(
+        `http://localhost:8080/api/course/${courseCode}/export/excel`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          responseType: 'blob'
+        }
+      )
 
-      XLSX.utils.book_append_sheet(wb, ws, 'Team Formation')
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `${courseCode}_team_formation_${new Date().toISOString().split('T')[0]}.xlsx`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
 
-      const fileName = `${teamConfig.name}_${new Date().toISOString().split('T')[0]}.xlsx`
-
-      XLSX.writeFile(wb, fileName)
-      message.success('Data exported successfully!')
+      message.success('Excel file exported successfully!')
     } catch (error) {
       console.error('Export failed:', error)
-      message.error('Export failed, please try again later')
+      message.error('Failed to export Excel file')
+    }
+  }
+
+  const handleExportPDF = async () => {
+    try {
+      const result = await Swal.fire({
+        title: 'Export PDF',
+        text: 'Are you sure you want to export team formation data to PDF?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Export',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#4f46e5',
+        cancelButtonColor: '#6b7280'
+      })
+
+      if (!result.isConfirmed) {
+        return
+      }
+
+      const token = localStorage.getItem('token')
+      const response = await axios.get(
+        `http://localhost:8080/api/course/${courseCode}/export/pdf`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          responseType: 'blob'
+        }
+      )
+
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `${courseCode}_team_formation_${new Date().toISOString().split('T')[0]}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+
+      message.success('PDF file exported successfully!')
+    } catch (error) {
+      console.error('Export failed:', error)
+      message.error('Failed to export PDF file')
     }
   }
 
@@ -315,11 +347,22 @@ function ProfessorCourseTeamUp() {
                 <div>
                   <div className="flex items-center space-x-4 mb-2">
                     <h3 className="text-2xl font-bold text-gray-900">Team Formation Settings</h3>
-                    {teamConfig?.status && (
+                    {teamConfig?.status === 0 && (
+                      <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                        Closed
+                      </span>
+                    )}
+                    {teamConfig?.status === 1 && (
                       <span className="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
                         Ongoing
                       </span>
                     )}
+                    {teamConfig?.status === 2 && (
+                      <span className="px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                        Ended
+                      </span>
+                    )}
+
                   </div>
                   <div className="flex items-center space-x-4">
                     <p className="text-gray-600">Configure team formation rules and requirements for your course</p>
@@ -333,7 +376,7 @@ function ProfessorCourseTeamUp() {
                   </div>
                 </div>
                 <div className="flex space-x-4">
-                  {teamConfig?.status ? (
+                  {teamConfig?.status === 1 ? (
                     <button
                       onClick={handleEndTeamUp}
                       className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-medium rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
@@ -341,6 +384,30 @@ function ProfessorCourseTeamUp() {
                       <LockOutlined className="mr-2" />
                       End Team Formation
                     </button>
+                  ) : teamConfig?.status === 2 ? (
+                    <>
+                      <button
+                        onClick={handleEditSettings}
+                        className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                      >
+                        <EditOutlined className="mr-2" />
+                        Reset Settings
+                      </button>
+                      <button
+                        onClick={handleExportExcel}
+                        className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                      >
+                        <FileExcelOutlined className="mr-2" />
+                        Export Excel
+                      </button>
+                      <button
+                        onClick={handleExportPDF}
+                        className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-medium rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                      >
+                        <FilePdfOutlined className="mr-2" />
+                        Export PDF
+                      </button>
+                    </>
                   ) : (
                     <>
                       {!teamConfig && (

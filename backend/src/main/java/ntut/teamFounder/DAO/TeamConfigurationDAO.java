@@ -27,7 +27,7 @@ public class TeamConfigurationDAO {
                         rs.getString("title"),
                         rs.getString("description"),
                         rs.getBoolean("formationType"),
-                        rs.getBoolean("status"),
+                        rs.getInt("status"),
                         rs.getInt("minSize"),
                         rs.getInt("maxSize"),
                         rs.getDate("startDate"),
@@ -37,19 +37,19 @@ public class TeamConfigurationDAO {
         return results.isEmpty() ? null : results.get(0);
     }
 
-    public int updateTeamConfigStatus(String courseCode, boolean status) {
+    public int updateTeamConfigStatus(String courseCode, int status) {
         String sql = "UPDATE teamConfiguration SET status = ? where courseCode = ?";
         return jdbcTemplate.update(sql, status, courseCode);
     }
 
-    public int createTeamConfiguration(String courseCode, String title, String description, boolean formationType, boolean status, int minSize, int maxSize, Date startDate, Date endDate) {
+    public int createTeamConfiguration(String courseCode, String title, String description, boolean formationType, int status, int minSize, int maxSize, Date startDate, Date endDate) {
         String sql = "INSERT INTO teamConfiguration (courseCode, title, description, formationType, status, minSize, maxSize, startDate, endDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         return jdbcTemplate.update(
                 sql, courseCode, title, description, formationType, status, minSize, maxSize, startDate, endDate
         );
     }
 
-    public int updateTeamConfiguration(String courseCode, String title, String description, boolean formationType, boolean status, int minSize, int maxSize, Date startDate, Date endDate, Long configId) {
+    public int updateTeamConfiguration(String courseCode, String title, String description, boolean formationType, int status, int minSize, int maxSize, Date startDate, Date endDate, Long configId) {
         String sql = "UPDATE teamConfiguration SET title=?, description=?, formationType=?, status=?, minsize=?, maxsize=?, startDate=?, endDate=? WHERE configId=?";
         return jdbcTemplate.update(
                 sql, title, description, formationType, status, minSize, maxSize, startDate, endDate, configId
@@ -69,7 +69,7 @@ public class TeamConfigurationDAO {
                 rs.getString("title"),
                 rs.getString("description"),
                 rs.getBoolean("formationType"),
-                rs.getBoolean("status"),
+                rs.getInt("status"),
                 rs.getInt("minSize"),
                 rs.getInt("maxSize"),
                 rs.getTimestamp("startDate"),

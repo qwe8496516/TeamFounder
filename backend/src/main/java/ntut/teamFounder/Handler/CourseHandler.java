@@ -123,10 +123,10 @@ public class CourseHandler {
         return courseDAO.getTotalMembersCountInLegitTeams(courseCode);
     }
 
-    @GetMapping("/{courseCode}/export")
+    @GetMapping("/{courseCode}/export/{fileType}")
     public ResponseEntity<byte[]> exportTeamList(
             @PathVariable String courseCode,
-            @RequestParam(defaultValue = "pdf") String fileType) {
+            @PathVariable String fileType) {
 
         try {
             List<Team> teams = courseDAO.getTeamsByCourseCode(courseCode);

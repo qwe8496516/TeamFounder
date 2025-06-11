@@ -121,29 +121,31 @@ const AnnouncementItem = ({ announcement, onClick }) => (
     onClick={() => onClick(announcement)}
   >
     <div className="flex-1 min-w-0">
-      <div className="flex items-center">
+      <div className="flex">
         {!announcement.isRead && (
           <span className="w-2 h-2 bg-indigo-500 rounded-full mr-3 animate-pulse"></span>
         )}
         <span className={`font-semibold truncate transition-colors duration-200 ${
           !announcement.isRead ? 'text-gray-900 group-hover:text-indigo-600' : 'text-gray-500 group-hover:text-gray-700'
         }`}>{announcement.title}</span>
-        <ImportanceTag level={announcement.importanceLevel} />
+        <div className="ml-auto ml-4 flex flex-col items-end justify-between h-full">
+          <ImportanceTag level={announcement.importanceLevel} />
+        </div>
       </div>
       <div className="text-xs text-gray-400 truncate mt-1 transition-colors duration-200 group-hover:text-gray-600">
         {announcement.content}
       </div>
     </div>
-    <div className="ml-4 flex flex-col items-end justify-between h-full min-h-[40px]">
-      <span className={`px-2 py-0.5 rounded text-xs font-medium mb-auto transition-all duration-300 ${
+    {/* <div className="ml-4 flex flex-col items-end justify-between h-full min-h-[40px]"> */}
+      {/* <span className={`px-2 py-0.5 rounded text-xs font-medium mb-auto transition-all duration-300 ${
         announcement.isRead 
           ? 'bg-gray-200 text-gray-500 group-hover:bg-gray-300' 
           : 'bg-indigo-100 text-indigo-600 group-hover:bg-indigo-200'
       }`}>{announcement.isRead ? 'Read' : 'Unread'}</span>
       <span className="text-xs text-gray-400 mt-auto whitespace-nowrap transition-colors duration-200 group-hover:text-gray-600">
-        {announcement.date}
-      </span>
-    </div>
+        {announcement./date}
+      </span> */}
+    {/* </div> */}
   </div>
 )
 
@@ -307,22 +309,22 @@ function StudentCourseManage() {
   // Handlers
   const handleOpenAnnouncement = useCallback(async (announcement) => {
     setSelectedAnnouncement(announcement)
-    if (!announcement.isRead) {
-      try {
-        const token = localStorage.getItem('token')
-        await axios.post(`http://localhost:8080/api/announcements/${announcement.id}/read`, {}, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        setAnnouncements(prev => prev.map(a => a.id === announcement.id ? { ...a, isRead: true } : a))
-      } catch (err) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to mark as read',
-          confirmButtonColor: '#4f46e5'
-        })
-      }
-    }
+    // if (!announcement.isRead) {
+    //   try {
+    //     const token = localStorage.getItem('token')
+    //     await axios.post(`http://localhost:8080/api/announcements/${announcement.id}/read`, {}, {
+    //       headers: { Authorization: `Bearer ${token}` }
+    //     })
+    //     setAnnouncements(prev => prev.map(a => a.id === announcement.id ? { ...a, isRead: true } : a))
+    //   } catch (err) {
+    //     Swal.fire({
+    //       icon: 'error',
+    //       title: 'Error',
+    //       text: 'Failed to mark as read',
+    //       confirmButtonColor: '#4f46e5'
+    //     })
+    //   }
+    // }
   }, [])
 
   const handlePageChange = useCallback((pageNumber) => {
