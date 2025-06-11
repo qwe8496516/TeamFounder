@@ -1,5 +1,6 @@
 package ntut.teamFounder.DAO;
 
+import ntut.teamFounder.Domain.Team;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -7,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class TeamDAO {
@@ -53,8 +56,43 @@ public class TeamDAO {
         return count != null && count > 0;
     }
 
-//    public int updateToReady(int teamId, int userId) {
-//        String sql = "UPDATE team_member SET ready = 1 WHERE (team_id, user_id) VALUES (?, ?)";
-//        return jdbcTemplate.update(sql, teamId, userId);
-//    }
+    public void setUserReady(int teamId, int userId) {
+        String sql = "UPDATE team_member SET ready = 1 WHERE team_id = ? AND user_id = ?";
+        jdbcTemplate.update(sql, teamId, userId);
+    }
+
+    public boolean areAllMembersReady(int teamId) {
+        String sql = "SELECT COUNT(*) FROM team_member WHERE team_id = ? AND ready = 0";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, teamId);
+        return count != null && count == 0;
+    }
+
+    public Team loadTeam(int teamId) {
+        // 1. Load team details (courseCode and teamId)
+        String teamSql = "SELECT id, course_code FROM team WHERE id = ?";
+        Map<String, Object> teamRow = jdbcTemplate.queryForMap(teamSql, teamId);
+
+        String courseCode = (String) teamRow.get("course_code");
+        int id = ((Long) teamRow.get("id")).intValue();
+
+        // 2. Load team members (just user IDs)
+        String memberSql = "SELECT user_id FROM team_member WHERE team_id = ?";
+        List<Long> memberIds = jdbcTemplate.query(memberSql, (rs, rowNum) -> rs.getLong("user_id"), teamId);
+
+        // 3. Create Team domain object
+        Team team = new Team(courseCode, id);
+
+        // 4. Add members to the team
+        for (Long userId : memberIds) {
+            team.addMember(userId);
+        }
+
+        return team;
+    }
+
+    public void setTeamLegit(Team team) {
+        String sql = "UPDATE team SET legit = TRUE, updatedAt = CURRENT_TIMESTAMP WHERE id = ?";
+        jdbcTemplate.update(sql, team.getTeamId());
+    }
+
 }

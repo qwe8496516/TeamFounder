@@ -4,6 +4,8 @@ import ntut.teamFounder.Domain.TeamConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -51,6 +53,27 @@ public class TeamConfigurationDAO {
         String sql = "UPDATE teamConfiguration SET title=?, description=?, formationType=?, status=?, minsize=?, maxsize=?, startDate=?, endDate=? WHERE configId=?";
         return jdbcTemplate.update(
                 sql, title, description, formationType, status, minSize, maxSize, startDate, endDate, configId
+        );
+    }
+
+    public TeamConfiguration loadByCourseCode(String courseCode) {
+        String sql = "SELECT * FROM teamConfiguration WHERE courseCode = ?";
+
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> mapRowToTeamConfiguration(rs), courseCode);
+    }
+
+    private TeamConfiguration mapRowToTeamConfiguration(ResultSet rs) throws SQLException {
+        return new TeamConfiguration(
+                rs.getLong("configId"),
+                rs.getString("courseCode"),
+                rs.getString("title"),
+                rs.getString("description"),
+                rs.getBoolean("formationType"),
+                rs.getBoolean("status"),
+                rs.getInt("minSize"),
+                rs.getInt("maxSize"),
+                rs.getTimestamp("startDate"),
+                rs.getTimestamp("endDate")
         );
     }
 }
