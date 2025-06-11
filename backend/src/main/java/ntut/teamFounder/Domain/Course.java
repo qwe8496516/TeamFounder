@@ -2,8 +2,11 @@ package ntut.teamFounder.Domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -17,6 +20,8 @@ public class Course {
     private String description;
     private boolean teamStatus;
     private int courseStatus;
+    @Getter
+    private List<Team> teams;
 
     public Course(String courseCode, String name, String professorId, int academicYear, int semester,
                   String description, int courseStatus) {
@@ -27,6 +32,7 @@ public class Course {
         this.semester = semester;
         this.description = description;
         this.courseStatus = courseStatus;
+        this.teams = new ArrayList<Team>();
     }
 
     public Map<String, Object> toMap() {
@@ -40,4 +46,9 @@ public class Course {
         map.put("courseStatus", courseStatus);
         return map;
     }
+
+    public void addTeam(Team team) {
+        teams.add(team);
+    }
+
 }

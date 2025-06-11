@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class InvitationDAO {
@@ -29,6 +30,11 @@ public class InvitationDAO {
     public Invitation getInvitationById(Long id) {
         String sql = "SELECT * FROM invitation WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, new InvitationRowMapper());
+    }
+
+    public List<Invitation> getInvitations(String courseCode, Long receiverId) {
+        String sql = "SELECT * FROM invitation WHERE courseCode = ? AND receiverId = ?";
+        return jdbcTemplate.query(sql, new Object[]{courseCode, receiverId}, new InvitationRowMapper());
     }
 
     private static class InvitationRowMapper implements RowMapper<Invitation> {

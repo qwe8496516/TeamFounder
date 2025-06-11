@@ -3,22 +3,33 @@ package ntut.teamFounder.Handler;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import ntut.teamFounder.DAO.InvitationDAO;
+import ntut.teamFounder.DAO.StudentDAO;
 import ntut.teamFounder.DAO.TeamDAO;
 import ntut.teamFounder.Domain.Invitation;
+import ntut.teamFounder.Domain.Skill;
+import ntut.teamFounder.Domain.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @Tag(name = "Invitation API")
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/invitations")
 public class InvitationHandler {
+
+    private final StudentDAO studentDAO;
     private final InvitationDAO invitationDAO;
     private final TeamDAO teamDAO;
 
     @Autowired
-    public InvitationHandler(InvitationDAO invitationDAO, TeamDAO teamDAO) {
+    public InvitationHandler(StudentDAO studentDAO, InvitationDAO invitationDAO, TeamDAO teamDAO) {
+        this.studentDAO = studentDAO;
         this.invitationDAO = invitationDAO;
         this.teamDAO = teamDAO;
     }
@@ -78,8 +89,29 @@ public class InvitationHandler {
         }
     }
 
-
-
+    @GetMapping("/{courseCode}/invitations/{userId}")
+    public ResponseEntity<?> getInvitations(@PathVariable String courseCode, @PathVariable Long userId) {
+        try {
+            List<Invitation> invites = invitationDAO.getInvitations(courseCode, userId);
+            List<Map<String, Object>> invitations = new ArrayList<>();
+            for (Invitation invite : invites) {
+                Student student = studentDAO.getStudentById(invite.getSenderId());
+                student.setSkills(studentDAO.getSkillsById(student.getId()));
+                List<Skill> skillList = new ArrayList<>();
+                for (Long skill : student.getSkills()) {
+                    Skill s = studentDAO.getSkillById(skill);
+                    skillList.add(s);
+                }
+                Map<String, Object> invitation = invite.toMap();
+                invitation.put("student", student);
+                invitation.put("skills", skillList);
+                invitations.add(invitation);
+            }
+            return ResponseEntity.ok(invitations);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to get invitations: " + e.getMessage());
+        }
+    }
 
 
     @PostMapping("")

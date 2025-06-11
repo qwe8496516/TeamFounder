@@ -192,7 +192,6 @@ function ProfessorCourseTeamUp() {
       }
 
       if (teamConfig) {
-        // 更新現有配置
         await axios.put(
           'http://localhost:8080/api/teamConfig/update',
           null,
@@ -202,7 +201,6 @@ function ProfessorCourseTeamUp() {
           }
         )
       } else {
-        // 創建新配置
         await axios.post(
           'http://localhost:8080/api/teamConfig/create',
           null,

@@ -44,6 +44,24 @@ public class CourseDAO {
         );
     }
 
+    public List<Long> getStudentsInMatch(String courseCode, Long matcherId) {
+        String sql = "SELECT e.userId\n" +
+                "FROM enrollment e\n" +
+                "WHERE e.courseCode = ?\n" +
+                "  AND e.userId NOT IN (\n" +
+                "    SELECT \n" +
+                "      CASE \n" +
+                "        WHEN i.senderId = ? THEN i.receiverId\n" +
+                "        WHEN i.receiverId = ? THEN i.senderId\n" +
+                "      END\n" +
+                "    FROM invitation i\n" +
+                "    WHERE i.senderId = ? OR i.receiverId = ?\n" +
+                "  )\n";
+        return jdbcTemplate.query(sql, new Object[]{courseCode, matcherId, matcherId, matcherId, matcherId}, (rs, rowNum) ->
+                rs.getLong("userId")
+        );
+    }
+
     public String getProfessorId(String courseCode) {
         String sql = "SELECT professorId FROM course WHERE courseCode = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{courseCode}, String.class);
@@ -73,5 +91,20 @@ public class CourseDAO {
     """;
 
         return jdbcTemplate.queryForObject(sql, Integer.class, courseCode);
+    }
+    public String getContentType(String fileType) {
+        return switch (fileType.toLowerCase()) {
+            case "pdf" -> "application/pdf";
+            case "excel" -> "text/csv";
+            default -> "text/html";
+        };
+    }
+
+    public String getFileExtension(String fileType) {
+        return switch (fileType.toLowerCase()) {
+            case "pdf" -> ".pdf";
+            case "excel" -> ".csv";
+            default -> ".html";
+        };
     }
 }

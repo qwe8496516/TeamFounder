@@ -48,8 +48,8 @@ public class TeamConfiguration {
     }
 
     public boolean dateValid() {
-//        return startDate != null && endDate != null && startDate.before(endDate);
-        return startDate != null && endDate != null;
+        Date today = new Date();
+        return startDate != null && endDate != null && startDate.before(endDate) && (endDate.after(today) || endDate.equals(today));
     }
 
     public Map<String, Object> toMap() {
