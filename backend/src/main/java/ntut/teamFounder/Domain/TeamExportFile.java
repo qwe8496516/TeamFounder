@@ -2,111 +2,136 @@ package ntut.teamFounder.Domain;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Map;
+import org.apache.pdfbox.pdmodel.*;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 public class TeamExportFile {
 
-    public byte[] generateExport(List<Team> teams, String fileType) throws Exception {
-        if (fileType.equalsIgnoreCase("pdf")) {
-            return generatePdfExport(teams);
-        } else {
-            return generateCsvExport(teams);
+    public byte[] generateExport(List<Map<String, Object>> teams, String fileType) throws Exception {
+        return fileType.equalsIgnoreCase("pdf") ?
+                generatePdfExport(teams) :
+                generateCsvExport(teams);
+    }
+
+    private byte[] generatePdfExport(List<Map<String, Object>> teams) throws Exception {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            contentStream.setFont(PDType1Font.HELVETICA, 12);
+
+            float y = page.getMediaBox().getHeight() - 50;
+            float margin = 50;
+            float leading = 18;
+
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, y);
+            contentStream.showText("Team Export Report");
+            contentStream.newLineAtOffset(0, -leading);
+
+            // Column header
+            contentStream.showText("TeamID | CourseCode | UserID | Username | Email");
+            contentStream.newLineAtOffset(0, -leading);
+
+            // Team Data
+            for (Map<String, Object> team : teams) {
+                List<Map<String, Object>> members = (List<Map<String, Object>>) team.get("members");
+                for (Map<String, Object> member : members) {
+                    String line = String.format("%s | %s | %s | %s | %s",
+                            team.get("teamId"),
+                            team.get("courseCode"),
+                            member.get("userId"),
+                            member.get("username"),
+                            member.get("email"));
+                    contentStream.showText(line);
+                    contentStream.newLineAtOffset(0, -leading);
+                }
+                contentStream.newLineAtOffset(0, -leading / 2); // Space between teams
+            }
+
+            contentStream.endText();
+            contentStream.close();
+
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            document.save(output);
+            return output.toByteArray();
         }
     }
 
-    private byte[] generatePdfExport(List<Team> teams) throws Exception {
-        StringBuilder pdfContent = new StringBuilder();
-
-        // PDF Header
-        pdfContent.append("%PDF-1.7\n\n");
-
-        // Catalog
-        pdfContent.append("1 0 obj\n")
-                .append("<< /Type /Catalog /Pages 2 0 R >>\n")
-                .append("endobj\n\n");
-
-        // Pages
-        pdfContent.append("2 0 obj\n")
-                .append("<< /Type /Pages /Kids [3 0 R] /Count 1 >>\n")
-                .append("endobj\n\n");
-
-        // Page
-        String pageContent = buildPdfPageContent(teams);
-        ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
-        contentStream.write(pageContent.getBytes());
-        String streamLength = String.valueOf(contentStream.size());
-
-        pdfContent.append("3 0 obj\n")
-                .append("<< /Type /Page /Parent 2 0 R /Contents 4 0 R ")
-                .append("/MediaBox [0 0 612 792] >>\n")
-                .append("endobj\n\n");
-
-        // Content Stream
-        pdfContent.append("4 0 obj\n")
-                .append("<< /Length ").append(streamLength).append(" >>\n")
-                .append("stream\n")
-                .append(pageContent)
-                .append("\nendstream\n")
-                .append("endobj\n\n");
-
-        // Cross-reference and trailer
-        pdfContent.append("xref\n")
-                .append("0 5\n")
-                .append("0000000000 65535 f \n")
-                .append("0000000018 00000 n \n")
-                .append("0000000070 00000 n \n")
-                .append("0000000200 00000 n \n")
-                .append("0000000300 00000 n \n")
-                .append("trailer\n")
-                .append("<< /Size 5 /Root 1 0 R >>\n")
-                .append("startxref\n")
-                .append(pdfContent.length())
-                .append("\n%%EOF");
-
-        return pdfContent.toString().getBytes();
-    }
-
-    private String buildPdfPageContent(List<Team> teams) {
+    private String buildPdfPageContent(List<Map<String, Object>> teams) {
         StringBuilder content = new StringBuilder();
+        int startY = 750; // Start Y-position
+        int lineHeight = 15;
+
+        // Begin text object and font setup
         content.append("BT\n/F1 12 Tf\n");
 
-        int yPosition = 700;
-        content.append(String.format("100 %d Td\n(Team Export Report)Tj\nET\n", yPosition));
-        yPosition -= 30;
+        // Title
+        content.append(String.format("1 0 0 1 50 %d Tm\n(Team Export Report) Tj\n", startY));
+        startY -= lineHeight * 2;
 
-        // Table headers
-        content.append(String.format("100 %d Td\n(Team ID)Tj\n", yPosition));
-        content.append(String.format("200 %d Td\n(Course Code)Tj\n", yPosition));
-        content.append(String.format("300 %d Td\n(Members)Tj\n", yPosition));
-        content.append(String.format("400 %d Td\n(Status)Tj\n", yPosition));
-        yPosition -= 20;
+        // Header row
+        content.append(String.format("1 0 0 1 50 %d Tm\n(TeamID) Tj\n", startY));
+        content.append(String.format("1 0 0 1 100 %d Tm\n(Course) Tj\n", startY));
+        content.append(String.format("1 0 0 1 160 %d Tm\n(UserID) Tj\n", startY));
+        content.append(String.format("1 0 0 1 250 %d Tm\n(Username) Tj\n", startY));
+        content.append(String.format("1 0 0 1 400 %d Tm\n(Email) Tj\n", startY));
+        startY -= lineHeight;
 
-        // Table rows
-        for (Team team : teams) {
-            content.append(String.format("100 %d Td\n(%s)Tj\n", yPosition, team.getTeamId()));
-            content.append(String.format("200 %d Td\n(%s)Tj\n", yPosition,
-                    team.getCourseCode() != null ? team.getCourseCode() : "N/A"));
-            content.append(String.format("300 %d Td\n(%s)Tj\n", yPosition,
-                    String.join(", ", (CharSequence) team.getMembers())));
-            content.append(String.format("400 %d Td\n(%s)Tj\n", yPosition,
-                    team.isFormed() ? "Formed" : "Not Formed"));
-            yPosition -= 15;
+        // Rows
+        for (Map<String, Object> team : teams) {
+            List<Map<String, Object>> members = (List<Map<String, Object>>) team.get("members");
+            String teamId = String.valueOf(team.get("teamId"));
+            String courseCode = String.valueOf(team.get("courseCode"));
+
+            for (Map<String, Object> member : members) {
+                String userId = String.valueOf(member.get("userId"));
+                String username = String.valueOf(member.get("username"));
+                String email = String.valueOf(member.get("email"));
+
+                // Print each column with fixed X position and current Y
+                content.append(String.format("1 0 0 1 50 %d Tm\n(%s) Tj\n", startY, teamId));
+                content.append(String.format("1 0 0 1 100 %d Tm\n(%s) Tj\n", startY, courseCode));
+                content.append(String.format("1 0 0 1 160 %d Tm\n(%s) Tj\n", startY, userId));
+                content.append(String.format("1 0 0 1 250 %d Tm\n(%s) Tj\n", startY, username));
+                content.append(String.format("1 0 0 1 400 %d Tm\n(%s) Tj\n", startY, email));
+
+                startY -= lineHeight;
+            }
+
+            startY -= 10; // Add extra space between teams
         }
+
+        // End text object
+        content.append("ET\n");
 
         return content.toString();
     }
 
-    private byte[] generateCsvExport(List<Team> teams) {
+
+
+    private byte[] generateCsvExport(List<Map<String, Object>> teams) {
         StringBuilder csv = new StringBuilder();
-        csv.append("Team ID,Course Code,Members,Status\n");
+        // Header
+        csv.append("Team ID,Course Code,User ID,Username,Email,Status\n");
 
-        for (Team team : teams) {
-            csv.append(team.getTeamId()).append(",")
-                    .append(team.getCourseCode() != null ? team.getCourseCode() : "N/A").append(",")
-                    .append("\"").append(String.join(",", (CharSequence) team.getMembers())).append("\",")
-                    .append(team.isFormed() ? "Formed" : "Not Formed")
-                    .append("\n");
+        // Data Rows
+        for (Map<String, Object> team : teams) {
+            List<Map<String, Object>> members = (List<Map<String, Object>>) team.get("members");
+
+            for (Map<String, Object> member : members) {
+                csv.append(team.get("teamId")).append(",")
+                        .append(team.get("courseCode")).append(",")
+                        .append(member.get("userId")).append(",")
+                        .append("\"").append(member.get("username")).append("\",")
+                        .append("\"").append(member.get("email")).append("\",")
+                        .append(team.get("formed"))
+                        .append("\n");
+            }
         }
-
         return csv.toString().getBytes();
     }
 }

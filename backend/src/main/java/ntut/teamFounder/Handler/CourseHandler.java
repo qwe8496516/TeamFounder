@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -117,20 +118,38 @@ public class CourseHandler {
         }
     }
 
+    // In your CourseHandler
     @GetMapping("/{courseCode}/export")
     public ResponseEntity<byte[]> exportTeamList(
             @PathVariable String courseCode,
             @RequestParam(defaultValue = "pdf") String fileType) {
 
         try {
-            Course course = courseDAO.getCourseByCourseCode(courseCode);
-            List<Team> teams = course.getTeams();
+            List<Team> teams = courseDAO.getTeamsByCourseCode(courseCode);
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (Team team : teams) {
+                Map<String, Object> teamMap = new HashMap<>();
+                teamMap.put("teamId", team.getTeamId());
+                teamMap.put("courseCode", team.getCourseCode());
+
+                // Get member details
+                List<Map<String, Object>> membersList = new ArrayList<>();
+                for (Long memberId : team.getMembers()) {
+                    Student student = studentDAO.getStudentById(memberId);
+                    if (student != null) {
+                        membersList.add(student.toMap());
+                    }
+                }
+                teamMap.put("members", membersList);
+
+                result.add(teamMap);
+            }
             TeamExportFile exportFile = new TeamExportFile();
-            byte[] fileContent = exportFile.generateExport(teams, fileType);
+            byte[] fileContent = exportFile.generateExport(result, fileType);
 
             return ResponseEntity.ok()
-                    .header("Content-Type", courseDAO.getContentType(fileType))
-                    .header("Content-Disposition", "attachment; filename=teams_" + courseCode + courseDAO.getFileExtension(fileType))
+                    .header("Content-Type", fileType.equalsIgnoreCase("pdf") ? "application/pdf" : "text/csv")
+                    .header("Content-Disposition", "attachment; filename=teams_" + courseCode + (fileType.equalsIgnoreCase("pdf") ? ".pdf" : ".csv"))
                     .body(fileContent);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
@@ -138,16 +157,38 @@ public class CourseHandler {
         }
     }
 
+
     @GetMapping("/{courseCode}/teams")
     public ResponseEntity<?> getTeamsInCourse(@PathVariable String courseCode) {
-        try{
-            Course course = courseDAO.getCourseByCourseCode(courseCode);
-            List<Team> teams = course.getTeams();
-            return ResponseEntity.ok(teams);
+        try {
+            List<Team> teams = courseDAO.getTeamsByCourseCode(courseCode);
+            List<Map<String, Object>> result = new ArrayList<>();
+
+            for (Team team : teams) {
+                Map<String, Object> teamMap = new HashMap<>();
+                teamMap.put("teamId", team.getTeamId());
+                teamMap.put("courseCode", team.getCourseCode());
+                teamMap.put("formed", team.isFormed());
+
+                // Get member details
+                List<Map<String, Object>> membersList = new ArrayList<>();
+                for (Long memberId : team.getMembers()) {
+                    Student student = studentDAO.getStudentById(memberId);
+                    if (student != null) {
+                        membersList.add(student.toMap());
+                    }
+                }
+                teamMap.put("members", membersList);
+
+                result.add(teamMap);
+            }
+
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to retrieve team list: " + e.getMessage());
         }
     }
+
 
 
 }

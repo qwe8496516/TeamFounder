@@ -1,6 +1,7 @@
 package ntut.teamFounder.DAO;
 
 import ntut.teamFounder.Domain.Course;
+import ntut.teamFounder.Domain.Team;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -97,5 +98,26 @@ public class CourseDAO {
             default -> ".html";
         };
     }
+
+    public List<Team> getTeamsByCourseCode(String courseCode) {
+        // First get all teams for the course
+        String teamSql = "SELECT * FROM team WHERE courseCode = ?";
+        List<Team> teams = jdbcTemplate.query(teamSql, (rs, rowNum) ->
+                new Team(
+                        rs.getString("courseCode"),
+                        rs.getLong("id"),
+                        rs.getBoolean("legit")
+                ), courseCode);
+
+        // Then populate members for each team
+        for (Team team : teams) {
+            String memberSql = "SELECT user_id FROM team_member WHERE team_id = ?";
+            List<Long> memberIds = jdbcTemplate.queryForList(memberSql, Long.class, team.getTeamId());
+            team.setMembers(memberIds);
+        }
+
+        return teams;
+    }
+
 
 }
