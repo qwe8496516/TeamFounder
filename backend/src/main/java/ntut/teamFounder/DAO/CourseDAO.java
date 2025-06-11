@@ -93,24 +93,7 @@ public class CourseDAO {
         return jdbcTemplate.queryForObject(sql, Integer.class, courseCode);
     }
 
-    public String getContentType(String fileType) {
-        return switch (fileType.toLowerCase()) {
-            case "pdf" -> "application/pdf";
-            case "excel" -> "text/csv";
-            default -> "text/html";
-        };
-    }
-
-    public String getFileExtension(String fileType) {
-        return switch (fileType.toLowerCase()) {
-            case "pdf" -> ".pdf";
-            case "excel" -> ".csv";
-            default -> ".html";
-        };
-    }
-
     public List<Team> getTeamsByCourseCode(String courseCode) {
-        // First get all teams for the course
         String teamSql = "SELECT * FROM team WHERE courseCode = ?";
         List<Team> teams = jdbcTemplate.query(teamSql, (rs, rowNum) ->
                 new Team(
@@ -119,7 +102,6 @@ public class CourseDAO {
                         rs.getBoolean("legit")
                 ), courseCode);
 
-        // Then populate members for each team
         for (Team team : teams) {
             String memberSql = "SELECT user_id FROM team_member WHERE team_id = ?";
             List<Long> memberIds = jdbcTemplate.queryForList(memberSql, Long.class, team.getTeamId());

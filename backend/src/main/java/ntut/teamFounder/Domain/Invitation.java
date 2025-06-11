@@ -16,7 +16,7 @@ public class Invitation {
     private String courseCode;
     private String message;
     private int status;
-
+    
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", id);
