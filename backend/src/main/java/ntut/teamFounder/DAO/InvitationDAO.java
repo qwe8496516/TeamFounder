@@ -37,7 +37,7 @@ public class InvitationDAO {
         return jdbcTemplate.query(sql, new Object[]{courseCode, receiverId}, new InvitationRowMapper());
     }
 
-    private static class InvitationRowMapper implements RowMapper<Invitation> {
+    public static class InvitationRowMapper implements RowMapper<Invitation> {
         @Override
         public Invitation mapRow(ResultSet rs, int rowNum) throws SQLException {
             Invitation invitation = new Invitation();

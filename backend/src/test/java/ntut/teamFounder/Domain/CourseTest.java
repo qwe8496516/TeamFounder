@@ -10,7 +10,7 @@ public class CourseTest {
 
     @Test
     public void toMap() {
-        Course course = new Course("CS101", "Intro to CS", "123456", 2025, 2, "Basic course", true, 0);
+        Course course = new Course("CS101", "Intro to CS", "123456", 2025, 2, "Basic course",  0);
         Map<String, Object> map = course.toMap();
 
         assertEquals(6, map.size());

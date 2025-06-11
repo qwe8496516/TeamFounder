@@ -118,6 +118,7 @@ public class CourseHandler {
         }
     }
 
+    @GetMapping("/{courseCode}/legitMembers")
     public int getTotalMembersCountInLegitTeams(String courseCode) {
         return courseDAO.getTotalMembersCountInLegitTeams(courseCode);
     }
