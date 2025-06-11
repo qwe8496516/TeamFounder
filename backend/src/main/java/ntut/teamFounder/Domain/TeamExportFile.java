@@ -61,62 +61,10 @@ public class TeamExportFile {
         }
     }
 
-    private String buildPdfPageContent(List<Map<String, Object>> teams) {
-        StringBuilder content = new StringBuilder();
-        int startY = 750; // Start Y-position
-        int lineHeight = 15;
-
-        // Begin text object and font setup
-        content.append("BT\n/F1 12 Tf\n");
-
-        // Title
-        content.append(String.format("1 0 0 1 50 %d Tm\n(Team Export Report) Tj\n", startY));
-        startY -= lineHeight * 2;
-
-        // Header row
-        content.append(String.format("1 0 0 1 50 %d Tm\n(TeamID) Tj\n", startY));
-        content.append(String.format("1 0 0 1 100 %d Tm\n(Course) Tj\n", startY));
-        content.append(String.format("1 0 0 1 160 %d Tm\n(UserID) Tj\n", startY));
-        content.append(String.format("1 0 0 1 250 %d Tm\n(Username) Tj\n", startY));
-        content.append(String.format("1 0 0 1 400 %d Tm\n(Email) Tj\n", startY));
-        startY -= lineHeight;
-
-        // Rows
-        for (Map<String, Object> team : teams) {
-            List<Map<String, Object>> members = (List<Map<String, Object>>) team.get("members");
-            String teamId = String.valueOf(team.get("teamId"));
-            String courseCode = String.valueOf(team.get("courseCode"));
-
-            for (Map<String, Object> member : members) {
-                String userId = String.valueOf(member.get("userId"));
-                String username = String.valueOf(member.get("username"));
-                String email = String.valueOf(member.get("email"));
-
-                // Print each column with fixed X position and current Y
-                content.append(String.format("1 0 0 1 50 %d Tm\n(%s) Tj\n", startY, teamId));
-                content.append(String.format("1 0 0 1 100 %d Tm\n(%s) Tj\n", startY, courseCode));
-                content.append(String.format("1 0 0 1 160 %d Tm\n(%s) Tj\n", startY, userId));
-                content.append(String.format("1 0 0 1 250 %d Tm\n(%s) Tj\n", startY, username));
-                content.append(String.format("1 0 0 1 400 %d Tm\n(%s) Tj\n", startY, email));
-
-                startY -= lineHeight;
-            }
-
-            startY -= 10; // Add extra space between teams
-        }
-
-        // End text object
-        content.append("ET\n");
-
-        return content.toString();
-    }
-
-
-
     private byte[] generateCsvExport(List<Map<String, Object>> teams) {
         StringBuilder csv = new StringBuilder();
         // Header
-        csv.append("Team ID,Course Code,User ID,Username,Email,Status\n");
+        csv.append("Team ID,Course Code,User ID,Username,Email\n");
 
         // Data Rows
         for (Map<String, Object> team : teams) {
@@ -127,8 +75,7 @@ public class TeamExportFile {
                         .append(team.get("courseCode")).append(",")
                         .append(member.get("userId")).append(",")
                         .append("\"").append(member.get("username")).append("\",")
-                        .append("\"").append(member.get("email")).append("\",")
-                        .append(team.get("formed"))
+                        .append(member.get("email"))
                         .append("\n");
             }
         }
