@@ -118,7 +118,10 @@ public class CourseHandler {
         }
     }
 
-    // In your CourseHandler
+    public int getTotalMembersCountInLegitTeams(String courseCode) {
+        return courseDAO.getTotalMembersCountInLegitTeams(courseCode);
+    }
+
     @GetMapping("/{courseCode}/export")
     public ResponseEntity<byte[]> exportTeamList(
             @PathVariable String courseCode,
@@ -188,7 +191,5 @@ public class CourseHandler {
             return ResponseEntity.badRequest().body("Failed to retrieve team list: " + e.getMessage());
         }
     }
-
-
 
 }

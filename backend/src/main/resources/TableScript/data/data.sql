@@ -11,7 +11,8 @@ INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598006', 'Michael Brown', 'MTIzNDU2', 't113598006@ntut.org.tw', 0);
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_islab', 'Jong Yih Kuo', 'MTIzNDU2', 'jykuo@ntut.org.tw', 1);
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_ooad', 'Woei Kae Chen', 'MTIzNDU2', 'woeikaechen@ntut.org.tw', 1);
-
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('Ready01', 'Ready01', 'MTIzNDU2', 'Ready01@ntut.org.tw', 0);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('Ready02', 'Ready02', 'MTIzNDU2', 'Ready02@ntut.org.tw', 0);
 
 #Skills
 INSERT INTO skill (type, name) VALUES ('Programming','HTML/CSS');
@@ -126,3 +127,38 @@ INSERT INTO team (courseCode, legit) VALUES ('CS205', FALSE);
 INSERT INTO team_member (team_id, user_id, ready) VALUES (3, 7, 1),
                                                          (3, 8, 1),
                                                          (3, 9, 0);
+
+# -- Team 1 (More than one not ready)
+# INSERT INTO team (id, course_code, legit) VALUES (1, 'CS205', FALSE);
+#
+# -- Members: 2 ready, 2 not ready
+# INSERT INTO team_member (team_id, user_id, ready) VALUES
+#                                                       (1, 1, 1),
+#                                                       (1, 2, 0),
+#                                                       (1, 3, 1),
+#                                                       (1, 4, 0);
+#
+# -- Team 2 (Only one not ready, but team too small)
+# INSERT INTO team (id, course_code, legit) VALUES (2, 'CS205', FALSE);
+#
+# -- Members: 1 ready, 1 not ready
+# INSERT INTO team_member (team_id, user_id, ready) VALUES
+#                                                       (2, 5, 1),
+#                                                       (2, 6, 0);
+#
+# -- Team 3 (Only one not ready, and team meets size)
+# INSERT INTO team (id, course_code, legit) VALUES (3, 'CS205', FALSE);
+#
+# -- Members: 2 ready, 1 not ready
+# INSERT INTO team_member (team_id, user_id, ready) VALUES
+#                                                       (3, 7, 1),
+#                                                       (3, 8, 1),
+#                                                       (3, 9, 0);
+#
+# -- getTotalMembersCountInLegitTeams
+# INSERT INTO team (id, course_code, legit) VALUES (4, 'CS301', TRUE);
+#
+# -- Add 3 members: all are ready (ready = 1)
+# INSERT INTO team_member (team_id, user_id, ready) VALUES
+#                                                       (4, 12, 1),
+#                                                       (4, 13, 1);

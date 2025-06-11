@@ -83,6 +83,16 @@ public class CourseDAO {
         );
     }
 
+    public int getTotalMembersCountInLegitTeams(String courseCode) {
+        String sql = """
+        SELECT COUNT(*) AS total_users
+        FROM team_member tm
+        JOIN team t ON tm.team_id = t.id
+        WHERE t.course_code = ? AND t.legit = TRUE
+    """;
+
+        return jdbcTemplate.queryForObject(sql, Integer.class, courseCode);
+    }
     public String getContentType(String fileType) {
         return switch (fileType.toLowerCase()) {
             case "pdf" -> "application/pdf";
@@ -118,6 +128,5 @@ public class CourseDAO {
 
         return teams;
     }
-
 
 }
