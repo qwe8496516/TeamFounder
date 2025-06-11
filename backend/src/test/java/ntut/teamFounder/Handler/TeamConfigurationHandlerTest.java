@@ -8,9 +8,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -27,21 +25,25 @@ public class TeamConfigurationHandlerTest {
     private TeamConfigurationDAO teamConfigurationDAO;
 
     @Test
-    void testGetTeamConfigByCourseCode_found() throws Exception {
+    void testGetTeamConfigByCourseCode_Success() throws Exception {
         TeamConfiguration config = Mockito.mock(TeamConfiguration.class);
         Map<String, Object> configMap = new HashMap<>();
         configMap.put("courseCode", "CS101");
+        configMap.put("title", "Team Project");
+
         Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS101")).thenReturn(config);
         Mockito.when(config.toMap()).thenReturn(configMap);
 
         mockMvc.perform(get("/api/teamConfig/CS101"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.courseCode").value("CS101"));
+                .andExpect(jsonPath("$.courseCode").value("CS101"))
+                .andExpect(jsonPath("$.title").value("Team Project"));
     }
 
     @Test
-    void testGetTeamConfigByCourseCode_notFound() throws Exception {
-        Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS404")).thenThrow(new RuntimeException("not found"));
+    void testGetTeamConfigByCourseCode_NotFound() throws Exception {
+        Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS404"))
+                .thenThrow(new RuntimeException("Config not found"));
 
         mockMvc.perform(get("/api/teamConfig/CS404"))
                 .andExpect(status().isOk())
@@ -49,77 +51,85 @@ public class TeamConfigurationHandlerTest {
     }
 
     @Test
-    void testUpdateTeamConfigStatus_success() throws Exception {
+    void testUpdateTeamConfigStatus_POST() throws Exception {
         TeamConfiguration config = Mockito.mock(TeamConfiguration.class);
         Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS101")).thenReturn(config);
-        Mockito.when(teamConfigurationDAO.updateTeamConfigStatus(eq("CS101"), eq(1))).thenReturn(1);
+        Mockito.when(teamConfigurationDAO.updateTeamConfigStatus("CS101", 2)).thenReturn(1);
 
-        mockMvc.perform(post("/api/teamConfig/CS101/status/Ongoing"))
+        mockMvc.perform(post("/api/teamConfig/CS101/status/POST"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Team Configuration Updated"));
     }
 
     @Test
-    void testUpdateTeamConfigStatus_notFound() throws Exception {
+    void testUpdateTeamConfigStatus_MID() throws Exception {
+        TeamConfiguration config = Mockito.mock(TeamConfiguration.class);
+        Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS101")).thenReturn(config);
+        Mockito.when(teamConfigurationDAO.updateTeamConfigStatus("CS101", 1)).thenReturn(1);
+
+        mockMvc.perform(post("/api/teamConfig/CS101/status/MID"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Team Configuration Updated"));
+    }
+
+    @Test
+    void testUpdateTeamConfigStatus_ConfigNotFound() throws Exception {
         Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS404")).thenReturn(null);
 
-        mockMvc.perform(post("/api/teamConfig/CS404/status/Ongoing"))
+        mockMvc.perform(post("/api/teamConfig/CS404/status/POST"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("No Team Config Found"));
     }
 
     @Test
-    void testUpdateTeamConfigStatus_updateFailed() throws Exception {
+    void testUpdateTeamConfigStatus_UpdateFailed() throws Exception {
         TeamConfiguration config = Mockito.mock(TeamConfiguration.class);
         Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS101")).thenReturn(config);
-        Mockito.when(teamConfigurationDAO.updateTeamConfigStatus(eq("CS101"), eq(0))).thenReturn(0);
+        Mockito.when(teamConfigurationDAO.updateTeamConfigStatus("CS101", 2)).thenReturn(0);
 
-        mockMvc.perform(post("/api/teamConfig/CS101/status/Closed"))
+        mockMvc.perform(post("/api/teamConfig/CS101/status/POST"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Update failed."));
     }
 
-    // In TeamConfigurationHandlerTest.java
     @Test
-    void testCreateTeamConfig_success() throws Exception {
-        TeamConfiguration mockConfig = Mockito.mock(TeamConfiguration.class);
-        Mockito.when(mockConfig.getCourseCode()).thenReturn("CS101");
-        Mockito.when(mockConfig.toMap()).thenReturn(Map.of("courseCode", "CS101"));
+    void testUpdateTeamConfiguration_Success() throws Exception {
+        TeamConfiguration existingConfig = Mockito.mock(TeamConfiguration.class);
+        Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS101")).thenReturn(existingConfig);
+        Mockito.when(existingConfig.getConfigId()).thenReturn(1L);
 
-        // Fix mocking syntax
-        Mockito.doReturn(mockConfig)
-                .when(teamConfigurationDAO)
-                .createTeamConfiguration(
-                        eq("CS101"), anyString(), anyString(),
-                        anyBoolean(), anyInt(),
-                        anyInt(), anyInt(),
-                        any(Date.class), any(Date.class)
-                );
-
-        mockMvc.perform(post("/api/teamConfig/create")
-                        .param("courseCode", "CS101")
-                        .param("sDate", "2025-06-01 00:00:00") // Match controller's format
-                        .param("eDate", "2025-06-30 00:00:00"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.courseCode").value("CS101"));
-    }
-
-    @Test
-    void testUpdateTeamConfiguration_checkConstraintsFail() throws Exception {
-        TeamConfiguration config = Mockito.mock(TeamConfiguration.class);
-        Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS101")).thenReturn(config);
-        Mockito.when(config.getConfigId()).thenReturn(1L);
-
-        // Simulate checkConstraints returns false
-        Mockito.when(config.checkConstraints()).thenReturn(false);
+        Mockito.when(teamConfigurationDAO.updateTeamConfiguration(
+                eq("CS101"), eq("New Title"), eq("New Desc"),
+                eq(true), eq(1), eq(2), eq(5),
+                any(), any(), eq(1L)
+        )).thenReturn(1);
 
         mockMvc.perform(put("/api/teamConfig/update")
                         .param("courseCode", "CS101")
                         .param("title", "New Title")
+                        .param("description", "New Desc")
+                        .param("formationType", "true")
+                        .param("status", "1")
+                        .param("minSize", "2")
+                        .param("maxSize", "5")
+                        .param("sDate", "2025-06-01")
+                        .param("eDate", "2025-06-30"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Team Configuration updated successfully."));
+    }
+
+    @Test
+    void testUpdateTeamConfiguration_ConstraintsFail() throws Exception {
+        TeamConfiguration existingConfig = Mockito.mock(TeamConfiguration.class);
+        Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS101")).thenReturn(existingConfig);
+
+        mockMvc.perform(put("/api/teamConfig/update")
+                        .param("courseCode", "CS101")
+                        .param("title", "Title")
                         .param("description", "Desc")
                         .param("formationType", "true")
-                        .param("status", "true")
-                        .param("minSize", "2")
+                        .param("status", "1")
+                        .param("minSize", "10")  // Invalid: minSize > maxSize
                         .param("maxSize", "5")
                         .param("sDate", "2025-06-01")
                         .param("eDate", "2025-06-30"))
@@ -128,16 +138,87 @@ public class TeamConfigurationHandlerTest {
     }
 
     @Test
-    void testCreateTeamConfig_checkConstraintsFail() throws Exception {
-        // Force constraints failure through parameters
-        mockMvc.perform(post("/api/teamConfig/create")
-                        .param("courseCode", "CS101")
-                        .param("minSize", "5")  // Violates minSize < maxSize
-                        .param("maxSize", "2")
+    void testUpdateTeamConfiguration_ConfigNotFound() throws Exception {
+        Mockito.when(teamConfigurationDAO.getTeamConfigByCourseCode("CS404")).thenReturn(null);
+
+        mockMvc.perform(put("/api/teamConfig/update")
+                        .param("courseCode", "CS404")
+                        .param("title", "Title")
+                        .param("description", "Desc")
+                        .param("formationType", "true")
+                        .param("status", "1")
+                        .param("minSize", "2")
+                        .param("maxSize", "5")
                         .param("sDate", "2025-06-01")
                         .param("eDate", "2025-06-30"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("No Team Config Found"));
     }
 
-}
+    @Test
+    void testCreateTeamConfig_Success() throws Exception {
+        Mockito.when(teamConfigurationDAO.createTeamConfiguration(
+                eq("CS101"), eq("New Course"), eq("Description"),
+                eq(false), eq(0), eq(2), eq(5),
+                any(), any()
+        )).thenReturn(1);
 
+        mockMvc.perform(post("/api/teamConfig/create")
+                        .param("courseCode", "CS101")
+                        .param("title", "New Course")
+                        .param("description", "Description")
+                        .param("minSize", "2")
+                        .param("maxSize", "5")
+                        .param("sDate", "2025-06-01 00:00:00")
+                        .param("eDate", "2025-06-30 00:00:00"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.description").value("Description"))
+                .andExpect(jsonPath("$.minSize").value(2))
+                .andExpect(jsonPath("$.maxSize").value(5));
+    }
+
+
+    @Test
+    void testCreateTeamConfig_ConstraintsFail() throws Exception {
+        mockMvc.perform(post("/api/teamConfig/create")
+                        .param("courseCode", "CS101")
+                        .param("title", "Course")
+                        .param("description", "Desc")
+                        .param("minSize", "10")  // Invalid: minSize > maxSize
+                        .param("maxSize", "5")
+                        .param("sDate", "2025-06-01 00:00:00")
+                        .param("eDate", "2025-06-30 00:00:00"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Please check your limitation and try again."));
+    }
+
+    @Test
+    void testCreateTeamConfig_InvalidDateFormat() throws Exception {
+        mockMvc.perform(post("/api/teamConfig/create")
+                        .param("courseCode", "CS101")
+                        .param("title", "Course")
+                        .param("description", "Desc")
+                        .param("minSize", "2")
+                        .param("maxSize", "5")
+                        .param("sDate", "invalid-date")
+                        .param("eDate", "2025-06-30 00:00:00"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Error Creating Team Config")));
+    }
+
+    @Test
+    void testUpdateTeamConfiguration_InvalidDateFormat() throws Exception {
+        mockMvc.perform(put("/api/teamConfig/update")
+                        .param("courseCode", "CS101")
+                        .param("title", "Title")
+                        .param("description", "Desc")
+                        .param("formationType", "true")
+                        .param("status", "1")
+                        .param("minSize", "2")
+                        .param("maxSize", "5")
+                        .param("sDate", "invalid-date")
+                        .param("eDate", "2025-06-30"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Error updating team config")));
+    }
+}
