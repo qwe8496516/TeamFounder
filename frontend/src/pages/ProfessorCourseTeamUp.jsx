@@ -235,8 +235,8 @@ function ProfessorCourseTeamUp() {
   const handleExportExcel = async () => {
     try {
       const result = await Swal.fire({
-        title: 'Export Excel',
-        text: 'Are you sure you want to export team formation data to Excel?',
+        title: 'Export CSV',
+        text: 'Are you sure you want to export team formation data to CSV?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Export',
@@ -251,7 +251,7 @@ function ProfessorCourseTeamUp() {
 
       const token = localStorage.getItem('token')
       const response = await axios.get(
-        `http://localhost:8080/api/course/${courseCode}/export/excel`,
+        `http://localhost:8080/api/course/${courseCode}/export/csv`,
         {
           headers: { Authorization: `Bearer ${token}` },
           responseType: 'blob'
@@ -261,16 +261,16 @@ function ProfessorCourseTeamUp() {
       const url = window.URL.createObjectURL(new Blob([response.data]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', `${courseCode}_team_formation_${new Date().toISOString().split('T')[0]}.xlsx`)
+      link.setAttribute('download', `${courseCode}_team_formation_${new Date().toISOString().split('T')[0]}.csv`)
       document.body.appendChild(link)
       link.click()
       link.remove()
       window.URL.revokeObjectURL(url)
 
-      message.success('Excel file exported successfully!')
+      message.success('CSV file exported successfully!')
     } catch (error) {
       console.error('Export failed:', error)
-      message.error('Failed to export Excel file')
+      message.error('Failed to export CSV file')
     }
   }
 
@@ -447,7 +447,7 @@ function ProfessorCourseTeamUp() {
                         className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                       >
                         <FileExcelOutlined className="mr-2" />
-                        Export Excel
+                        Export CSV
                       </button>
                       <button
                         onClick={handleExportPDF}
