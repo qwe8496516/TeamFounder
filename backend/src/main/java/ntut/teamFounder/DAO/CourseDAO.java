@@ -88,7 +88,7 @@ public class CourseDAO {
         SELECT COUNT(*) AS total_users
         FROM team_member tm
         JOIN team t ON tm.team_id = t.id
-        WHERE t.course_code = ? AND t.legit = TRUE
+        WHERE t.courseCode = ? AND t.legit = TRUE
     """;
 
         return jdbcTemplate.queryForObject(sql, Integer.class, courseCode);
