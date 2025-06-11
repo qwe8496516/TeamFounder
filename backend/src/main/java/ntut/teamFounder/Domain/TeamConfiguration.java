@@ -65,4 +65,33 @@ public class TeamConfiguration {
         return map;
     }
 
+    public boolean validateLegit(Team team) {
+        int teamSize = team.getMembers().size();
+        // return teamSize >= this.minSize && teamSize <= this.maxSize;
+
+        // Check status is ongoing
+        if (!(this.status)) {
+            return false;
+        }
+
+        // Check size constraints
+        if (teamSize < this.minSize || teamSize > this.maxSize) {
+            return false;
+        }
+
+        // Check time window
+//        Date now = new Date();
+//        if (now.before(this.startDate) || now.after(this.endDate)) {
+//            return false;
+//        }
+
+        // Check course code matches
+//        if (!this.courseCode.equals(team.getCourseCode())) {
+//            return false;
+//        }
+
+        // All checks passed
+        return true;
+    }
+
 }

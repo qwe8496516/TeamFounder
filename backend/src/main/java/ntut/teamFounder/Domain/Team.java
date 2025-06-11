@@ -2,6 +2,7 @@ package ntut.teamFounder.Domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,4 +29,6 @@ public class Team {
     public void removeMember(Long userId) {
         members.remove(userId);
     }
+
+
 }
