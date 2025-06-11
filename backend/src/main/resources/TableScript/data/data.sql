@@ -159,10 +159,14 @@ INSERT INTO team_member (team_id, user_id, ready) VALUES (3, 7, 1),
 #                                                       (3, 8, 1),
 #                                                       (3, 9, 0);
 #
-# -- getTotalMembersCountInLegitTeams
-# INSERT INTO team (id, course_code, legit) VALUES (4, 'CS301', TRUE);
-#
-# -- Add 3 members: all are ready (ready = 1)
-# INSERT INTO team_member (team_id, user_id, ready) VALUES
-#                                                       (4, 12, 1),
-#                                                       (4, 13, 1);
+-- getTotalMembersCountInLegitTeams 1
+INSERT INTO team (id, courseCode, legit) VALUES (4, 'CS301', TRUE);
+INSERT INTO team_member (team_id, user_id, ready) VALUES
+                                                      (4, 12, 1),
+                                                      (4, 13, 1);
+
+-- getTotalMembersCountInLegitTeams 2
+INSERT INTO team (id, courseCode, legit) VALUES (5, 'CS301', TRUE);
+INSERT INTO team_member (team_id, user_id, ready) VALUES
+                                                      (5, 3, 1),
+                                                      (5, 4, 1);
