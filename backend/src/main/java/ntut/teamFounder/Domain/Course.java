@@ -17,7 +17,6 @@ public class Course {
     private int academicYear;
     private int semester;
     private String description;
-    private boolean teamStatus;
     private int courseStatus;
     private List<Team> teams;
 
