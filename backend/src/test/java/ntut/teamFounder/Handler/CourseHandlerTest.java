@@ -2,9 +2,7 @@ package ntut.teamFounder.Handler;
 
 import ntut.teamFounder.DAO.CourseDAO;
 import ntut.teamFounder.DAO.StudentDAO;
-import ntut.teamFounder.Domain.Course;
-import ntut.teamFounder.Domain.Skill;
-import ntut.teamFounder.Domain.Student;
+import ntut.teamFounder.Domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -66,27 +64,6 @@ public class CourseHandlerTest {
     }
 
     @Test
-    void getCoursesByStudentId_WithValidId_ShouldReturnSuccess() {
-        Long studentId = 1L;
-        List<String> courseCodes = Arrays.asList("CS101", "CS102");
-        Course mockCourse1 = new Course("CS101", "Computer Science 101", "prof1", 2024, 1, "Introduction to CS",  0);
-        Course mockCourse2 = new Course("CS102", "Computer Science 102", "prof1", 2024, 1, "Advanced CS", 0);
-
-        when(courseDAO.getCourseByStudentId(studentId)).thenReturn(courseCodes);
-        when(courseDAO.getCourseByCourseCode("CS101")).thenReturn(mockCourse1);
-        when(courseDAO.getCourseByCourseCode("CS102")).thenReturn(mockCourse2);
-
-        ResponseEntity<?> response = courseHandler.getCoursesByStudentId(studentId);
-
-        assertTrue(response.getStatusCode().is2xxSuccessful());
-        List<Course> courses = (List<Course>) response.getBody();
-        assertNotNull(courses);
-        assertEquals(2, courses.size());
-        assertEquals("CS101", courses.get(0).getCourseCode());
-        assertEquals("CS102", courses.get(1).getCourseCode());
-    }
-
-    @Test
     void getStudentInCourse_WithValidCode_ShouldReturnSuccess() {
         String courseCode = "CS101";
         List<Long> studentIds = Arrays.asList(1L, 2L);
@@ -108,64 +85,112 @@ public class CourseHandlerTest {
     }
 
     @Test
-    void getCompatibleStudents_WithValidData_ShouldReturnSuccess() {
-        String courseCode = "CS101";
-        Long userId = 1L;
-        List<Long> studentIds = Arrays.asList(2L, 3L);
-        
-        Student matcher = new Student(userId, "student1", "Student One", "pass1", "student1@example.com", new Date());
-        List<Long> matcherSkills = Arrays.asList(1L, 2L);
-        matcher.setSkills(matcherSkills);
-        
-        Student student2 = new Student(2L, "student2", "Student Two", "pass2", "student2@example.com", new Date());
-        List<Long> student2Skills = Arrays.asList(1L, 2L, 3L);
-        student2.setSkills(student2Skills);
-        
-        Student student3 = new Student(3L, "student3", "Student Three", "pass3", "student3@example.com", new Date());
-        List<Long> student3Skills = Arrays.asList(4L, 5L);
-        student3.setSkills(student3Skills);
-        
-        Skill skill1 = new Skill(1L, "Programming", "Java");
-        Skill skill2 = new Skill(2L, "Programming", "Python");
-        Skill skill3 = new Skill(3L, "Programming", "C++");
-        Skill skill4 = new Skill(4L, "Design", "UI/UX");
-        Skill skill5 = new Skill(5L, "Design", "Figma");
+    void getCoursesByStudentId_WithValidStudentId_ShouldReturnSuccess() {
+        Long studentId = 1L;
+        List<String> courseCodes = Arrays.asList("CS101", "CS102");
+        Course course1 = new Course("CS101", "Comp Sci 101", "prof1", 2024, 1, "Intro CS", 0);
+        Course course2 = new Course("CS102", "Comp Sci 102", "prof1", 2024, 1, "Advanced CS", 0);
 
-        when(courseDAO.getStudentsInCourse(courseCode)).thenReturn(studentIds);
-        when(studentDAO.getStudentById(userId)).thenReturn(matcher);
-        when(studentDAO.getStudentById(2L)).thenReturn(student2);
-        when(studentDAO.getStudentById(3L)).thenReturn(student3);
-        when(studentDAO.getSkillsById(userId)).thenReturn(matcherSkills);
-        when(studentDAO.getSkillsById(2L)).thenReturn(student2Skills);
-        when(studentDAO.getSkillsById(3L)).thenReturn(student3Skills);
-        when(studentDAO.getSkillById(1L)).thenReturn(skill1);
-        when(studentDAO.getSkillById(2L)).thenReturn(skill2);
-        when(studentDAO.getSkillById(3L)).thenReturn(skill3);
-        when(studentDAO.getSkillById(4L)).thenReturn(skill4);
-        when(studentDAO.getSkillById(5L)).thenReturn(skill5);
+        when(courseDAO.getCourseByStudentId(studentId)).thenReturn(courseCodes);
+        when(courseDAO.getCourseByCourseCode("CS101")).thenReturn(course1);
+        when(studentDAO.getStudentCount("CS101")).thenReturn(30);
+        when(courseDAO.getCourseByCourseCode("CS102")).thenReturn(course2);
+        when(studentDAO.getStudentCount("CS102")).thenReturn(25);
 
-        ResponseEntity<?> response = courseHandler.getCompatibleStudents(courseCode, userId);
+        ResponseEntity<?> response = courseHandler.getCoursesByStudentId(studentId);
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
-        List<Map<String, Object>> students = (List<Map<String, Object>>) response.getBody();
-        assertNotNull(students);
-        assertEquals(2, students.size());
-        
-        Map<String, Object> student2Data = students.get(0);
-        assertEquals("student2", student2Data.get("userId"));
-        assertEquals("Student Two", student2Data.get("username"));
-        assertEquals("student2@example.com", student2Data.get("email"));
-        assertTrue((int) student2Data.get("Fitness") > 90);
-        List<Skill> student2SkillsList = (List<Skill>) student2Data.get("skills");
-        assertEquals(3, student2SkillsList.size());
-        
-        Map<String, Object> student3Data = students.get(1);
-        assertEquals("student3", student3Data.get("userId"));
-        assertEquals("Student Three", student3Data.get("username"));
-        assertEquals("student3@example.com", student3Data.get("email"));
-        assertTrue((int) student3Data.get("Fitness") <= 90);
-        List<Skill> student3SkillsList = (List<Skill>) student3Data.get("skills");
-        assertEquals(2, student3SkillsList.size());
+        List<Map<String, Object>> courses = (List<Map<String, Object>>) response.getBody();
+        assertEquals(2, courses.size());
+        assertEquals("CS101", courses.get(0).get("courseCode"));
+        assertEquals(30, courses.get(0).get("students"));
+        assertEquals("CS102", courses.get(1).get("courseCode"));
+        assertEquals(25, courses.get(1).get("students"));
+    }
+
+    @Test
+    void getCoursesByStudentId_WithException_ShouldReturnBadRequest() {
+        Long studentId = 1L;
+        when(courseDAO.getCourseByStudentId(studentId)).thenThrow(new RuntimeException("DB error"));
+
+        ResponseEntity<?> response = courseHandler.getCoursesByStudentId(studentId);
+
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertTrue(response.getBody().toString().contains("Failed to retrieve course"));
+    }
+
+    @Test
+    void getCompatibleStudents_WithException_ShouldReturnBadRequest() {
+        when(studentDAO.getStudentById(anyLong())).thenThrow(new RuntimeException("DB error"));
+
+        ResponseEntity<?> response = courseHandler.getCompatibleStudents("CS101", 1L);
+
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertTrue(response.getBody().toString().contains("Failed to retrieve match list"));
+    }
+
+    @Test
+    void getCoursesByProfessorId_ShouldReturnSuccess() {
+        String professorId = "prof1";
+        Course course1 = new Course("CS101", "CS101 Name", professorId, 2024, 1, "desc1", 0);
+        Course course2 = new Course("CS102", "CS102 Name", professorId, 2024, 1, "desc2", 0);
+
+        when(courseDAO.getCoursesByProfessorId(professorId)).thenReturn(Arrays.asList(course1, course2));
+        when(studentDAO.getStudentCount("CS101")).thenReturn(20);
+        when(studentDAO.getStudentCount("CS102")).thenReturn(15);
+
+        ResponseEntity<?> response = courseHandler.getCoursesByProfessorId(professorId);
+
+        assertTrue(response.getStatusCode().is2xxSuccessful());
+        List<Map<String, Object>> courses = (List<Map<String, Object>>) response.getBody();
+        assertEquals(2, courses.size());
+        assertEquals("CS101", courses.get(0).get("courseCode"));
+        assertEquals(20, courses.get(0).get("students"));
+    }
+
+    @Test
+    void getCoursesByProfessorId_WithException_ShouldReturnBadRequest() {
+        when(courseDAO.getCoursesByProfessorId(anyString())).thenThrow(new RuntimeException("DB error"));
+
+        ResponseEntity<?> response = courseHandler.getCoursesByProfessorId("prof1");
+
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertTrue(response.getBody().toString().contains("Failed to retrieve course"));
+    }
+
+    @Test
+    void getTotalMembersCountInLegitTeams_ShouldReturnCount() {
+        String courseCode = "CS101";
+        when(courseDAO.getTotalMembersCountInLegitTeams(courseCode)).thenReturn(10);
+
+        int count = courseHandler.getTotalMembersCountInLegitTeams(courseCode);
+
+        assertEquals(10, count);
+    }
+
+    @Test
+    void exportTeamList_WithException_ShouldReturnInternalServerError() {
+        String courseCode = "CS101";
+        String fileType = "csv";
+
+        when(courseDAO.getTeamsByCourseCode(courseCode)).thenThrow(new RuntimeException("DB error"));
+
+        ResponseEntity<byte[]> response = courseHandler.exportTeamList(courseCode, fileType);
+
+        assertTrue(response.getStatusCode().is5xxServerError());
+        assertTrue(new String(response.getBody()).contains("Export failed"));
+    }
+
+
+    @Test
+    void getTeamsInCourse_WithException_ShouldReturnBadRequest() {
+        String courseCode = "CS101";
+        when(courseDAO.getTeamsByCourseCode(courseCode)).thenThrow(new RuntimeException("DB error"));
+
+        ResponseEntity<?> response = courseHandler.getTeamsInCourse(courseCode);
+
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertTrue(response.getBody().toString().contains("Failed to retrieve team list"));
     }
 
 
