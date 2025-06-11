@@ -33,7 +33,8 @@ class CourseTest {
 
     @Test
     void testSetters() {
-        Course course = new Course("CS101", "Intro", "prof", 2025, 1, "desc", 1);
+        Course course = new Course("CS101", "Intro", "prof"
+                , 2025, 1, "desc", 1);
 
         course.setCourseCode("CS102");
         course.setName("Data Structures");
@@ -56,7 +57,8 @@ class CourseTest {
 
     @Test
     void testAddTeam() {
-        Course course = new Course("CS101", "Intro", "prof", 2025, 1, "desc", 1);
+        Course course = new Course("CS101", "Intro", "prof"
+                , 2025, 1, "desc", 1);
         Team team1 = new Team("CS101", 1L, false);
         Team team2 = new Team("CS101", 2L, true);
 

@@ -11,7 +11,8 @@ public class StudentTest {
     @Test
     void testConstructor() {
         Date now = new Date();
-        Student student = new Student(1L, "113456789", "Alice", "pw123", "t113456789@ntut.org.tw", now);
+        Student student = new Student(1L, "113456789", "Alice"
+                , "pw123", "t113456789@ntut.org.tw", now);
         assertEquals(1L, student.getId());
         assertEquals("113456789", student.getUserId());
         assertEquals("Alice", student.getUsername());
@@ -26,7 +27,8 @@ public class StudentTest {
     @Test
     public void testAddSkill() {
         Date now = new Date();
-        Student student = new Student(1L, "113456789", "Alice", "pw123", "t113456789@ntut.org.tw", now);
+        Student student = new Student(1L, "113456789", "Alice"
+                , "pw123", "t113456789@ntut.org.tw", now);
         List<Long> skills = new ArrayList<>();
         skills.add(0, 1L);
         skills.add(1, 2L);
@@ -36,7 +38,8 @@ public class StudentTest {
 
     @Test
     void testCalculateFitness() {
-        Student student = new Student(1L, "u1", "Alice", "pass", "a@x.com", new Date());
+        Student student = new Student(1L, "u1", "Alice"
+                , "pass", "a@x.com", new Date());
         assertEquals(50, student.calculateFitness(new ArrayList<>()));
 
         student.getSkills().addAll(Arrays.asList(1L, 2L, 3L));
@@ -61,14 +64,16 @@ public class StudentTest {
 
     @Test
     void testCalculateWeight() {
-        Student student = new Student(1L, "u1", "Alice", "pass", "a@x.com", new Date());
+        Student student = new Student(1L, "u1", "Alice"
+                , "pass", "a@x.com", new Date());
         double result = student.calculateWeight(2, 4);
         assertEquals(95, result);
     }
 
     @Test
     void testFitnessToInteger() {
-        Student student = new Student(1L, "u1", "Alice", "pass", "a@x.com", new Date());
+        Student student = new Student(1L, "u1", "Alice"
+                , "pass", "a@x.com", new Date());
         assertEquals(10, student.fitnessToInteger(10.9));
         assertEquals(-9, student.fitnessToInteger(-9.1));
         assertEquals(0, student.fitnessToInteger(0));
@@ -76,7 +81,8 @@ public class StudentTest {
 
     @Test
     void testToMap() {
-        Student student = new Student(1L, "u1", "Alice", "pass", "a@x.com", new Date());
+        Student student = new Student(1L, "u1", "Alice"
+                , "pass", "a@x.com", new Date());
         Map<String, Object> map = student.toMap();
         assertEquals(1L, map.get("id"));
         assertEquals("u1", map.get("userId"));

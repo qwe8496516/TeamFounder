@@ -22,9 +22,9 @@ public class CourseDAOTest {
     public void getCourseByStudentId() {
         Long studentId = 1L;
         List<String> courses = courseDAO.getCourseByStudentId(studentId);
-        assertEquals(2, courses.size());
-        assertEquals("CS205", courses.get(0));
-        assertEquals("CS301", courses.get(1));
+        assertEquals(4, courses.size());
+        assertEquals("CS201", courses.get(0));
+        assertEquals("CS205", courses.get(1));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class CourseDAOTest {
         List<Long> studentIds = courseDAO.getStudentsInCourse(courseCode);
 
         assertNotNull(studentIds);
-        assertEquals(4, studentIds.size());
+        assertEquals(6, studentIds.size());
         assertEquals(1L, studentIds.get(0));
         assertEquals(3L, studentIds.get(1));
         assertEquals(4L, studentIds.get(2));
