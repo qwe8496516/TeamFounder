@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS teamConfiguration (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     formationType BOOLEAN DEFAULT FALSE, -- 'SELF-SELECTED', 'RANDOM'
-    status BOOLEAN DEFAULT FALSE, -- 'CLOSED', 'ONGOING'
+    status TINYINT NOT NULL, -- 'Pre-TeamUp', 'Mid-TeamUp', 'Post-TeamUp'
     minSize TINYINT NOT NULL,
     maxSize TINYINT NOT NULL,
     startDate DATETIME NOT NULL,

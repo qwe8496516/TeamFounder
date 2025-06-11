@@ -6,13 +6,19 @@ import CourseNavigation from '../components/CourseNavigation'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 
+const TEAM_UP_STATUS = {
+  PRE: 1,
+  MID: 2,
+  POST: 3
+}
+
 function StudentCourseTeamUp() {
   const { courseCode } = useParams()
   const navigate = useNavigate()
   
   const [teamData, setTeamData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isTeamUpEnabled, setIsTeamUpEnabled] = useState(false)
+  const [teamUpStatus, setTeamUpStatus] = useState(null)
   const [teamConfig, setTeamConfig] = useState(null)
 
   useEffect(() => {
@@ -35,14 +41,9 @@ function StudentCourseTeamUp() {
           headers: { Authorization: `Bearer ${token}` }
         })
         setTeamConfig(configResponse.data)
+        setTeamUpStatus(configResponse.data.status)
 
-        const now = new Date()
-        const startDate = new Date(configResponse.data.startDate)
-        const endDate = new Date(configResponse.data.endDate)
-        const isEnabled = configResponse.data.status === true && now >= startDate && now <= endDate
-        setIsTeamUpEnabled(isEnabled)
-
-        if (isEnabled) {
+        if (configResponse.data.status === TEAM_UP_STATUS.MID) {
           const userId = localStorage.getItem('id')
           const teamResponse = await axios.get(`http://localhost:8080/api/team/${courseCode}/${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -69,7 +70,7 @@ function StudentCourseTeamUp() {
     return <Loading />
   }
 
-  if (!isTeamUpEnabled) {
+  if (teamUpStatus === TEAM_UP_STATUS.PRE) {
     return (
       <div className="bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -83,13 +84,9 @@ function StudentCourseTeamUp() {
             <h3 className="text-lg font-medium text-gray-900 mb-2">Team Formation Not Available</h3>
             <p className="text-gray-500 mb-6">
               {teamConfig ? (
-                teamConfig.status === true ? (
-                  <>
-                    Team formation will be available from {new Date(teamConfig.startDate).toLocaleDateString()} to {new Date(teamConfig.endDate).toLocaleDateString()}
-                  </>
-                ) : (
-                  'Team formation is currently disabled for this course'
-                )
+                <>
+                  Team formation will be available from {new Date(teamConfig.startDate).toLocaleDateString()} to {new Date(teamConfig.endDate).toLocaleDateString()}
+                </>
               ) : (
                 'Team formation feature is not available for this course yet'
               )}
@@ -100,7 +97,7 @@ function StudentCourseTeamUp() {
     )
   }
 
-  if (!teamData || teamData === "Team not found") {
+  if (!teamData || (teamUpStatus === TEAM_UP_STATUS.MID && teamData === "Team not found")) {
     return (
       <div className="bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -155,9 +152,9 @@ function StudentCourseTeamUp() {
                   <div className="flex items-center gap-4">
                     <h2 className="text-2xl font-bold text-gray-900">Team</h2>
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      teamInfo.formed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                      teamUpStatus === TEAM_UP_STATUS.POST ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {teamInfo.formed ? 'Formed' : 'Forming'}
+                      {teamUpStatus === TEAM_UP_STATUS.POST ? 'Formed' : 'Forming'}
                     </span>
                   </div>
                 </div>

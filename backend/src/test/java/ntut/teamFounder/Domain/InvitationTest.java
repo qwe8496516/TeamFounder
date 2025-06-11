@@ -44,7 +44,6 @@ class InvitationTest {
         assertEquals("Hello!", map.get("message"));
         assertEquals(0, map.get("status"));
 
-        // receiverId and courseCode are not included in toMap per your implementation
         assertNull(map.get("receiverId"));
         assertNull(map.get("courseCode"));
     }
@@ -52,7 +51,6 @@ class InvitationTest {
     @Test
     void testToMapWithNullFields() {
         Invitation invitation = new Invitation();
-        // All fields are null or 0 by default
 
         Map map = invitation.toMap();
 
@@ -80,7 +78,6 @@ class InvitationTest {
         inv2.setMessage("msg");
         inv2.setStatus(1);
 
-        // Lombok @Getter/@Setter does not generate equals/hashCode, so this will be false
         assertNotEquals(inv1, inv2);
         assertNotEquals(inv1.hashCode(), inv2.hashCode());
     }
