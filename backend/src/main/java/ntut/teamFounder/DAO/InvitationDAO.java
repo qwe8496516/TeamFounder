@@ -37,6 +37,11 @@ public class InvitationDAO {
         return jdbcTemplate.query(sql, new Object[]{courseCode, receiverId}, new InvitationRowMapper());
     }
 
+    public int deleteInvitationsByCourseCode(String courseCode) {
+        String sql = "DELETE FROM invitation WHERE courseCode = ?";
+        return jdbcTemplate.update(sql, courseCode);
+    }
+
     public static class InvitationRowMapper implements RowMapper<Invitation> {
         @Override
         public Invitation mapRow(ResultSet rs, int rowNum) throws SQLException {

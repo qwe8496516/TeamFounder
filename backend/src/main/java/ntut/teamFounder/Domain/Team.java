@@ -12,10 +12,10 @@ import java.util.Map;
 @Getter
 @Setter
 public class Team {
-    private List<Long> members;
-    private boolean formed;
     private Long teamId;
     private String courseCode;
+    private List<Long> members;
+    private boolean formed;
 
     public Team(String courseCode, Long teamId, boolean formed) {
         this.members = new ArrayList<>();

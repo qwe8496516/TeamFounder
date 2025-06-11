@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Loading from '../components/Loading'
 import { motion } from 'framer-motion'
-import { PlusOutlined, TeamOutlined, UserOutlined, LockOutlined, UnlockOutlined, EditOutlined, EyeOutlined, CalendarOutlined, TableOutlined, FileExcelOutlined, FilePdfOutlined } from '@ant-design/icons'
+import { PlusOutlined, TeamOutlined, UserOutlined, LockOutlined, UnlockOutlined, EditOutlined, EyeOutlined, CalendarOutlined, TableOutlined, FileExcelOutlined, FilePdfOutlined, ReloadOutlined } from '@ant-design/icons'
 import ActivityModal from '../components/ActivityModal'
 import { Table, Tag, message } from 'antd'
 import * as XLSX from 'xlsx'
@@ -324,6 +324,55 @@ function ProfessorCourseTeamUp() {
     setIsModalVisible(true)
   }
 
+  const handleResetSettings = async () => {
+    try {
+      const result = await Swal.fire({
+        title: 'Reset Settings',
+        text: 'Are you sure you want to reset the team formation settings? This will delete all current settings.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Reset',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#4f46e5',
+        cancelButtonColor: '#6b7280'
+      })
+
+      if (!result.isConfirmed) {
+        return
+      }
+
+      const token = localStorage.getItem('token')
+      await axios.delete(
+        `http://localhost:8080/api/teamConfig/${courseCode}/delete`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      
+      await axios.post(
+        `http://localhost:8080/api/teamConfig/${courseCode}/status/PRE`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      
+      const updatedConfig = await api.getTeamConfig(courseCode, token)
+      setTeamConfig(updatedConfig)
+      
+      Swal.fire({
+        title: 'Success',
+        text: 'Team formation settings have been reset',
+        icon: 'success',
+        confirmButtonColor: '#4f46e5'
+      })
+    } catch (error) {
+      console.error('Error resetting settings:', error)
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to reset settings',
+        confirmButtonColor: '#4f46e5'
+      })
+    }
+  }
+
   if (isLoading) {
     return <Loading />
   }
@@ -385,12 +434,12 @@ function ProfessorCourseTeamUp() {
                       End Team Formation
                     </button>
                   ) : teamConfig?.status === 2 ? (
-                    <>
+                    <div className="flex space-x-4">
                       <button
-                        onClick={handleEditSettings}
-                        className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                        onClick={handleResetSettings}
+                        className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                       >
-                        <EditOutlined className="mr-2" />
+                        <ReloadOutlined className="mr-2" />
                         Reset Settings
                       </button>
                       <button
@@ -407,7 +456,7 @@ function ProfessorCourseTeamUp() {
                         <FilePdfOutlined className="mr-2" />
                         Export PDF
                       </button>
-                    </>
+                    </div>
                   ) : (
                     <>
                       {!teamConfig && (
@@ -504,7 +553,7 @@ function ProfessorCourseTeamUp() {
                 </div>
               </div>
 
-              {teamConfig.status && (
+              {/* {teamConfig.status && (
                 <div className="border-t border-gray-100 pt-8">
                   <div className="bg-white rounded-xl p-6">
                     <h4 className="text-lg font-semibold text-gray-900 mb-4">Team Formation Status</h4>
@@ -530,7 +579,7 @@ function ProfessorCourseTeamUp() {
                     </div>
                   </div>
                 </div>
-              )}
+              )} */}
 
               {!teamConfig.status && (
                 <div className="border-t border-gray-100 pt-8">

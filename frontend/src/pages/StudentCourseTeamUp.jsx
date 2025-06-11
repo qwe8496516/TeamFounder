@@ -1,16 +1,154 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Loading from '../components/Loading'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import CourseNavigation from '../components/CourseNavigation'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 
 const TEAM_UP_STATUS = {
-  PRE: 1,
-  MID: 2,
-  POST: 3
+  PRE: 0,
+  MID: 1,
+  POST: 2
 }
+
+const TeamNotAvailable = ({ teamConfig }) => (
+  <motion.div
+    key="pre"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.3 }}
+  >
+    <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 mb-4">
+        <svg className="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+      </div>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">Team Formation Not Available</h3>
+      <p className="text-gray-500 mb-6">
+        {teamConfig ? (
+          teamConfig.status === 1 ? (
+            <>
+              Team formation will be available from {new Date(teamConfig.startDate).toLocaleDateString()} to {new Date(teamConfig.endDate).toLocaleDateString()}
+            </>
+          ) : teamConfig.status === 2 ? (
+            'Team formation has ended for this course'
+          ) : (
+            'Team formation is currently disabled for this course'
+          )
+        ) : (
+          'Team formation feature is not available for this course yet'
+        )}
+      </p>
+    </div>
+  </motion.div>
+)
+
+const NoTeam = ({ courseCode, navigate }) => (
+  <motion.div
+    key="no-team"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.3 }}
+  >
+    <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 mb-4">
+        <svg className="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      </div>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">No Team Yet</h3>
+      <p className="text-gray-500 mb-6">You haven't joined or created a team yet</p>
+      <div className="flex justify-center space-x-4">
+        <button
+          onClick={() => navigate(`/student/course/${courseCode}/invitations`)}
+          className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+        >
+          View Invitations
+        </button>
+        <button
+          onClick={() => navigate(`/student/course/${courseCode}/match`)}
+          className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200"
+        >
+          Find Teammates
+        </button>
+      </div>
+    </div>
+  </motion.div>
+)
+
+const TeamMember = ({ member, isCurrentUser }) => (
+  <motion.div
+    key={member.id}
+    initial={{ opacity: 0, x: -20 }}
+    animate={{ opacity: 1, x: 0 }}
+    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+  >
+    <div className="flex items-center space-x-4">
+      <div className="flex-shrink-0">
+        <img
+          className="h-12 w-12 rounded-full"
+          src={`https://i.pravatar.cc/150?img=${member.id}`}
+          alt={member.username}
+        />
+      </div>
+      <div>
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-medium text-gray-900">{member.username}</h3>
+          {isCurrentUser && (
+            <span className="px-2 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800 rounded-full">
+              You
+            </span>
+          )}
+        </div>
+        <p className="text-sm text-gray-500">{member.userId}</p>
+      </div>
+    </div>
+    <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+      {member.email}
+    </span>
+  </motion.div>
+)
+
+const TeamInfo = ({ teamInfo, teamMembers }) => (
+  <motion.div
+    key="team-info"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.3 }}
+  >
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="p-8">
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <div className="flex items-center gap-4">
+              <h2 className="text-2xl font-bold text-gray-900">Team</h2>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                teamInfo.formed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+              }`}>
+                {teamInfo.formed ? 'Formed' : 'Forming'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {teamMembers.map((member) => (
+            <TeamMember
+              key={member.id}
+              member={member}
+              isCurrentUser={member.id === parseInt(localStorage.getItem('id'))}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  </motion.div>
+)
 
 function StudentCourseTeamUp() {
   const { courseCode } = useParams()
@@ -43,7 +181,7 @@ function StudentCourseTeamUp() {
         setTeamConfig(configResponse.data)
         setTeamUpStatus(configResponse.data.status)
 
-        if (configResponse.data.status === TEAM_UP_STATUS.MID) {
+        if (configResponse.data.status === 1 || configResponse.data.status === 2) {
           const userId = localStorage.getItem('id')
           const teamResponse = await axios.get(`http://localhost:8080/api/team/${courseCode}/${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -70,136 +208,25 @@ function StudentCourseTeamUp() {
     return <Loading />
   }
 
-  if (teamUpStatus === TEAM_UP_STATUS.PRE) {
-    return (
-      <div className="bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <CourseNavigation courseCode={courseCode} currentPage="team up" userType="student" />
-          <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 mb-4">
-              <svg className="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Team Formation Not Available</h3>
-            <p className="text-gray-500 mb-6">
-              {teamConfig ? (
-                <>
-                  Team formation will be available from {new Date(teamConfig.startDate).toLocaleDateString()} to {new Date(teamConfig.endDate).toLocaleDateString()}
-                </>
-              ) : (
-                'Team formation feature is not available for this course yet'
-              )}
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (!teamData || (teamUpStatus === TEAM_UP_STATUS.MID && teamData === "Team not found")) {
-    return (
-      <div className="bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <CourseNavigation courseCode={courseCode} currentPage="team up" userType="student" />
-          <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 mb-4">
-              <svg className="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Team Yet</h3>
-            <p className="text-gray-500 mb-6">You haven't joined or created a team yet</p>
-            <div className="flex justify-center space-x-4">
-              <button
-                onClick={() => navigate(`/student/course/${courseCode}/invitations`)}
-                className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200"
-              >
-                View Invitations
-              </button>
-              <button
-                onClick={() => navigate(`/student/course/${courseCode}/match`)}
-                className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200"
-              >
-                Find Teammates
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  const teamInfo = teamData[0]
-  const teamMembers = teamData.slice(1)
+  const teamInfo = teamData && teamData !== "Team not found" ? teamData[0] : null
+  const teamMembers = teamData && teamData !== "Team not found" ? teamData.slice(1) : []
 
   return (
     <div className="bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <CourseNavigation courseCode={courseCode} currentPage="team up" userType="student" />
+        
+        <AnimatePresence mode="wait">
+          {teamUpStatus === 0 && <TeamNotAvailable teamConfig={teamConfig} />}
+          
+          {(!teamData || teamData === "Team not found") && teamUpStatus !== 0 && (
+            <NoTeam courseCode={courseCode} navigate={navigate} />
+          )}
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-          className="mt-8"
-        >
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="p-8">
-              <div className="flex justify-between items-start mb-8">
-                <div>
-                  <div className="flex items-center gap-4">
-                    <h2 className="text-2xl font-bold text-gray-900">Team</h2>
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      teamUpStatus === TEAM_UP_STATUS.POST ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {teamUpStatus === TEAM_UP_STATUS.POST ? 'Formed' : 'Forming'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                {teamMembers.map((member) => {
-                  const isCurrentUser = member.id === parseInt(localStorage.getItem('id'))
-                  return (
-                    <motion.div
-                      key={member.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className="flex-shrink-0">
-                          <img
-                            className="h-12 w-12 rounded-full"
-                            src={`https://i.pravatar.cc/150?img=${member.id}`}
-                            alt={member.username}
-                          />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="text-lg font-medium text-gray-900">{member.username}</h3>
-                            {isCurrentUser && (
-                              <span className="px-2 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800 rounded-full">
-                                You
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-500">{member.userId}</p>
-                        </div>
-                      </div>
-                      <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                        {member.email}
-                      </span>
-                    </motion.div>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
-        </motion.div>
+          {teamData && teamData !== "Team not found" && teamInfo && (
+            <TeamInfo teamInfo={teamInfo} teamMembers={teamMembers} />
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

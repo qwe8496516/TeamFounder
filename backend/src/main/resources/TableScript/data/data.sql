@@ -107,30 +107,30 @@ VALUES (1, 5, 'CS301', 'Would you like to team up for the CS project?', 0),
        (3, 1, 'CS205', 'I LOVE U!', 0),
        (5, 4, 'CS302', 'Hey, want to join my group?', 0);
 
--- Team 1 (More than one not ready)
-INSERT INTO team (id, courseCode, legit) VALUES (1, 'CS205', FALSE);
-
--- Members: 2 ready, 2 not ready
-INSERT INTO team_member (team_id, user_id, ready) VALUES
-                                                      (1, 1, 1),
-                                                      (1, 2, 0),
-                                                      (1, 3, 1),
-                                                      (1, 4, 0);
-
--- Team 2 (Only one not ready, but team too small)
-INSERT INTO team (courseCode, legit) VALUES ('CS205', FALSE);
-
--- Members: 1 ready, 1 not ready
-INSERT INTO team_member (team_id, user_id, ready) VALUES (2, 5, 1),
-                                                         (2, 6, 0);
-
--- Team 3 (Only one not ready, and team meets size)
-INSERT INTO team (courseCode, legit) VALUES ('CS205', FALSE);
-
--- Members: 2 ready, 1 not ready
-INSERT INTO team_member (team_id, user_id, ready) VALUES (3, 7, 1),
-                                                         (3, 8, 1),
-                                                         (3, 9, 0);
+# -- Team 1 (More than one not ready)
+# INSERT INTO team (id, courseCode, legit) VALUES (1, 'CS205', FALSE);
+#
+# -- Members: 2 ready, 2 not ready
+# INSERT INTO team_member (team_id, user_id, ready) VALUES
+#                                                       (1, 1, 1),
+#                                                       (1, 2, 0),
+#                                                       (1, 3, 1),
+#                                                       (1, 4, 0);
+#
+# -- Team 2 (Only one not ready, but team too small)
+# INSERT INTO team (courseCode, legit) VALUES ('CS205', FALSE);
+#
+# -- Members: 1 ready, 1 not ready
+# INSERT INTO team_member (team_id, user_id, ready) VALUES (2, 5, 1),
+#                                                          (2, 6, 0);
+#
+# -- Team 3 (Only one not ready, and team meets size)
+# INSERT INTO team (courseCode, legit) VALUES ('CS205', FALSE);
+#
+# -- Members: 2 ready, 1 not ready
+# INSERT INTO team_member (team_id, user_id, ready) VALUES (3, 7, 1),
+#                                                          (3, 8, 1),
+#                                                          (3, 9, 0);
 
 # -- Team 1 (More than one not ready)
 # INSERT INTO team (id, course_code, legit) VALUES (1, 'CS205', FALSE);
@@ -159,14 +159,14 @@ INSERT INTO team_member (team_id, user_id, ready) VALUES (3, 7, 1),
 #                                                       (3, 8, 1),
 #                                                       (3, 9, 0);
 #
--- getTotalMembersCountInLegitTeams 1
-INSERT INTO team (id, courseCode, legit) VALUES (4, 'CS301', TRUE);
-INSERT INTO team_member (team_id, user_id, ready) VALUES
-                                                      (4, 12, 1),
-                                                      (4, 13, 1);
-
--- getTotalMembersCountInLegitTeams 2
-INSERT INTO team (id, courseCode, legit) VALUES (5, 'CS301', TRUE);
-INSERT INTO team_member (team_id, user_id, ready) VALUES
-                                                      (5, 3, 1),
-                                                      (5, 4, 1);
+# -- getTotalMembersCountInLegitTeams 1
+# INSERT INTO team (id, courseCode, legit) VALUES (4, 'CS301', TRUE);
+# INSERT INTO team_member (team_id, user_id, ready) VALUES
+#                                                       (4, 12, 1),
+#                                                       (4, 13, 1);
+#
+# -- getTotalMembersCountInLegitTeams 2
+# INSERT INTO team (id, courseCode, legit) VALUES (5, 'CS301', TRUE);
+# INSERT INTO team_member (team_id, user_id, ready) VALUES
+#                                                       (5, 3, 1),
+#                                                       (5, 4, 1);

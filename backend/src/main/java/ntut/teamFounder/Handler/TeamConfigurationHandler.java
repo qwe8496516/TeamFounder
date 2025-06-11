@@ -1,15 +1,18 @@
 package ntut.teamFounder.Handler;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import ntut.teamFounder.DAO.CourseDAO;
+import ntut.teamFounder.DAO.InvitationDAO;
 import ntut.teamFounder.DAO.TeamConfigurationDAO;
+import ntut.teamFounder.DAO.TeamDAO;
+import ntut.teamFounder.Domain.Team;
 import ntut.teamFounder.Domain.TeamConfiguration;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @Tag(name = "Team Configuration API")
@@ -18,9 +21,15 @@ import java.util.Map;
 public class TeamConfigurationHandler {
 
     private final TeamConfigurationDAO teamConfigurationDAO;
+    private final CourseDAO courseDAO;
+    private final TeamDAO teamDAO;
+    private final InvitationDAO invitationDAO;
 
-    public TeamConfigurationHandler(TeamConfigurationDAO teamConfigurationDAO) {
+    public TeamConfigurationHandler(TeamConfigurationDAO teamConfigurationDAO, CourseDAO courseDAO, TeamDAO teamDAO, InvitationDAO invitationDAO) {
         this.teamConfigurationDAO = teamConfigurationDAO;
+        this.courseDAO = courseDAO;
+        this.teamDAO = teamDAO;
+        this.invitationDAO = invitationDAO;
     }
 
     @GetMapping("/{courseCode}")
@@ -108,6 +117,49 @@ public class TeamConfigurationHandler {
             return ResponseEntity.ok(teamConfiguration.toMap());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error Creating Team Config : " + e.getMessage() + ".");
+        }
+    }
+
+    @DeleteMapping("/{courseCode}/delete")
+    @Transactional
+    public ResponseEntity<?> deleteTeamConfig(@PathVariable String courseCode) {
+        try {
+//            int deleted = teamConfigurationDAO.deleteTeamConfiguration(courseCode);
+            Calendar calendar = Calendar.getInstance();
+
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+
+            Date startDate = calendar.getTime();
+
+            Calendar calendarPlus30 = (Calendar) calendar.clone();
+            calendarPlus30.add(Calendar.DAY_OF_MONTH, 30);
+            Date endDate = calendarPlus30.getTime();
+            int updated = teamConfigurationDAO.updateTeamConfigurationByCourseCode(courseCode, "Team Formation", "Configure team formation rules and requirements for your course", false, 0, 1, 9, startDate, endDate);
+            if (updated <= 0) {
+                throw new RuntimeException("Team configuration not found or already removed.");
+            }
+            int deleted = invitationDAO.deleteInvitationsByCourseCode(courseCode);
+            if (!(deleted > 0)) {
+                throw new RuntimeException("Invitations not found or already removed.");
+            }
+            List<Team> teams = courseDAO.getTeamsByCourseCode(courseCode);
+            for (Team team : teams) {
+                Long teamId = team.getTeamId();
+                int deletedTeam = teamDAO.deleteTeam(teamId);
+                if (deletedTeam <= 0) {
+                    throw new RuntimeException("Team not found or already removed.");
+                }
+
+                teamDAO.deleteTeamMembers(teamId);
+            }
+
+            return ResponseEntity.ok("Delete Team Config Successfully.");
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error Deleting Team Config: " + e.getMessage());
         }
     }
 

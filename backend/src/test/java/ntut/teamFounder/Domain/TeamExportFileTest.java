@@ -40,7 +40,7 @@ class TeamExportFileTest {
     void testGeneratePdfExport() throws Exception {
         TeamExportFile exportFile = new TeamExportFile();
         byte[] pdfBytes = exportFile.generateExport(sampleTeams(), "pdf");
-        // PDF bytes should not be empty and should start with "%PDF"
+
         assertNotNull(pdfBytes);
         assertTrue(pdfBytes.length > 0);
         String pdfHeader = new String(pdfBytes, 0, 4);

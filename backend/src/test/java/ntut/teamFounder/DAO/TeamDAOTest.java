@@ -59,7 +59,7 @@ class TeamDAOTest {
                 .thenAnswer(invocation -> {
                     RowMapper<Team> mapper = invocation.getArgument(2);
                     ResultSet rs = mock(ResultSet.class);
-                    when(rs.getString("course_code")).thenReturn(courseCode);
+                    when(rs.getString("courseCode")).thenReturn(courseCode);
                     when(rs.getLong("id")).thenReturn(teamId);
                     when(rs.getBoolean("legit")).thenReturn(legit);
                     return mapper.mapRow(rs, 0);
@@ -133,7 +133,7 @@ class TeamDAOTest {
 
     @Test
     void loadTeam_shouldLoadTeamAndMembers() {
-        Map<String, Object> teamMap = Map.of("id", 1L, "course_code", "CS101");
+        Map<String, Object> teamMap = Map.of("id", 1L, "courseCode", "CS101");
         List<Long> userIds = List.of(1L, 2L);
 
         when(jdbcTemplate.queryForMap(anyString(), eq(1))).thenReturn(teamMap);

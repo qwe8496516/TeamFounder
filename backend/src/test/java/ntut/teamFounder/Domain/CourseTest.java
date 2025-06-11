@@ -43,7 +43,6 @@ class CourseTest {
         course.setSemester(1);
         course.setDescription("DS course");
         course.setCourseStatus(2);
-        course.setTeamStatus(true);
 
         assertEquals("CS102", course.getCourseCode());
         assertEquals("Data Structures", course.getName());
@@ -52,7 +51,6 @@ class CourseTest {
         assertEquals(1, course.getSemester());
         assertEquals("DS course", course.getDescription());
         assertEquals(2, course.getCourseStatus());
-        assertTrue(course.isTeamStatus());
     }
 
     @Test

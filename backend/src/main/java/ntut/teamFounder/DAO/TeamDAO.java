@@ -18,7 +18,7 @@ public class TeamDAO {
         String sql = "SELECT t.id " +
                 "FROM team t " +
                 "JOIN team_member tm ON t.id = tm.team_id " +
-                "WHERE tm.user_id = ? AND t.course_code = ?";
+                "WHERE tm.user_id = ? AND t.courseCode = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new Object[]{userId, courseCode}, Long.class);
         } catch (Exception e) {
@@ -30,7 +30,7 @@ public class TeamDAO {
         String sql = "SELECT * FROM team WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{teamId}, (rs, rowNum) ->
             new Team(
-                rs.getString("course_code"),
+                rs.getString("courseCode"),
                 rs.getLong("id"),
                 rs.getBoolean("legit")
             )
@@ -44,8 +44,18 @@ public class TeamDAO {
         );
     }
 
+    public int deleteTeam(Long teamId) {
+        String sql = "DELETE FROM team WHERE id = ?";
+        return jdbcTemplate.update(sql, teamId);
+    }
+
+    public int deleteTeamMembers(Long teamId) {
+        String sql = "DELETE FROM team_member WHERE team_id = ?";
+        return jdbcTemplate.update(sql, teamId);
+    }
+
     public Long createTeam(String courseCode) {
-        String sql = "INSERT INTO team (course_code) VALUES (?)";
+        String sql = "INSERT INTO team (courseCode) VALUES (?)";
         jdbcTemplate.update(sql, courseCode);
 
         String getIdSql = "SELECT LAST_INSERT_ID()";
@@ -78,7 +88,7 @@ public class TeamDAO {
         String teamSql = "SELECT id, course_code FROM team WHERE id = ?";
         Map<String, Object> teamRow = jdbcTemplate.queryForMap(teamSql, teamId);
 
-        String courseCode = (String) teamRow.get("course_code");
+        String courseCode = (String) teamRow.get("courseCode");
         Long id = ((Long) teamRow.get("id"));
 
         String memberSql = "SELECT user_id FROM team_member WHERE team_id = ?";

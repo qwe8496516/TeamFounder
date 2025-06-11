@@ -56,10 +56,22 @@ public class TeamConfigurationDAO {
         );
     }
 
+    public int updateTeamConfigurationByCourseCode(String courseCode, String title, String description, boolean formationType, int status, int minSize, int maxSize, Date startDate, Date endDate) {
+        String sql = "UPDATE teamConfiguration SET title=?, description=?, formationType=?, status=?, minsize=?, maxsize=?, startDate=?, endDate=? WHERE courseCode=?";
+        return jdbcTemplate.update(
+                sql, title, description, formationType, status, minSize, maxSize, startDate, endDate, courseCode
+        );
+    }
+
     public TeamConfiguration loadByCourseCode(String courseCode) {
         String sql = "SELECT * FROM teamConfiguration WHERE courseCode = ?";
 
         return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> mapRowToTeamConfiguration(rs), courseCode);
+    }
+
+    public int deleteTeamConfiguration(String courseCode) {
+        String sql = "DELETE FROM teamConfiguration WHERE courseCode = ?";
+        return jdbcTemplate.update(sql, courseCode);
     }
 
     private TeamConfiguration mapRowToTeamConfiguration(ResultSet rs) throws SQLException {
