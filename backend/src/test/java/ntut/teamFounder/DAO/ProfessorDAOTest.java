@@ -43,10 +43,8 @@ class ProfessorDAOTest {
                 ArgumentMatchers.<RowMapper<Professor>>any())
         ).thenReturn(List.of(expectedProfessor));
 
-        // Act
         Professor actualProfessor = professorDAO.getProfessorByProfessorId("p001");
 
-        // Assert
         assertNotNull(actualProfessor);
         assertEquals(expectedProfessor.getUserId(), actualProfessor.getUserId());
         assertEquals(expectedProfessor.getUsername(), actualProfessor.getUsername());
@@ -54,33 +52,27 @@ class ProfessorDAOTest {
 
     @Test
     void getProfessorByProfessorId_shouldReturnNull_whenProfessorDoesNotExist() {
-        // Arrange
         when(jdbcTemplate.query(
                 eq("SELECT * FROM users WHERE userId = ? AND privilege = 1"),
                 ArgumentMatchers.<Object[]>any(),
                 ArgumentMatchers.<RowMapper<Professor>>any())
         ).thenReturn(Collections.emptyList());
 
-        // Act
         Professor result = professorDAO.getProfessorByProfessorId("nonExistent");
 
-        // Assert
         assertNull(result);
     }
 
     @Test
     void getProfessorByProfessorId_shouldHandleNullId() {
-        // Arrange
         when(jdbcTemplate.query(
                 anyString(),
                 ArgumentMatchers.<Object[]>any(),
                 ArgumentMatchers.<RowMapper<Professor>>any())
         ).thenReturn(Collections.emptyList());
 
-        // Act
         Professor result = professorDAO.getProfessorByProfessorId(null);
 
-        // Assert
         assertNull(result);
     }
 }
