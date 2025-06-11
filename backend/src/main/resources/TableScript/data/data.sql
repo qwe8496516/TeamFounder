@@ -11,7 +11,8 @@ INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('113598006', 'Michael Brown', 'MTIzNDU2', 't113598006@ntut.org.tw', 0);
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_islab', 'Jong Yih Kuo', 'MTIzNDU2', 'jykuo@ntut.org.tw', 1);
 INSERT INTO users (userId, username, password, email, privilege) VALUES ('p_ooad', 'Woei Kae Chen', 'MTIzNDU2', 'woeikaechen@ntut.org.tw', 1);
-
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('Ready01', 'Ready01', 'MTIzNDU2', 'Ready01@ntut.org.tw', 0);
+INSERT INTO users (userId, username, password, email, privilege) VALUES ('Ready02', 'Ready02', 'MTIzNDU2', 'Ready02@ntut.org.tw', 0);
 
 #Skills
 INSERT INTO skill (type, name) VALUES ('Programming','HTML/CSS');
@@ -125,3 +126,11 @@ INSERT INTO team_member (team_id, user_id, ready) VALUES
                                                       (3, 7, 1),
                                                       (3, 8, 1),
                                                       (3, 9, 0);
+
+-- getTotalMembersCountInLegitTeams
+INSERT INTO team (id, course_code, legit) VALUES (4, 'CS301', TRUE);
+
+-- Add 3 members: all are ready (ready = 1)
+INSERT INTO team_member (team_id, user_id, ready) VALUES
+                                                      (4, 12, 1),
+                                                      (4, 13, 1);

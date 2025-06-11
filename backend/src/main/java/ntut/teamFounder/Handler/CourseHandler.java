@@ -119,4 +119,7 @@ public class CourseHandler {
         }
     }
 
+    public int getTotalMembersCountInLegitTeams(String courseCode) {
+        return courseDAO.getTotalMembersCountInLegitTeams(courseCode);
+    }
 }

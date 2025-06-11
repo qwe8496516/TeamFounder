@@ -36,7 +36,7 @@ public class TeamHandler {
 
         if (teamDAO.areAllMembersReady(teamId)) {
             Team team = teamDAO.loadTeam(teamId);
-          
+
             TeamConfiguration teamConfiguration = teamConfigurationDAO.loadByCourseCode(team.getCourseCode());
             if (teamConfiguration.validateLegit(team)) {
                 team.setFormed(true);
