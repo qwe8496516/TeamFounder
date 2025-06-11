@@ -36,7 +36,8 @@ public class CourseDAOTest {
         assertEquals("113598056", course.getProfessorId());
         assertEquals(113, course.getAcademicYear());
         assertEquals(1, course.getSemester());
-        assertEquals("A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks.", course.getDescription());
+        assertEquals("A course focusing on web technologies including HTML, CSS, JavaScript, and frameworks."
+                , course.getDescription());
     }
 
     @Test

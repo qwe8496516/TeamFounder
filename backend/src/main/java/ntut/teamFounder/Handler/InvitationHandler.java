@@ -37,7 +37,7 @@ public class InvitationHandler {
     @PutMapping("/{invitationId}/reject")
     public ResponseEntity<?> rejectInvitation(@PathVariable Long invitationId) {
         try {
-            int updatedRows = invitationDAO.updateInvitationStatus(invitationId, 2);  // 2 = REJECTED
+            int updatedRows = invitationDAO.updateInvitationStatus(invitationId, 2);
             if (updatedRows == 0) {
                 return ResponseEntity.badRequest().body("Invitation not found or already handled.");
             }
@@ -50,7 +50,6 @@ public class InvitationHandler {
     @PutMapping("/{invitationId}/accept")
     public ResponseEntity<?> acceptInvitation(@PathVariable Long invitationId) {
         try {
-            // Step 1: Fetch the invitation
             Invitation invitation = invitationDAO.getInvitationById(invitationId);
             if (invitation == null) {
                 return ResponseEntity.badRequest().body("Invitation not found.");
@@ -60,26 +59,21 @@ public class InvitationHandler {
             Long receiverId = invitation.getReceiverId();
             String courseCode = invitation.getCourseCode();
 
-            // Step 2: Check if receiver is already in a team for the course
             Long receiverTeamId = teamDAO.getTeamIdByUserAndCourse(receiverId, courseCode);
             if (receiverTeamId != null) {
                 return ResponseEntity.badRequest().body("Receiver is already in a team for this course.");
             }
 
-            // Step 3: Check if sender is in a team
             Long senderTeamId = teamDAO.getTeamIdByUserAndCourse(senderId, courseCode);
 
             if (senderTeamId != null) {
-                // Add receiver to sender's existing team
-                teamDAO.addUserToTeam(senderTeamId, receiverId);    //remember to add User to the same chatroom too
+                teamDAO.addUserToTeam(senderTeamId, receiverId);
             } else {
-                // Create a new team and add both users
                 Long newTeamId = teamDAO.createTeam(courseCode);
-                teamDAO.addUserToTeam(newTeamId, senderId);     //remember to add User to the same chatroom too
-                teamDAO.addUserToTeam(newTeamId, receiverId);   //remember to add User to the same chatroom too
+                teamDAO.addUserToTeam(newTeamId, senderId);
+                teamDAO.addUserToTeam(newTeamId, receiverId);
             }
 
-            // Step 4: Update invitation status to 'ACCEPTED'
             invitationDAO.updateInvitationStatus(invitationId, 1);
 
             return ResponseEntity.ok("Invitation accepted and team updated successfully.");
