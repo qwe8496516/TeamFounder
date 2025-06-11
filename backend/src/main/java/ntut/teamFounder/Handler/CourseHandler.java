@@ -3,9 +3,7 @@ package ntut.teamFounder.Handler;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import ntut.teamFounder.DAO.CourseDAO;
 import ntut.teamFounder.DAO.StudentDAO;
-import ntut.teamFounder.Domain.Course;
-import ntut.teamFounder.Domain.Skill;
-import ntut.teamFounder.Domain.Student;
+import ntut.teamFounder.Domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -118,5 +116,38 @@ public class CourseHandler {
             return ResponseEntity.badRequest().body("Failed to retrieve course: " + e.getMessage());
         }
     }
+
+    @GetMapping("/{courseCode}/export")
+    public ResponseEntity<byte[]> exportTeamList(
+            @PathVariable String courseCode,
+            @RequestParam(defaultValue = "pdf") String fileType) {
+
+        try {
+            Course course = courseDAO.getCourseByCourseCode(courseCode);
+            List<Team> teams = course.getTeams();
+            TeamExportFile exportFile = new TeamExportFile();
+            byte[] fileContent = exportFile.generateExport(teams, fileType);
+
+            return ResponseEntity.ok()
+                    .header("Content-Type", courseDAO.getContentType(fileType))
+                    .header("Content-Disposition", "attachment; filename=teams_" + courseCode + courseDAO.getFileExtension(fileType))
+                    .body(fileContent);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(("Export failed: " + e.getMessage()).getBytes());
+        }
+    }
+
+    @GetMapping("/{courseCode}/teams")
+    public ResponseEntity<?> getTeamsInCourse(@PathVariable String courseCode) {
+        try{
+            Course course = courseDAO.getCourseByCourseCode(courseCode);
+            List<Team> teams = course.getTeams();
+            return ResponseEntity.ok(teams);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to retrieve team list: " + e.getMessage());
+        }
+    }
+
 
 }

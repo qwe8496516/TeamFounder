@@ -64,4 +64,20 @@ public class CourseDAO {
         );
     }
 
+    public String getContentType(String fileType) {
+        return switch (fileType.toLowerCase()) {
+            case "pdf" -> "application/pdf";
+            case "excel" -> "text/csv";
+            default -> "text/html";
+        };
+    }
+
+    public String getFileExtension(String fileType) {
+        return switch (fileType.toLowerCase()) {
+            case "pdf" -> ".pdf";
+            case "excel" -> ".csv";
+            default -> ".html";
+        };
+    }
+
 }
