@@ -93,10 +93,10 @@ INSERT INTO enrollment (userId, courseCode) VALUES (7, 'CS205');
 INSERT INTO enrollment (userId, courseCode) VALUES (7, 'CS301');
 
 INSERT INTO teamConfiguration (courseCode, title, description, formationType, status, minSize, maxSize, startDate, endDate)
-VALUES ('CS205', 'Team Formation', 'Configure team formation rules and requirements for your course', 0, 1, 3, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');
+VALUES ('CS205', 'Team Formation', 'Configure team formation rules and requirements for your course', 0, 1, 2, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');
 
 INSERT INTO teamConfiguration (courseCode, title, description, formationType, status, minSize, maxSize, startDate, endDate)
-VALUES ('CS201', 'Team Formation', 'Configure team formation rules and requirements for your course', 1, 0, 3, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');
+VALUES ('CS201', 'Team Formation', 'Configure team formation rules and requirements for your course', 1, 0, 2, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');
 
 INSERT INTO teamConfiguration (courseCode, title, description, formationType, status, minSize, maxSize, startDate, endDate)
 VALUES ('CS301', 'Team Formation', 'Configure team formation rules and requirements for your course', 1, 2, 3, 5, '2025-06-05 00:00:00', '2025-06-20 23:59:59');

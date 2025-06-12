@@ -372,9 +372,9 @@ function StudentCourseInvitations() {
                                         invitation.status === 1 ? 'bg-green-100 text-green-800 border border-green-200' :
                                         'bg-red-100 text-red-800 border border-red-200'
                                       }`}>
-                                        {invitation.status === 0 ? 'PENDING' :
-                                         invitation.status === 1 ? 'ACCEPTED' :
-                                         'REJECTED'}
+                                        {invitation.status === 0 ? 'Pending' :
+                                         invitation.status === 1 ? 'Accepted' :
+                                         'Rejected'}
                                       </span>
                                     </div>
                                     {invitation.status === 0 && (
